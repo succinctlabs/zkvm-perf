@@ -1,0 +1,35 @@
+[package]
+name = "eval"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4.0", features = ["derive"] }
+csv = "1.3.0"
+serde = { version = "1.0.196", features = ["derive"] }
+bincode = "1.3.3"
+
+risc0-zkvm = { version = "0.21.0", default-features = false, features = [
+    "prove",
+], optional = true }
+sp1-prover = { git = "https://github.com/succinctlabs/sp1", optional = true, rev = "v1.0.0-testnet" }
+sp1-core = { git = "https://github.com/succinctlabs/sp1", rev = "v1.0.0-testnet" }
+
+jolt = { package = "jolt-sdk", git = "https://github.com/a16z/jolt", features = [
+    "host",
+], optional = true, rev = "845d39af373de078ee2616cf36a255f36f38334a" }
+fibonacci-jolt = { path = "../../programs/fibonacci-jolt", optional = true }
+loop-jolt = { path = "../../programs/loop-jolt", optional = true }
+tendermint-jolt = { path = "../../programs/tendermint-jolt", optional = true }
+sha2-chain-jolt = { path = "../../programs/sha2-chain-jolt", optional = true }
+
+[features]
+# Note: `jolt-zkvm` does not need to be in the default features, but we add it here for the following reasons:
+# - The `jolt::provable` macro requires a `jolt` dependency to be compiled with the "host" feature in the same workspace
+# - To prevent compilation errors in `program` when users clone this repo, we add the "jolt-zkvm" feature to the default features.
+default = ["jolt-zkvm"]
+
+risc0 = ["risc0-zkvm"]
+sp1 = ["sp1-prover"]
+# The name of this feature flag is jolt-zkvm to avoid conflicting with the jolt crate.
+jolt-zkvm = ["jolt", "fibonacci-jolt", "loop-jolt", "tendermint-jolt", "sha2-chain-jolt"]

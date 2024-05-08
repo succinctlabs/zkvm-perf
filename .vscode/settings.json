@@ -1,0 +1,11 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "eval/cli/Cargo.toml",
+        // "programs/fibonacci-jolt/Cargo.toml",
+        // "programs/fibonacci/Cargo.toml",
+        // "programs/tendermint-sp1/Cargo.toml",
+        // "programs/tendermint-risc0/Cargo.toml",
+        // "programs/ssz-withdrawals/Cargo.toml",
+    ],
+    "rust-analyzer.procMacro.enable": true
+}

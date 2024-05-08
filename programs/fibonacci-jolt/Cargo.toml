@@ -1,0 +1,16 @@
+[package]
+name = "fibonacci-jolt"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "guest"
+path = "./src/lib.rs"
+
+[dependencies]
+jolt = { package = "jolt-sdk", git = "https://github.com/a16z/jolt", features = [
+    "guest-std",
+], rev = "845d39af373de078ee2616cf36a255f36f38334a" }
+
+[features]
+guest = []
