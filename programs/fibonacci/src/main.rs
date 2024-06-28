@@ -2,10 +2,10 @@
 
 use std::hint::black_box;
 
-#[cfg(feature = "risc0")]
-risc0_zkvm::guest::entry!(main);
+// #[cfg(feature = "risc0")]
+// risc0_zkvm::guest::entry!(main);
 
-#[cfg(feature = "sp1")]
+// #[cfg(feature = "sp1")]
 sp1_zkvm::entrypoint!(main);
 
 fn fibonacci(n: u32) -> u32 {
