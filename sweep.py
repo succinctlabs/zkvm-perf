@@ -9,8 +9,9 @@ os.environ["NO_GROTH16"] = "false"
 os.environ["RECONSTRUCT_COMMITMENTS"] = "true"
 
 trials = 1
-options_program = ['ssz-withdrawals', 'tendermint', 'reth']
-options_prover = ["sp1", "risc0"]
+# options_program = ['ssz-withdrawals', 'tendermint', 'reth']
+options_program = ['reth']
+options_prover = ["sp1"]
 options_hashfn = ['poseidon']
 options_shard_size = [22]
 

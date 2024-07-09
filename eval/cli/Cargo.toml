@@ -12,8 +12,9 @@ bincode = "1.3.3"
 risc0-zkvm = { version = "0.21.0", default-features = false, features = [
     "prove",
 ], optional = true }
-sp1-prover = { git = "https://github.com/succinctlabs/sp1", optional = true, rev = "v1.0.0-testnet" }
-sp1-core = { git = "https://github.com/succinctlabs/sp1", rev = "v1.0.0-testnet" }
+sp1-prover = { path = "../../../sp1/prover", optional = true, features = ["native-gnark"] }
+sp1-core = { path = "../../../sp1/core" }
+bytemuck = "^1.16.0"
 
 jolt = { package = "jolt-sdk", git = "https://github.com/a16z/jolt", features = [
     "host",
@@ -27,7 +28,7 @@ sha2-chain-jolt = { path = "../../programs/sha2-chain-jolt", optional = true }
 # Note: `jolt-zkvm` does not need to be in the default features, but we add it here for the following reasons:
 # - The `jolt::provable` macro requires a `jolt` dependency to be compiled with the "host" feature in the same workspace
 # - To prevent compilation errors in `program` when users clone this repo, we add the "jolt-zkvm" feature to the default features.
-default = ["jolt-zkvm"]
+default = ["jolt-zkvm", "sp1"]
 
 risc0 = ["risc0-zkvm"]
 sp1 = ["sp1-prover"]
