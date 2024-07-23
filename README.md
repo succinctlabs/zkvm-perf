@@ -5,6 +5,7 @@ A benchmarking suite for zkVMs.
 ## Setup
 
 Install Rust:
+
 ```
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup install nightly
@@ -13,8 +14,10 @@ rustup install nightly
 You might need to do `sudo sh` if the first command doesn't work.
 
 Install the Succinct toolchain which is used for building the ELF files: https://succinctlabs.github.io/sp1/getting-started/install.html.
+
 ```
 curl -L https://sp1.succinct.xyz | bash
+source /home/ubuntu/.bashrc
 sp1up
 cargo prove --version
 ```
@@ -24,17 +27,19 @@ Make sure that `go` is installed on your system, to run the gnark wrapper.
 Install the `jolt` [toolchain](https://jolt.a16zcrypto.com/usage/quickstart.html).
 
 ```
-cargo install --git https://github.com/a16z/jolt --rev 845d39af373de078ee2616cf36a255f36f38334a --force --bins jolt 
+cargo install --git https://github.com/a16z/jolt --rev 845d39af373de078ee2616cf36a255f36f38334a --force --bins jolt
 jolt install-toolchain
 ```
 
 You might have to install these libraries for JOLT:
+
 ```
 sudo apt-get update
 sudo apt-get install libc6
 ```
 
 Install the Risc0 toolchain:
+
 ```
 cargo install cargo-binstall
 cargo binstall cargo-risczero
@@ -42,7 +47,8 @@ cargo risczero install
 ```
 
 Install docker (needed for running R0's STARK -> SNARK):
-* https://docs.docker.com/engine/install/ubuntu/
+
+- https://docs.docker.com/engine/install/ubuntu/
 
 Then, make sure you can run docker not in sudo mode:
 https://docs.docker.com/engine/install/linux-postinstall/
@@ -78,16 +84,19 @@ To run a single benchmark, you can run:
 Note that right now only poseidion is supported for all zkVMs, since we are interested in also profiling recursion.
 
 Example SP1:
+
 ```
 ./eval.sh fibonacci sp1 poseidon 22 benchmark
 ```
 
 Example JOLT:
+
 ```
 ./eval.sh fibonacci jolt-zkvm poseidon 22 benchmark
 ```
 
 Example Risc0:
+
 ```
 ./eval.sh fibonacci risc0 poseidon 22 benchmark
 ```
@@ -97,6 +106,7 @@ Example Risc0:
 Because Risc0 uses C++ for their prover, you may need to install the C++ compiler and libraries.
 
 For Ubuntu/Debian-based systems:
+
 ```
 # Update system repositories and installed packages
 sudo apt update
@@ -107,6 +117,7 @@ sudo apt install build-essential
 ```
 
 For CentOS/RHEL-based systems:
+
 ```
 # Update system repositories and installed packages
 sudo yum update
@@ -119,6 +130,7 @@ sudo yum install -y gcc-c++
 ```
 
 For Fedora:
+
 ```
 # Update system repositories and installed packages
 sudo dnf update
