@@ -11,6 +11,7 @@ path = "./src/lib.rs"
 jolt = { package = "jolt-sdk", git = "https://github.com/a16z/jolt", features = [
     "guest-std",
 ], rev = "845d39af373de078ee2616cf36a255f36f38334a" }
+serde = { version = "1.0.204", default-features = false, features = ["derive"] }
 
 [features]
 guest = []

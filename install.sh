@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Helper function to print an error message and exit
+# Helper function to print an error message and exit.
 error_exit() {
     echo "Error: $1 failed with exit code $?. Exiting."
     exit 1

@@ -1,6 +1,5 @@
 [workspace]
-
-members = ["eval/cli"]
+members = ["eval"]
 
 resolver = "2"
 
@@ -11,14 +10,20 @@ opt-level = 3
 opt-level = 3
 
 [profile.release]
-debug = 1
+opt-level = 3
 lto = true
+
+[profile.fast]
+inherits = "release"
+debug = true
+debug-assertions = true
 
 [profile.release.build-override]
 opt-level = 3
 
-# Note: Need to add this patch until the Jolt repo adds an override which automatically adds this patch.
 [patch.crates-io]
 ark-ff = { git = "https://github.com/a16z/arkworks-algebra", branch = "optimize/field-from-u64" }
 ark-ec = { git = "https://github.com/a16z/arkworks-algebra", branch = "optimize/field-from-u64" }
 ark-serialize = { git = "https://github.com/a16z/arkworks-algebra", branch = "optimize/field-from-u64" }
+revm-interpreter = { git = "https://github.com/sp1-patches/revm-new", branch = "john/update-for-v1" }
+revm-primitives = { git = "https://github.com/sp1-patches/revm-new", branch = "john/update-for-v1" }

@@ -1,5 +1,5 @@
-// This code is borrowed from RISC Zero's benchmarks. 
-// 
+// This code is borrowed from RISC Zero's benchmarks.
+//
 // Copyright 2024 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
