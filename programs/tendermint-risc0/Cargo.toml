@@ -8,8 +8,8 @@ edition = "2021"
 risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["std"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
-tendermint = { version = "0.34.0", default-features = false }
-tendermint-light-client-verifier = { version = "0.34.0", default-features = false, features = [
+tendermint = { version = "0.39.0", default-features = false }
+tendermint-light-client-verifier = { version = "0.39.0", default-features = false, features = [
     "rust-crypto",
 ] }
 
