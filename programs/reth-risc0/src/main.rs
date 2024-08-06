@@ -17,9 +17,8 @@ use sp1_reth_primitives::SP1RethInput;
 // Include bytes from the file with the block number.
 
 fn main() {
-    // Read the input from a file.
-    let bytes = include_bytes!("../17106222.bin");
-    let mut input: SP1RethInput = bincode::deserialize(bytes).expect("unable to deserialize input");
+    // Read the input.
+    let mut input = risc0_zkvm::guest::env::read::<SP1RethInput>();
 
     // Initialize the database.
     let db = InMemoryDB::initialize(&mut input).unwrap();

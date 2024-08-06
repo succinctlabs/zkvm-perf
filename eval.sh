@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 echo "Running $1, $2, $3, $4, $5"
 
 # Get program directory name as $1 and append "-$2" to it if $1 == "tendermint"
@@ -15,7 +14,7 @@ echo "Building program"
 # cd to program directory computed above
 cd "programs/$program_directory"
 
-# If the prover is not jolt-zkvm, then build the program.
+# If the prover is sp1, then build the program.
 if [ "$2" == "sp1" ]; then
     # The reason we don't just use `cargo prove build` from the SP1 CLI is we need to pass a --features ...
     # flag to select between sp1 and risc0.
@@ -34,22 +33,42 @@ if [ "$2" == "risc0" ]; then
         cargo build --release --ignore-rust-version --features $2
 fi
 
-
-cd ../../eval
+cd ../../
 
 echo "Running eval script"
 
-# Runs the eval for the specified program, prover & hash function with conditional compilation based on the feature flag.
+# Detect whether we're on an instance with a GPU.
+if nvidia-smi > /dev/null 2>&1; then
+  GPU_EXISTS=true
+else
+  GPU_EXISTS=false
+fi
 
-RUST_LOG=info RUSTFLAGS='-C target-cpu=native -C target_feature=+avx512ifma,+avx512vl' cargo run -p eval --release --no-default-features --features $2 -- --program $1 --prover $2 --hashfn $3 --shard-size $4 --filename $5
+# Set the compilation flags.
+if [ "$GPU_EXISTS" = false ]; then
+  export RUSTFLAGS='-C target-cpu=native -C target_feature=+avx512ifma,+avx512vl'
+fi
 
-# TODO: conditionally run with avx flags based on the machine's architecture.
-#RUST_LOG=info RUSTFLAGS='-C target-cpu=native' cargo run -p eval --release --no-default-features --features $2 -- --program $1 --prover $2 --hashfn $3 --shard-size $4
+# Set the logging level.
+export RUST_LOG=info
 
-cd ../
+# Determine the features based on GPU existence.
+if [ "$GPU_EXISTS" = true ]; then
+  FEATURES="cuda"
+else
+  FEATURES="default"
+fi
 
-# Get the current commit hash
-commit_hash=$(git rev-parse HEAD)
-
-# Write the commit hash to COMMIT_HASH file
-echo "$commit_hash" > COMMIT_HASH
+# Run the benchmark.
+cargo run \
+    -p sp1-benchmarks-eval \
+    --release \
+    --no-default-features \
+    --features $FEATURES \
+    -- \
+    --program $1 \
+    --prover $2 \
+    --hashfn $3 \
+    --shard-size $4 \
+    --filename $5 \
+    ${6:+--block-number $6}

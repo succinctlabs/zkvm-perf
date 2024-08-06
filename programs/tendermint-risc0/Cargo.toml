@@ -5,9 +5,7 @@ name = "tendermint-risc0"
 edition = "2021"
 
 [dependencies]
-risc0-zkvm = { version = "0.21.0", default-features = false, features = [
-    "std",
-] }
+risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["std"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 tendermint = { version = "0.34.0", default-features = false }
@@ -18,9 +16,9 @@ tendermint-light-client-verifier = { version = "0.34.0", default-features = fals
 [patch.crates-io]
 # Placing these patch statement in the workspace Cargo.toml will add RISC Zero SHA-256 and bigint
 # multiplication accelerator support for all downstream usages of the following crates.
-sha2 = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.6-risczero.0" }
-crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.2-risczero.0" }
-ed25519-consensus = {  git = "ssh://git@github.com/succinctlabs/ed25519-consensus-private.git", branch = "uma/risc0" }
+sha2 = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.8-risczero.0" }
+crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.5-risczero.0" }
+ed25519-consensus = { git = "https://github.com/risc0/ed25519-consensus", rev = "8a6d26d1fcd377f9322ba83d3732d04c157e4778" }
 
 [features]
 risc0 = []
