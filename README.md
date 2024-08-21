@@ -80,7 +80,7 @@ Note for benchmarking the Reth program, you must also pass in a block number:
 ./eval.sh reth sp1 poseidon 22 benchmark 19409768
 ```
 
-The inputs for these blocks have already been generated [here](./eval/cli/blocks/). You can add more
+The inputs for these blocks have already been generated [here](./eval/blocks/). You can add more
 blocks by using the [SP1-Reth](https://github.com/succinctlabs/sp1-reth) script.
 
 ## Common Issues
