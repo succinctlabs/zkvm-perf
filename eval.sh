@@ -45,9 +45,9 @@ else
 fi
 
 # Set the compilation flags.
-if [ "$GPU_EXISTS" = false ]; then
-  export RUSTFLAGS='-C target-cpu=native -C target_feature=+avx512ifma,+avx512vl'
-fi
+# if [ "$GPU_EXISTS" = false ]; then
+#   export RUSTFLAGS='-C target-cpu=native'
+# fi
 
 # Set the logging level.
 export RUST_LOG=info
