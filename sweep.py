@@ -22,7 +22,7 @@ def main():
     parser.add_argument("--filename", default="benchmark", help="Filename for the benchmark")
     parser.add_argument("--trials", type=int, default=1, help="Number of trials to run")
     parser.add_argument("--programs", nargs='+', default=['loop', 'fibonacci', 'tendermint', 'reth1', 'reth2'], help="List of programs to benchmark")
-    parser.add_argument("--provers", nargs='+', default=["sp1", "risc0"], help="List of provers to use")
+    parser.add_argument("--provers", nargs='+', default=["sp1"], help="List of provers to use")
     parser.add_argument("--hashfns", nargs='+', default=['poseidon'], help="List of hash functions to use")
     parser.add_argument("--shard-sizes", type=int, nargs='+', default=[22], help="List of shard sizes to use")
     parser.add_argument("--block-1", default="17106222", help="Block number for reth1")
