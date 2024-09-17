@@ -34,4 +34,9 @@ ADD . /usr/src/app
 
 RUN cargo build -p sp1-benchmarks-eval
 
+# install docker for dind
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+    docker.io
+    
+
 ENTRYPOINT ["/bin/bash", "-c"]

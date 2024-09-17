@@ -1,17 +1,24 @@
+#[cfg(feature = "risc0")]
 use std::fs;
 
+#[cfg(feature = "risc0")]
 use risc0_zkvm::{
     compute_image_id, get_prover_server, ExecutorEnv, ExecutorImpl, ProverOpts, VerifierContext,
 };
-
+#[cfg(feature = "risc0")]
 use crate::{
     utils::{get_elf, get_reth_input, time_operation},
-    EvalArgs, HashFnId, PerformanceReport, ProgramId,
+    HashFnId, ProgramId,
+};
+
+use crate::{
+    EvalArgs, PerformanceReport,
 };
 
 pub struct Risc0Evaluator;
 
 impl Risc0Evaluator {
+    #[cfg(feature = "risc0")]
     pub fn eval(args: &EvalArgs) -> PerformanceReport {
         if args.hashfn != HashFnId::Poseidon {
             panic!("Only Poseidon hash function is supported for Risc0.");
@@ -79,7 +86,6 @@ impl Risc0Evaluator {
         let ((), core_verify_duration) = time_operation(|| receipt.verify(image_id).unwrap());
 
         // Now compress the proof with recursion.
-        // let composite_receipt = receipt.inner.composite().unwrap();
         let (compressed_proof, compress_duration) =
             time_operation(|| prover.compress(&ProverOpts::succinct(), &receipt).unwrap());
 
@@ -111,5 +117,10 @@ impl Risc0Evaluator {
             compress_verify_duration: recursive_verify_duration.as_secs_f64(),
             compress_proof_size: recursive_proof_size,
         }
+    }
+
+    #[cfg(not(feature = "risc0"))]
+    pub fn eval(_args: &EvalArgs) -> PerformanceReport {
+        panic!("RISC0 feature is not enabled. Please compile with --features risc0");
     }
 }
