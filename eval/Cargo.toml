@@ -19,11 +19,11 @@ serde_json = "1.0"
 chrono = "0.4.38"
 
 # sp1
-sp1-prover = { git = "https://github.com/succinctlabs/sp1", branch = "dev" }
-sp1-core-executor = { git = "https://github.com/succinctlabs/sp1.git", branch = "dev" }
-sp1-core-machine = { git = "https://github.com/succinctlabs/sp1.git", branch = "dev" }
-sp1-cuda = { git = "https://github.com/succinctlabs/sp1.git", branch = "dev", optional = true }
-sp1-stark = { git = "https://github.com/succinctlabs/sp1.git", branch = "dev" }
+sp1-prover = { git = "https://github.com/succinctlabs/sp1", rev = "2e8b0a8" }
+sp1-core-executor = { git = "https://github.com/succinctlabs/sp1.git", rev = "2e8b0a8" }
+sp1-core-machine = { git = "https://github.com/succinctlabs/sp1.git", rev = "2e8b0a8" }
+sp1-cuda = { git = "https://github.com/succinctlabs/sp1.git", rev = "2e8b0a8", optional = true }
+sp1-stark = { git = "https://github.com/succinctlabs/sp1.git", rev = "2e8b0a8" }
 
 # risc0
 risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["prove"], optional = true }

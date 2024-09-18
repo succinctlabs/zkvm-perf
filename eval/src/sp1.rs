@@ -6,11 +6,14 @@ use crate::{
 };
 
 use sp1_core_executor::SP1Context;
-use sp1_stark::SP1ProverOpts;
+
 use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover, SP1Stdin};
 
 #[cfg(feature = "cuda")]
 use sp1_cuda::SP1CudaProver;
+
+#[cfg(not(feature = "cuda"))]
+use sp1_stark::SP1ProverOpts;
 
 pub struct SP1Evaluator;
 
