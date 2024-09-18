@@ -5,18 +5,22 @@ use crate::{
     EvalArgs, PerformanceReport, ProgramId,
 };
 
-use sp1_core::{runtime::SP1Context, utils::SP1ProverOpts};
+use sp1_core_executor::SP1Context;
+
 use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover, SP1Stdin};
 
 #[cfg(feature = "cuda")]
-use sp1_server::SP1ProverServer;
+use sp1_cuda::SP1CudaProver;
+
+#[cfg(not(feature = "cuda"))]
+use sp1_stark::SP1ProverOpts;
 
 pub struct SP1Evaluator;
 
 impl SP1Evaluator {
     pub fn eval(args: &EvalArgs) -> PerformanceReport {
         // Setup the logger.
-        sp1_core::utils::setup_logger();
+        sp1_core_machine::utils::setup_logger();
 
         // Set enviroment variables to configure the prover.
         std::env::set_var("SHARD_SIZE", format!("{}", 1 << args.shard_size));
@@ -42,7 +46,7 @@ impl SP1Evaluator {
         let prover = SP1Prover::<DefaultProverComponents>::new();
 
         #[cfg(feature = "cuda")]
-        let server = SP1ProverServer::new();
+        let server = SP1CudaProver::new().expect("Failed to initialize CUDA prover");
 
         // Setup the program.
         let (pk, vk) = prover.setup(&elf);

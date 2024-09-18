@@ -1,0 +1,42 @@
+FROM nvidia/cuda:12.5.1-devel-ubuntu20.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+    curl \
+    build-essential \
+    protobuf-compiler \
+    git \
+    libssl-dev \
+    pkg-config \
+    python3 \
+    python3-pip \
+    build-essential \ 
+    libc6 \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# ENV DONT_USE_CPU_EXTENSIONS=1
+# ENV RUSTFLAGS="-C target-cpu=generic"
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Install Toolchains
+ADD install.sh /install.sh
+RUN chmod +x /install.sh && /install.sh
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Add source code to container
+ADD . /usr/src/app
+
+RUN cargo build -p sp1-benchmarks-eval
+
+# install docker for dind
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+    docker.io
+    
+
+ENTRYPOINT ["/bin/bash", "-c"]

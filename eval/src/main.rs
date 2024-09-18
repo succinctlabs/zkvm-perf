@@ -1,6 +1,3 @@
-#[cfg(feature = "jolt-zkvm")]
-mod jolt;
-
 mod risc0;
 mod sp1;
 mod types;
@@ -78,16 +75,6 @@ fn main() {
     let report = match args.prover {
         ProverId::Risc0 => risc0::Risc0Evaluator::eval(&args),
         ProverId::SP1 => sp1::SP1Evaluator::eval(&args),
-        ProverId::JoltZkvm => {
-            #[cfg(feature = "jolt-zkvm")]
-            {
-                jolt::JoltPerformanceReportGenerator::get_report(&args)
-            }
-            #[cfg(not(feature = "jolt-zkvm"))]
-            {
-                unreachable!()
-            }
-        }
     };
 
     // Create the results directory if it doesn't exist.

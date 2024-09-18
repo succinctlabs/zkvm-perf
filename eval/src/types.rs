@@ -15,7 +15,6 @@ pub enum ProgramId {
 pub enum ProverId {
     Risc0,
     SP1,
-    JoltZkvm,
 }
 
 /// An identifier used to select the hash function to evaluate.
@@ -47,7 +46,6 @@ impl ProverId {
         match self {
             ProverId::Risc0 => "risc0".to_string(),
             ProverId::SP1 => "sp1".to_string(),
-            ProverId::JoltZkvm => "jolt-zkvm".to_string(),
         }
     }
 }
