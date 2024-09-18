@@ -1,0 +1,207 @@
+name: PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Filename for the benchmark'
+        required: true
+        default: 'benchmark'
+        type: string
+      trials:
+        description: 'Number of trials to run'
+        required: true
+        default: '1'
+        type: number
+      programs:
+        description: 'Programs to benchmark'
+        required: true
+        type: choice
+        options:
+        - loop
+        - fibonacci
+        - tendermint
+        - reth1
+        - reth2
+      provers:
+        description: 'Provers to use'
+        required: true
+        type: choice
+        options:
+        - sp1
+        - risc0
+      hashfns:
+        description: 'Hash functions to use'
+        required: true
+        type: choice
+        options:
+        - poseidon
+      shard_sizes:
+        description: 'Shard sizes to use'
+        required: true
+        default: '22'
+        type: string
+      block_1:
+        description: 'Block number for reth1'
+        required: true
+        default: '17106222'
+        type: string
+      block_2:
+        description: 'Block number for reth2'
+        required: true
+        default: '19409768'
+        type: string
+      instance_type:
+        description: 'Instance type'
+        required: true
+        type: choice
+        default: 'g6.4xlarge'
+        options:
+        - g6.16xlarge
+        - g6.8xlarge
+        - g6.4xlarge
+        - g6.2xlarge
+      ami_id:
+        description: 'AMI ID'
+        required: true
+        type: string
+        default: 'ami-079a6a210557ef0e4'
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  start-runner:
+    name: Start Self-Hosted EC2 Runner
+    runs-on: "ubuntu-latest"
+    outputs:
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+
+    steps:
+      # Use an access key for an IAM user with these permissions:
+      # - ec2:RunInstances
+      # - ec2:TerminateInstances
+      # - ec2:DescribeInstances
+      # - ec2:DescribeInstanceStatus
+      - name: Configure AWS credentials
+        uses: "aws-actions/configure-aws-credentials@v1"
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Start EC2 runner
+        id: "start-ec2-runner"
+        uses: "xJonathanLEI/ec2-github-runner@main"
+        with:
+          mode: "start"
+          # Must use personal access token here as `GITHUB_TOKEN` does not have access to runners.
+          # Use a fine-grained token with these permissions to at least this repository:
+          # - Administration: Read and write
+          # - Contents: Read and write
+          # - Metadata: Read-only
+          # - Workflows: Read and write
+          github-token: "${{ secrets.GH_PAT }}"
+          ec2-image-id: "${{ inputs.ami_id || 'ami-079a6a210557ef0e4' }}"
+          ec2-instance-type: "${{ inputs.instance_type || 'g6.4xlarge' }}"
+          # Use a subnet in the default VPC
+          subnet-id: "${{ secrets.AWS_SUBNET_ID }}"
+          # Use a security group attached to the default VPC
+          security-group-id: "${{ secrets.AWS_SG_ID }}"
+          storage-size: 1024
+
+  perf:
+    name: Run ZKVM-Perf
+    runs-on: "${{ needs.start-runner.outputs.label }}"
+    needs:
+      - "start-runner"
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      # - name: Setup Self-Hosted Runner
+      #   uses: ./.github/actions/self-hosted
+
+      - name: rust-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            ~/.rustup/
+          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: rust-1.79.0-
+
+      # Commented out because the latency of the docker buildx cache is high enough 
+      # with the EC2 builder that it's a wash.  Can be added back in if the toolchain gets complex.
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
+
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
+
+      # - name: Build and cache Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile.toolchain
+      #     push: false
+      #     load: true
+      #     tags: moongate-toolchain:latest
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # This step is necessary to prevent the cache from growing indefinitely
+      # - name: Move cache
+      #   run: |
+      #     rm -rf /tmp/.buildx-cache
+      #     mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+        
+      - name: Run docker build
+        run: |
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
+      # we need to run cargo test --release in the docker container
+      - name: Run Tests (docker)
+        run: |
+          docker run --gpus all -it --platform linux/amd64 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ./benchmarks:/usr/src/app/benchmarks \
+            -e RUST_BACKTRACE=full \
+            --network host \
+            zkvm-perf \
+            "python3 sweep.py --filename ${{ inputs.filename }} --trials ${{ inputs.trials }} --programs ${{ inputs.programs }} --provers ${{ inputs.provers }} --hashfns ${{ inputs.hashfns }} --shard-sizes ${{ inputs.shard_sizes }} --block-1 ${{ inputs.block_1 }} --block-2 ${{ inputs.block_2 }}"
+
+  stop-runner:
+    name: Stop Self-Hosted EC2 Runner
+    runs-on: "ubuntu-latest"
+    needs:
+      - "start-runner"
+      - "perf"
+    if: ${{ always() }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: "aws-actions/configure-aws-credentials@v1"
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Stop EC2 runner
+        uses: "xJonathanLEI/ec2-github-runner@main"
+        with:
+          mode: "stop"
+          github-token: ${{ secrets.GH_PAT }}
+          label: "${{ needs.start-runner.outputs.label }}"
+          ec2-instance-id: "${{ needs.start-runner.outputs.ec2-instance-id }}"
