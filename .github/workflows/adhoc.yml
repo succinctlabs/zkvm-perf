@@ -174,7 +174,7 @@ jobs:
       # we need to run cargo test --release in the docker container
       - name: Run Tests (docker)
         run: |
-          docker run --gpus all -it --platform linux/amd64 \
+          docker run --gpus all --platform linux/amd64 \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ./benchmarks:/usr/src/app/benchmarks \
             -e RUST_BACKTRACE=full \
