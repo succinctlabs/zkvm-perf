@@ -3,10 +3,11 @@ name: Execute ZKVM-Perf
 on:
   workflow_dispatch:
     inputs:
-      instance_types:
-        description: 'Instance types'
+      instance_type:
+        description: 'Instance type'
         required: true
-        type: boolean
+        type: choice
+        default: 'g6.4xlarge'
         options:
         - g6.16xlarge
         - g6.8xlarge
@@ -70,51 +71,142 @@ on:
     branches: [main]
 
 jobs:
-  matrix-setup:
-    runs-on: ubuntu-latest
+
+  start-runner:
+    name: Start Self-Hosted EC2 Runner
+    runs-on: "ubuntu-latest"
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+
     steps:
-      - id: set-matrix
-        run: |
-          INSTANCES=$(echo '${{ toJson(inputs.instance_types) }}' | jq -c 'to_entries | map(select(.value == true)) | map(.key)')
-          echo "matrix=${INSTANCES}" >> $GITHUB_OUTPUT
+      # Use an access key for an IAM user with these permissions:
+      # - ec2:RunInstances
+      # - ec2:TerminateInstances
+      # - ec2:DescribeInstances
+      # - ec2:DescribeInstanceStatus
+      - name: Configure AWS credentials
+        uses: "aws-actions/configure-aws-credentials@v1"
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Start EC2 runner
+        id: "start-ec2-runner"
+        uses: "xJonathanLEI/ec2-github-runner@main"
+        with:
+          mode: "start"
+          # Must use personal access token here as `GITHUB_TOKEN` does not have access to runners.
+          # Use a fine-grained token with these permissions to at least this repository:
+          # - Administration: Read and write
+          # - Contents: Read and write
+          # - Metadata: Read-only
+          # - Workflows: Read and write
+          github-token: "${{ secrets.GH_PAT }}"
+          ec2-image-id: "${{ inputs.ami_id || 'ami-079a6a210557ef0e4' }}"
+          ec2-instance-type: "${{ inputs.instance_type || 'g6.4xlarge' }}"
+          # Use a subnet in the default VPC
+          subnet-id: "${{ secrets.AWS_SUBNET_ID }}"
+          # Use a security group attached to the default VPC
+          security-group-id: "${{ secrets.AWS_SG_ID }}"
+          storage-size: 1024
 
   perf:
-    needs: matrix-setup
-    strategy:
-      matrix:
-        instance_type: ${{fromJson(needs.matrix-setup.outputs.matrix)}}
-    name: Run ZKVM-Perf on ${{ matrix.instance_type }}
-    runs-on: ubuntu-latest
+    name: Run ZKVM-Perf
+    runs-on: "${{ needs.start-runner.outputs.label }}"
+    needs:
+      - "start-runner"
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
     steps:
-      - name: Start EC2 runner
-        id: start-ec2-runner
-        uses: machulav/ec2-github-runner@v2
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      # - name: Setup Self-Hosted Runner
+      #   uses: ./.github/actions/self-hosted
+
+      - name: rust-cache
+        uses: actions/cache@v3
         with:
-          mode: start
-          github-token: ${{ secrets.GH_PAT }}
-          ec2-image-id: ${{ inputs.ami_id }}
-          ec2-instance-type: ${{ matrix.instance_type }}
-          subnet-id: ${{ secrets.AWS_SUBNET_ID }}
-          security-group-id: ${{ secrets.AWS_SG_ID }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            ~/.rustup/
+          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: rust-1.79.0-
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      # Commented out because the latency of the docker buildx cache is high enough 
+      # with the EC2 builder that it's a wash.  Can be added back in if the toolchain gets complex.
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-      - name: Run ZKVM-Perf
-        env:
-          INSTANCE_TYPE: ${{ matrix.instance_type }}
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
+
+      # - name: Build and cache Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile.toolchain
+      #     push: false
+      #     load: true
+      #     tags: moongate-toolchain:latest
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # This step is necessary to prevent the cache from growing indefinitely
+      # - name: Move cache
+      #   run: |
+      #     rm -rf /tmp/.buildx-cache
+      #     mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+        
+      - name: Run docker build
         run: |
-          # Your ZKVM-Perf commands here
-          echo "Running on $INSTANCE_TYPE"
-          # Add your docker commands and other steps here
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
+      # we need to run cargo test --release in the docker container
+      - name: Run Tests (docker)
+        run: |
+          docker run --gpus all --platform linux/amd64 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ./benchmarks:/usr/src/app/benchmarks \
+            -e RUST_BACKTRACE=full \
+            --network host \
+            zkvm-perf \
+            "python3 sweep.py --filename ${{ inputs.filename || 'benchmark' }} --trials ${{ inputs.trials || '1' }} --programs ${{ inputs.programs || 'loop' }} --provers ${{ inputs.provers || 'sp1' }} --hashfns ${{ inputs.hashfns || 'poseidon' }} --shard-sizes ${{ inputs.shard_sizes || '22' }} --block-1 ${{ inputs.block_1 || '17106222' }} --block-2 ${{ inputs.block_2 || '19409768' }}"
+      # cat the results from benchmarks/*.csv and print to console
+      - name: Print Results
+        run: |
+          cat benchmarks/*.csv
+
+  stop-runner:
+    name: Stop Self-Hosted EC2 Runner
+    runs-on: "ubuntu-latest"
+    needs:
+      - "start-runner"
+      - "perf"
+    if: ${{ always() }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: "aws-actions/configure-aws-credentials@v1"
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Stop EC2 runner
-        if: always()
-        uses: machulav/ec2-github-runner@v2
+        uses: "xJonathanLEI/ec2-github-runner@main"
         with:
-          mode: stop
+          mode: "stop"
           github-token: ${{ secrets.GH_PAT }}
-          label: ${{ steps.start-ec2-runner.outputs.label }}
-          ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+          label: "${{ needs.start-runner.outputs.label }}"
+          ec2-instance-id: "${{ needs.start-runner.outputs.ec2-instance-id }}"
