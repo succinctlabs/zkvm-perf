@@ -180,7 +180,7 @@ jobs:
             -e RUST_BACKTRACE=full \
             --network host \
             zkvm-perf \
-            "python3 sweep.py --filename ${{ inputs.filename }} --trials ${{ inputs.trials }} --programs ${{ inputs.programs }} --provers ${{ inputs.provers }} --hashfns ${{ inputs.hashfns }} --shard-sizes ${{ inputs.shard_sizes }} --block-1 ${{ inputs.block_1 }} --block-2 ${{ inputs.block_2 }}"
+            "python3 sweep.py --filename ${{ inputs.filename || 'benchmark' }} --trials ${{ inputs.trials || '1' }} --programs ${{ inputs.programs || 'loop' }} --provers ${{ inputs.provers || 'sp1' }} --hashfns ${{ inputs.hashfns || 'poseidon' }} --shard-sizes ${{ inputs.shard_sizes || '22' }} --block-1 ${{ inputs.block_1 || '17106222' }} --block-2 ${{ inputs.block_2 || '19409768' }}"
 
   stop-runner:
     name: Stop Self-Hosted EC2 Runner
