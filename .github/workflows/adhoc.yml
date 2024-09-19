@@ -3,14 +3,6 @@ name: Execute ZKVM-Perf
 on:
   workflow_dispatch:
     inputs:
-      instance_type:
-        description: 'Instance type'
-        required: true
-        type: choice
-        default: 'g6.16xlarge'
-        options:
-        - g6.16xlarge
-        - r7i.16xlarge
       enable_gpu:
         description: 'Enable GPU usage'
         required: true
@@ -22,22 +14,14 @@ on:
         type: string
         default: 'ami-079a6a210557ef0e4'
       provers:
-        description: 'Provers to use'
+        description: 'Provers to use (comma-separated)'
         required: true
-        type: choice
-        options:
-        - sp1
-        - risc0
+        type: string
+        default: 'sp1,risc0'
       programs:
-        description: 'Programs to benchmark'
-        required: true
-        type: choice
-        options:
-        - loop
-        - fibonacci
-        - tendermint
-        - reth1
-        - reth2
+        description: 'Programs to benchmark (comma-separated, leave empty for all)'
+        required: false
+        type: string
       filename:
         description: 'Filename for the benchmark'
         required: true
@@ -49,32 +33,52 @@ on:
         default: '1'
         type: number
       hashfns:
-        description: 'Hash functions to use'
+        description: 'Hash functions to use (comma-separated)'
         required: true
-        type: choice
-        options:
-        - poseidon
+        type: string
+        default: 'poseidon'
       shard_sizes:
-        description: 'Shard sizes to use'
+        description: 'Shard sizes to use (comma-separated)'
         required: true
         default: '22'
         type: string
-      
+      sp1_ref:
+        description: 'SP1 reference (commit hash or branch name)'
+        required: false
+        type: string
+        default: '2e8b0a8'
+
   pull_request:
     branches: [main]
 
 jobs:
+  matrix_prep:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+    - id: set-matrix
+      run: |
+        echo "matrix=$(jq -c . << EOF
+        {
+          "instance_type": ["g6.16xlarge", "r7i.16xlarge"]
+        }
+        EOF
+        )" >> $GITHUB_OUTPUT
 
   start-runner:
+    needs: matrix_prep
+    strategy:
+      matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
     name: Start Self-Hosted EC2 Runner
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     outputs:
       label: ${{ steps.start-ec2-runner.outputs.label }}
       ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
 
     steps:
       - name: Configure AWS credentials
-        uses: "aws-actions/configure-aws-credentials@v1"
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -84,19 +88,17 @@ jobs:
         id: "start-ec2-runner"
         uses: "xJonathanLEI/ec2-github-runner@main"
         with:
-          mode: "start"
-          github-token: "${{ secrets.GH_PAT }}"
-          ec2-image-id: "${{ inputs.ami_id || 'ami-079a6a210557ef0e4' }}"
-          ec2-instance-type: "${{ inputs.instance_type || 'g6.4xlarge' }}"
-          subnet-id: "${{ secrets.AWS_SUBNET_ID }}"
-          security-group-id: "${{ secrets.AWS_SG_ID }}"
-          storage-size: 1024
+          mode: start
+          github-token: ${{ secrets.GH_PAT }}
+          ec2-image-id: ${{ inputs.ami_id }}
+          ec2-instance-type: ${{ matrix.instance_type }}
+          subnet-id: ${{ secrets.AWS_SUBNET_ID }}
+          security-group-id: ${{ secrets.AWS_SG_ID }}
 
   perf:
-    name: Run ZKVM-Perf
-    runs-on: "${{ needs.start-runner.outputs.label }}"
-    needs:
-      - "start-runner"
+    needs: start-runner
+    name: Run ZKVM-Perf on ${{ matrix.instance_type }}
+    runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
     steps:
@@ -115,10 +117,15 @@ jobs:
             ~/.rustup/
           key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: rust-1.79.0-
-        
+
+      - name: Update SP1 reference
+        run: |
+          chmod +x update_sp1_and_build.sh
+          SP1_REF=${{ inputs.sp1_ref }} RUN_BUILD=false ./update_sp1_and_build.sh
+
       - name: Run docker build
         run: |
-          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
 
       - name: Run Tests (docker)
         run: |
@@ -128,7 +135,12 @@ jobs:
             -e RUST_BACKTRACE=full \
             --network host \
             zkvm-perf \
-            "python3 sweep.py --filename ${{ inputs.filename || 'benchmark' }} --trials ${{ inputs.trials || '1' }} --programs ${{ inputs.programs || 'loop' }} --provers ${{ inputs.provers || 'sp1' }} --hashfns ${{ inputs.hashfns || 'poseidon' }} --shard-sizes ${{ inputs.shard_sizes || '22' }}"
+            "python3 sweep.py --filename ${{ inputs.filename }} \
+                              --trials ${{ inputs.trials }} \
+                              ${{ inputs.programs && format('--programs {0}', inputs.programs) || '' }} \
+                              --provers ${{ inputs.provers }} \
+                              --hashfns ${{ inputs.hashfns }} \
+                              --shard-sizes ${{ inputs.shard_sizes }}"
 
       - name: Print Results
         run: |
@@ -136,15 +148,15 @@ jobs:
 
   stop-runner:
     name: Stop Self-Hosted EC2 Runner
-    runs-on: "ubuntu-latest"
     needs:
-      - "start-runner"
-      - "perf"
-    if: ${{ always() }}
+      - start-runner
+      - perf
+    runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Configure AWS credentials
-        uses: "aws-actions/configure-aws-credentials@v1"
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -153,7 +165,7 @@ jobs:
       - name: Stop EC2 runner
         uses: "xJonathanLEI/ec2-github-runner@main"
         with:
-          mode: "stop"
+          mode: stop
           github-token: ${{ secrets.GH_PAT }}
-          label: "${{ needs.start-runner.outputs.label }}"
-          ec2-instance-id: "${{ needs.start-runner.outputs.ec2-instance-id }}"
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
