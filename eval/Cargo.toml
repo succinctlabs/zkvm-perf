@@ -19,7 +19,7 @@ serde_json = "1.0"
 chrono = "0.4.38"
 
 # sp1
-sp1-prover = { git = "https://github.com/succinctlabs/sp1", branch = "tamir/v1.3.0-rc2" }
+sp1-prover = { git = "https://github.com/succinctlabs/sp1.git", branch = "tamir/v1.3.0-rc2" }
 sp1-core-executor = { git = "https://github.com/succinctlabs/sp1.git", branch = "tamir/v1.3.0-rc2" }
 sp1-core-machine = { git = "https://github.com/succinctlabs/sp1.git", branch = "tamir/v1.3.0-rc2" }
 sp1-cuda = { git = "https://github.com/succinctlabs/sp1.git", branch = "tamir/v1.3.0-rc2", optional = true }
@@ -29,7 +29,7 @@ sp1-stark = { git = "https://github.com/succinctlabs/sp1.git", branch = "tamir/v
 risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["prove"], optional = true }
 
 # sp1-reth
-sp1-reth-primitives = { git = "https://github.com/succinctlabs/sp1-reth.git", branch = "john/update-for-v1" }
+sp1-reth-primitives = { git = "https://github.com/succinctlabs/sp1-reth.git", branch = "kevjue/alloy-rpc-types-version" }
 
 [features]
 default = []
