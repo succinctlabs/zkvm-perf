@@ -3,11 +3,6 @@ name: Execute ZKVM-Perf
 on:
   workflow_dispatch:
     inputs:
-      enable_gpu:
-        description: 'Enable GPU usage'
-        required: true
-        type: boolean
-        default: true
       ami_id:
         description: 'AMI ID'
         required: true
@@ -61,7 +56,10 @@ jobs:
       run: |
         echo "matrix=$(jq -c . << EOF
         {
-          "instance_type": ["g6.16xlarge", "r7i.16xlarge"]
+          "instance_config": [
+            {"type": "g6.16xlarge", "gpu": true},
+            {"type": "r7i.16xlarge", "gpu": false}
+          ]
         }
         EOF
         )" >> $GITHUB_OUTPUT
@@ -91,13 +89,13 @@ jobs:
           mode: start
           github-token: ${{ secrets.GH_PAT }}
           ec2-image-id: ${{ inputs.ami_id }}
-          ec2-instance-type: ${{ matrix.instance_type }}
+          ec2-instance-type: ${{ matrix.instance_config.type }}
           subnet-id: ${{ secrets.AWS_SUBNET_ID }}
           security-group-id: ${{ secrets.AWS_SG_ID }}
 
   perf:
     needs: start-runner
-    name: Run ZKVM-Perf on ${{ matrix.instance_type }}
+    name: Run ZKVM-Perf on ${{ matrix.instance_config.type }}
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
@@ -129,7 +127,7 @@ jobs:
 
       - name: Run Tests (docker)
         run: |
-          docker run ${{ inputs.enable_gpu && '--gpus all' || '' }} --platform linux/amd64 \
+          docker run ${{ matrix.instance_config.gpu && '--gpus all' || '' }} --platform linux/amd64 \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ./benchmarks:/usr/src/app/benchmarks \
             -e RUST_BACKTRACE=full \
