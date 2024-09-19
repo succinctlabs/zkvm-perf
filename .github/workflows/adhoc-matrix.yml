@@ -185,6 +185,17 @@ jobs:
               await new Promise(resolve => setTimeout(resolve, checkInterval));
             }
 
+      - name: Download benchmark results
+        uses: actions/download-artifact@v3
+        with:
+          name: benchmark-results-${{ matrix.instance_type }}-${{ env.TRIGGERED_RUN_ID }}
+          path: ./benchmark-results-${{ matrix.instance_type }}
+
+      - name: Process benchmark results
+        run: |
+          echo "Results for ${{ matrix.instance_type }}:"
+          cat ./benchmark-results-${{ matrix.instance_type }}/*.csv
+
       - name: Stop EC2 runner
         if: always()
         uses: xJonathanLEI/ec2-github-runner@main
@@ -193,3 +204,34 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           label: ${{ steps.start-ec2-runner.outputs.label }}
           ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+
+  combine-results:
+    needs: run-benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Combine CSV files
+        run: |
+          echo "Combining CSV files:"
+          # Get the header from the first CSV file
+          head -n 1 $(ls benchmark-results-*/*.csv | head -n 1) > combined_results.csv
+          # Append data from all CSV files, skipping the header
+          for file in benchmark-results-*/*.csv; do
+            tail -n +2 "$file" >> combined_results.csv
+          done
+          cat combined_results.csv
+
+      - name: Upload combined results
+        uses: actions/upload-artifact@v2
+        with:
+          name: combined-benchmark-results
+          path: combined_results.csv
+
+      - name: Create summary
+        run: |
+          echo "## Benchmark Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat combined_results.csv >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

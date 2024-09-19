@@ -66,12 +66,16 @@ jobs:
         run: |
           docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
 
+      - name: Make benchmarks directory
+        run: mkdir -p ${{ github.workspace }}/benchmarks
+
       - name: Run benchmark
         run: |
           docker run ${{ inputs.enable_gpu == 'true' && '--gpus all' || '' }} --platform linux/amd64 \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
             -e RUST_BACKTRACE=full \
+            -e INSTANCE_TYPE=${{ inputs.instance_type }} \
             --network host \
             zkvm-perf \
             python3 sweep.py \
@@ -81,11 +85,21 @@ jobs:
               --provers ${{ inputs.provers }} \
               --hashfns ${{ fromJson(env.ADDITIONAL_PARAMS).hashfns }} \
               --shard-sizes ${{ fromJson(env.ADDITIONAL_PARAMS).shard_sizes }}
+        
+      - name: List benchmark results
+        run: ls -la ${{ github.workspace }}/benchmarks
+
+      - name: Add instance type to CSV
+        run: |
+          for file in ${{ github.workspace }}/benchmarks/*.csv; do
+            sed -i '1s/^/instance_type,/' "$file"
+            sed -i "2,\$s/^/${{ inputs.instance_type }},/" "$file"
+          done
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
         with:
-          name: benchmark-results-${{ inputs.instance_type }}
+          name: benchmark-results-${{ inputs.instance_type }}-${{ github.run_id }}
           path: ${{ github.workspace }}/benchmarks/*.csv
 
       - name: Print Results
