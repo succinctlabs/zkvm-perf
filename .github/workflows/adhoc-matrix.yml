@@ -1,0 +1,195 @@
+name: Execute ZKVM-Perf (Matrix)
+
+on:
+  workflow_dispatch:
+    inputs:
+      provers:
+        description: 'Provers to use (comma-separated)'
+        required: false
+        type: string
+        default: 'sp1'
+      programs:
+        description: 'Programs to benchmark (comma-separated)'
+        required: false
+        type: string
+        default: 'loop,fibonacci,tendermint,reth1,reth2'
+      filename:
+        description: 'Filename for the benchmark'
+        required: false
+        type: string
+        default: 'benchmark'
+      trials:
+        description: 'Number of trials to run'
+        required: false
+        type: string
+        default: '1'
+      sp1_ref:
+        description: 'SP1 reference (commit hash or branch name)'
+        required: false
+        type: string
+        default: '2e8b0a8'
+      additional_params:
+        description: 'Additional parameters as JSON'
+        required: false
+        type: string
+        default: '{"hashfns":"poseidon","shard_sizes":"22"}'
+
+jobs:
+  run-benchmarks:
+    strategy:
+      matrix:
+        include:
+          - instance_type: g6.16xlarge
+            enable_gpu: true
+            ami_id: ami-079a6a210557ef0e4
+          - instance_type: r7i.16xlarge
+            enable_gpu: false
+            ami_id: ami-079a6a210557ef0e4
+    
+    name: Run on ${{ matrix.instance_type }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: xJonathanLEI/ec2-github-runner@main
+        with:
+          mode: start
+          # Must use personal access token here as `GITHUB_TOKEN` does not have access to runners.
+          # Use a fine-grained token with these permissions to at least this repository:
+          # - Administration: Read and write
+          # - Contents: Read and write
+          # - Metadata: Read-only
+          # - Workflows: Read and write
+          # - Actions: Read and write
+          github-token: ${{ secrets.GH_PAT }}
+          ec2-image-id: ${{ matrix.ami_id }}
+          ec2-instance-type: ${{ matrix.instance_type }}
+          subnet-id: ${{ secrets.AWS_SUBNET_ID }}
+          security-group-id: ${{ secrets.AWS_SG_ID }}
+          storage-size: 1024
+
+      - name: Run benchmarks
+        id: run-benchmarks
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const runnerName = '${{ steps.start-ec2-runner.outputs.label }}';
+            const maxAttempts = 5;
+            const initialDelay = 30000; // 30 seconds
+            let triggeredRunId = null;
+            
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              console.log(`Attempt ${attempt} to trigger benchmark workflow`);
+              
+              await new Promise(resolve => setTimeout(resolve, initialDelay * attempt));
+              
+              try {
+                const result = await github.rest.actions.createWorkflowDispatch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: 'run-on-runner.yml',
+                  ref: context.ref,
+                  inputs: {
+                    runner_name: runnerName,
+                    instance_type: '${{ matrix.instance_type }}',
+                    enable_gpu: '${{ matrix.enable_gpu }}',
+                    provers: '${{ inputs.provers }}',
+                    programs: '${{ inputs.programs }}',
+                    filename: '${{ inputs.filename }}_${{ matrix.instance_type }}',
+                    trials: '${{ inputs.trials }}',
+                    sp1_ref: '${{ inputs.sp1_ref }}',
+                    additional_params: '${{ inputs.additional_params }}'
+                  }
+                });
+                console.log('Benchmark workflow triggered successfully');
+                
+                // Wait for the run to appear in the list
+                for (let i = 0; i < 10; i++) {
+                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  const runs = await github.rest.actions.listWorkflowRuns({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: 'run-on-runner.yml',
+                    status: 'in_progress'
+                  });
+                  const recentRun = runs.data.workflow_runs.find(run => 
+                    new Date(run.created_at).getTime() > Date.now() - 60000
+                  );
+                  if (recentRun) {
+                    triggeredRunId = recentRun.id;
+                    break;
+                  }
+                }
+                
+                if (triggeredRunId) {
+                  console.log(`Triggered run ID: ${triggeredRunId}`);
+                  break;
+                } else {
+                  throw new Error('Failed to find the triggered workflow run');
+                }
+              } catch (error) {
+                console.log(`Failed to trigger or find workflow: ${error.message}`);
+                if (attempt === maxAttempts) {
+                  core.setFailed('Failed to trigger benchmark workflow after multiple attempts');
+                }
+              }
+            }
+            // Use the new method to set output
+            core.exportVariable('TRIGGERED_RUN_ID', triggeredRunId);
+
+      - name: Wait for benchmark completion
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const triggeredRunId = process.env.TRIGGERED_RUN_ID;
+            if (!triggeredRunId) {
+              core.setFailed('No triggered run ID found');
+              return;
+            }
+            
+            const maxWaitTime = 3600000; // 1 hour in milliseconds
+            const checkInterval = 60000; // 1 minute in milliseconds
+            const startTime = Date.now();
+            
+            while (true) {
+              const run = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: triggeredRunId
+              });
+              
+              if (run.data.status === 'completed') {
+                console.log(`Benchmark workflow completed with conclusion: ${run.data.conclusion}`);
+                if (run.data.conclusion !== 'success') {
+                  core.setFailed(`Benchmark workflow failed with conclusion: ${run.data.conclusion}`);
+                }
+                break;
+              }
+              
+              if (Date.now() - startTime > maxWaitTime) {
+                core.setFailed('Benchmark workflow did not complete within the maximum wait time');
+                break;
+              }
+              
+              console.log(`Waiting for benchmark to complete... Current status: ${run.data.status}`);
+              await new Promise(resolve => setTimeout(resolve, checkInterval));
+            }
+
+      - name: Stop EC2 runner
+        if: always()
+        uses: xJonathanLEI/ec2-github-runner@main
+        with:
+          mode: stop
+          github-token: ${{ secrets.GH_PAT }}
+          label: ${{ steps.start-ec2-runner.outputs.label }}
+          ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}

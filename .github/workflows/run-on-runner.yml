@@ -1,0 +1,93 @@
+name: Run Benchmarks on EC2 Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner_name:
+        required: true
+        type: string
+      instance_type:
+        required: true
+        type: string
+      enable_gpu:
+        required: true
+        type: string
+      provers:
+        required: false
+        type: string
+        default: 'sp1'
+      programs:
+        required: false
+        type: string
+        default: 'loop,fibonacci,tendermint,reth1,reth2'
+      filename:
+        required: false
+        type: string
+        default: 'benchmark'
+      trials:
+        required: false
+        type: string
+        default: '1'
+      sp1_ref:
+        required: false
+        type: string
+        default: '2e8b0a8'
+      additional_params:
+        required: false
+        type: string
+        default: '{"hashfns":"poseidon","shard_sizes":"22"}'
+
+jobs:
+  run-benchmark:
+    runs-on: ${{ inputs.runner_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Parse additional parameters
+        id: parse-params
+        run: |
+          echo 'ADDITIONAL_PARAMS<<EOF' >> $GITHUB_ENV
+          echo '${{ inputs.additional_params }}' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Update SP1 and build
+        env:
+          SP1_REF: ${{ inputs.sp1_ref }}
+          RUN_BUILD: "false"
+        run: |
+          chmod +x update_sp1_and_build.sh
+          ./update_sp1_and_build.sh
+
+      - name: Build Docker image
+        run: |
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
+
+      - name: Run benchmark
+        run: |
+          docker run ${{ inputs.enable_gpu == 'true' && '--gpus all' || '' }} --platform linux/amd64 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
+            -e RUST_BACKTRACE=full \
+            --network host \
+            zkvm-perf \
+            python3 sweep.py \
+              --filename ${{ inputs.filename }} \
+              --trials ${{ inputs.trials }} \
+              --programs ${{ inputs.programs }} \
+              --provers ${{ inputs.provers }} \
+              --hashfns ${{ fromJson(env.ADDITIONAL_PARAMS).hashfns }} \
+              --shard-sizes ${{ fromJson(env.ADDITIONAL_PARAMS).shard_sizes }}
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results-${{ inputs.instance_type }}
+          path: ${{ github.workspace }}/benchmarks/*.csv
+
+      - name: Print Results
+        run: |
+          cat ${{ github.workspace }}/benchmarks/*.csv
