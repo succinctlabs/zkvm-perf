@@ -7,12 +7,10 @@ on:
         description: 'Instance type'
         required: true
         type: choice
-        default: 'g6.4xlarge'
+        default: 'g6.16xlarge'
         options:
         - g6.16xlarge
-        - g6.8xlarge
-        - g6.4xlarge
-        - g6.2xlarge
+        - r7i.16xlarge
       enable_gpu:
         description: 'Enable GPU usage'
         required: true
