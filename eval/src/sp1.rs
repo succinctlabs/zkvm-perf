@@ -47,7 +47,7 @@ impl SP1Evaluator {
         let prover = SP1Prover::<DefaultProverComponents>::new();
 
         #[cfg(feature = "cuda")]
-        let server = SP1CudaProver::new();
+        let server = SP1CudaProver::new().expect("SP1 cuda prover failed to initialize");
 
         // Setup the program.
         let (pk, vk) = prover.setup(&elf);
