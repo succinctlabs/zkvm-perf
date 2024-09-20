@@ -161,6 +161,9 @@ jobs:
             const checkInterval = 60000; // 1 minute in milliseconds
             const startTime = Date.now();
             
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${triggeredRunId}`;
+            console.log(`Waiting for benchmark job to complete. Job URL: ${runUrl}`);
+            
             while (true) {
               const run = await github.rest.actions.getWorkflowRun({
                 owner: context.repo.owner,
@@ -171,17 +174,17 @@ jobs:
               if (run.data.status === 'completed') {
                 console.log(`Benchmark workflow completed with conclusion: ${run.data.conclusion}`);
                 if (run.data.conclusion !== 'success') {
-                  core.setFailed(`Benchmark workflow failed with conclusion: ${run.data.conclusion}`);
+                  core.setFailed(`Benchmark workflow failed with conclusion: ${run.data.conclusion}. Job URL: ${runUrl}`);
                 }
                 break;
               }
               
               if (Date.now() - startTime > maxWaitTime) {
-                core.setFailed('Benchmark workflow did not complete within the maximum wait time');
+                core.setFailed(`Benchmark workflow did not complete within the maximum wait time. Job URL: ${runUrl}`);
                 break;
               }
               
-              console.log(`Waiting for benchmark to complete... Current status: ${run.data.status}`);
+              console.log(`Waiting for benchmark to complete... Current status: ${run.data.status}. Job URL: ${runUrl}`);
               await new Promise(resolve => setTimeout(resolve, checkInterval));
             }
 
