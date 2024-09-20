@@ -31,7 +31,6 @@ on:
       sp1_ref:
         required: false
         type: string
-        default: '2e8b0a8'
       additional_params:
         required: false
         type: string
@@ -64,7 +63,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu .
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
 
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
