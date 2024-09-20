@@ -152,6 +152,8 @@ jobs:
                       }
                     } catch (error) {
                       console.log(`Error checking inputs for run ${run.id}: ${error.message}`);
+                      // log the run details
+                      console.log(JSON.stringify(run, null, 2));
                       // Continue to the next run
                       continue;
                     }
