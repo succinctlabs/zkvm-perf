@@ -19,13 +19,13 @@ SP1_DEPS=("sp1-prover" "sp1-core-executor" "sp1-core-machine" "sp1-cuda" "sp1-st
 if [[ $SP1_REF =~ ^[0-9a-f]{7,40}$ ]]; then
     # It's a commit hash
     for dep in "${SP1_DEPS[@]}"; do
-        sed -i.bak -E 's/^('"$dep"' = \{ git = "https:\/\/github\.com\/succinctlabs\/sp1.*)(branch = "[^"]+"|rev = "[^"]+")/\1rev = "'"$SP1_REF"'"/' "$CARGO_TOML"
+        sed -i.bak "s#^$dep = { git = \"https://github.com/succinctlabs/sp1.*\(branch = \"[^\"]+\"|rev = \"[^\"]+\"\)#$dep = { git = \"https://github.com/succinctlabs/sp1\", rev = \"$SP1_REF\"#" "$CARGO_TOML"
     done
     echo "Updated Cargo.toml with new SP1 commit hash"
 else
     # It's a branch name
     for dep in "${SP1_DEPS[@]}"; do
-        sed -i.bak -E 's/^('"$dep"' = \{ git = "https:\/\/github\.com\/succinctlabs\/sp1.*)(branch = "[^"]+"|rev = "[^"]+")/\1branch = "'"$SP1_REF"'"/' "$CARGO_TOML"
+        sed -i.bak "s#^$dep = { git = \"https://github.com/succinctlabs/sp1.*\(branch = \"[^\"]+\"|rev = \"[^\"]+\"\)#$dep = { git = \"https://github.com/succinctlabs/sp1\", branch = \"$SP1_REF\"#" "$CARGO_TOML"
     done
     echo "Updated Cargo.toml with new SP1 branch"
 fi
