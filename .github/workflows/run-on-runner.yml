@@ -65,14 +65,6 @@ jobs:
           echo '${{ inputs.additional_params }}' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Update SP1 Pin
-        env:
-          SP1_REF: ${{ inputs.sp1_ref }}
-          RUN_BUILD: "false"
-        run: |
-          chmod +x update_sp1_and_build.sh
-          ./update_sp1_and_build.sh
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
