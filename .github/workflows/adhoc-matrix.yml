@@ -27,7 +27,7 @@ on:
         description: 'SP1 reference (commit hash or branch name)'
         required: false
         type: string
-        default: '2e8b0a8'
+        default: 'dev'
       additional_params:
         description: 'Additional parameters as JSON'
         required: false
