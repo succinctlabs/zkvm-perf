@@ -7,7 +7,8 @@ use crate::{
 
 use sp1_core_executor::SP1Context;
 
-use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover, SP1Stdin};
+use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover};
+use sp1_core_machine::io::SP1Stdin;
 
 #[cfg(feature = "cuda")]
 use sp1_cuda::SP1CudaProver;

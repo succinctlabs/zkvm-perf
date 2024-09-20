@@ -36,7 +36,7 @@ ADD . /usr/src/app
 RUN chmod +x update_sp1_and_build.sh && \
     SP1_REF=${SP1_REF} RUN_BUILD=false ./update_sp1_and_build.sh
 
-RUN cargo build -p sp1-benchmarks-eval --all-features --release
+# RUN cargo build -p sp1-benchmarks-eval --all-features
 
 # install docker for dind
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \

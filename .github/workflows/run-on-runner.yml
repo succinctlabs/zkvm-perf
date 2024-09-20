@@ -103,11 +103,27 @@ jobs:
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
 
+      - name: rust-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            ~/.rustup/
+          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: rust-1.79.0-
+
       - name: Run benchmark
         run: |
           docker run ${{ inputs.enable_gpu == 'true' && '--gpus all' || '' }} --platform linux/amd64 \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
+            -v ~/.cargo/registry:/root/.cargo/registry \
+            -v ~/.cargo/git:/root/.cargo/git \
+            -v ~/.rustup:/root/.rustup \
             -e RUST_BACKTRACE=full \
             -e INSTANCE_TYPE=${{ inputs.instance_type }} \
             --network host \
