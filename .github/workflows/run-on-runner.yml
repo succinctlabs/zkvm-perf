@@ -77,8 +77,8 @@ jobs:
             -e INSTANCE_TYPE=${{ inputs.instance_type }} \
             --network host \
             zkvm-perf \
-            "python3 sweep.py --filename ${{ inputs.filename }} --trials ${{ inputs.trials }} --programs ${{ inputs.programs }} --provers ${{ inputs.provers }} --hashfns ${{ fromJson(env.ADDITIONAL_PARAMS).hashfns }} --shard-sizes ${{ fromJson(env.ADDITIONAL_PARAMS).shard_sizes }}"
-        
+            "python3 sweep.py --filename ${{ inputs.filename }} --trials ${{ inputs.trials }} --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') --provers ${{ inputs.provers }} --hashfns ${{ fromJson(env.ADDITIONAL_PARAMS).hashfns }} --shard-sizes ${{ fromJson(env.ADDITIONAL_PARAMS).shard_sizes }}"
+
       - name: List benchmark results
         run: ls -la ${{ github.workspace }}/benchmarks
 
