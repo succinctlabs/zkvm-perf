@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Parse additional parameters
         id: parse-params
@@ -65,40 +65,37 @@ jobs:
           echo '${{ inputs.additional_params }}' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+      # - name: Build and cache Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile.gpu
+      #     push: false
+      #     load: true
+      #     tags: zkvm-perf
+      #     build-args: |
+      #       SP1_REF=${{ inputs.sp1_ref }}
+      #     platforms: linux/amd64
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
-      - name: Build and cache Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile.gpu
-          push: false
-          load: true
-          tags: zkvm-perf
-          build-args: |
-            SP1_REF=${{ inputs.sp1_ref }}
-          platforms: linux/amd64
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      # This step is necessary to prevent the cache from growing indefinitely
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      # - name: Build Docker image
+      # # This step is necessary to prevent the cache from growing indefinitely
+      # - name: Move cache
       #   run: |
-      #     docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
+      #     rm -rf /tmp/.buildx-cache
+      #     mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Build Docker image
+        run: |
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
 
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
@@ -123,7 +120,6 @@ jobs:
             -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
             -v ~/.cargo/registry:/root/.cargo/registry \
             -v ~/.cargo/git:/root/.cargo/git \
-            -v ~/.rustup:/root/.rustup \
             -e RUST_BACKTRACE=full \
             -e INSTANCE_TYPE=${{ inputs.instance_type }} \
             --network host \
