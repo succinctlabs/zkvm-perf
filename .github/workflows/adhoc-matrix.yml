@@ -83,54 +83,92 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           script: |
             const runnerName = '${{ steps.start-ec2-runner.outputs.label }}';
-            const uniqueId = '${{ matrix.instance_type }}-' + Date.now().toString();
-            console.log(`Generated unique ID: ${uniqueId}`);
-            
-            const result = await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'run-on-runner.yml',
-              ref: context.ref,
-              inputs: {
-                runner_name: runnerName,
-                instance_type: '${{ matrix.instance_type }}',
-                enable_gpu: '${{ matrix.enable_gpu }}',
-                provers: '${{ inputs.provers }}',
-                programs: '${{ inputs.programs }}',
-                filename: '${{ inputs.filename }}_' + uniqueId,
-                trials: '${{ inputs.trials }}',
-                sp1_ref: '${{ inputs.sp1_ref }}',
-                additional_params: '${{ inputs.additional_params }}'
-              }
-            });
-            
-            // Wait for the run to appear in the list
+            const maxAttempts = 5;
+            const initialDelay = 30000; // 30 seconds
             let triggeredRunId = null;
-            for (let i = 0; i < 30; i++) {
-              await new Promise(resolve => setTimeout(resolve, 10000));
-              const runs = await github.rest.actions.listWorkflowRuns({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                workflow_id: 'run-on-runner.yml',
-                status: 'in_progress'
-              });
-              const recentRun = runs.data.workflow_runs.find(run => 
-                run.head_sha === context.sha &&
-                run.name.includes(runnerName)
-              );
-              if (recentRun) {
-                triggeredRunId = recentRun.id;
-                break;
+            
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              console.log(`Attempt ${attempt} to trigger benchmark workflow`);
+              
+              await new Promise(resolve => setTimeout(resolve, initialDelay * attempt));
+              
+              try {
+                const result = await github.rest.actions.createWorkflowDispatch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: 'run-on-runner.yml',
+                  ref: context.ref,
+                  inputs: {
+                    runner_name: runnerName,
+                    instance_type: '${{ matrix.instance_type }}',
+                    enable_gpu: '${{ matrix.enable_gpu }}',
+                    provers: '${{ inputs.provers }}',
+                    programs: '${{ inputs.programs }}',
+                    filename: '${{ inputs.filename }}_${{ matrix.instance_type }}',
+                    trials: '${{ inputs.trials }}',
+                    sp1_ref: '${{ inputs.sp1_ref }}',
+                    additional_params: '${{ inputs.additional_params }}'
+                  }
+                });
+                console.log('Benchmark workflow triggered successfully');
+                
+                // Wait for the run to appear in the list
+                for (let i = 0; i < 10; i++) {
+                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  const runs = await github.rest.actions.listWorkflowRuns({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: 'run-on-runner.yml',
+                    status: 'in_progress'
+                  });
+                  const recentRun = runs.data.workflow_runs.find(run => 
+                    new Date(run.created_at).getTime() > Date.now() - 60000
+                  );
+                  if (recentRun) {
+                    // Fetch the run details to check inputs
+                    const runDetails = await github.rest.actions.getWorkflowRun({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      run_id: recentRun.id
+                    });
+                    
+                    // Check if the inputs match what we expect
+                    const inputs = runDetails.data.inputs;
+                    if (
+                      inputs.runner_name === runnerName &&
+                      inputs.instance_type === '${{ matrix.instance_type }}' &&
+                      inputs.enable_gpu === '${{ matrix.enable_gpu }}' &&
+                      inputs.provers === '${{ inputs.provers }}' &&
+                      inputs.programs === '${{ inputs.programs }}' &&
+                      inputs.filename === '${{ inputs.filename }}_${{ matrix.instance_type }}' &&
+                      inputs.trials === '${{ inputs.trials }}' &&
+                      inputs.sp1_ref === '${{ inputs.sp1_ref }}' &&
+                      inputs.additional_params === '${{ inputs.additional_params }}'
+                    ) {
+                      triggeredRunId = recentRun.id;
+                      break;
+                    } else {
+                      console.log('Found a run, but inputs do not match. Continuing search...');
+                    }
+                  }
+                }
+                
+                if (triggeredRunId) {
+                  console.log(`Triggered run ID: ${triggeredRunId}`);
+                  break;
+                } else {
+                  throw new Error('Failed to find the triggered workflow run with matching inputs');
+                }
+              } catch (error) {
+                console.log(`Failed to trigger or find workflow: ${error.message}`);
+                if (attempt === maxAttempts) {
+                  core.setFailed('Failed to trigger benchmark workflow after multiple attempts');
+                }
               }
             }
-            
-            if (triggeredRunId) {
-              console.log(`Triggered run ID: ${triggeredRunId}`);
-              core.exportVariable('TRIGGERED_RUN_ID', triggeredRunId);
-              core.exportVariable('UNIQUE_ID', uniqueId);
-            } else {
-              core.setFailed('Failed to find the triggered workflow run');
-            }
+            // Use the new method to set output
+            core.exportVariable('TRIGGERED_RUN_ID', triggeredRunId);
+            console.log(`Triggered run ID: ${triggeredRunId}`);
 
       - name: Wait for benchmark completion
         uses: actions/github-script@v6
@@ -177,7 +215,7 @@ jobs:
       - name: Download benchmark results
         uses: actions/download-artifact@v3
         with:
-          name: benchmark-results-${{ env.UNIQUE_ID }}-${{ env.TRIGGERED_RUN_ID }}
+          name: benchmark-results-${{ matrix.instance_type }}-${{ env.TRIGGERED_RUN_ID }}
           path: ./benchmark-results-${{ matrix.instance_type }}
 
       - name: Process benchmark results

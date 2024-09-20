@@ -1,14 +1,9 @@
-name: Run on Runner ${{ github.event.inputs.runner_name }}
+name: Run Benchmarks on EC2 Runner
 
 on:
   workflow_dispatch:
     inputs:
       runner_name:
-        description: 'Name of the runner'
-        required: true
-        type: string
-      unique_id:
-        description: 'Unique identifier for this run'
         required: true
         type: string
       instance_type:
@@ -43,8 +38,7 @@ on:
 
 jobs:
   run-benchmark:
-    name: Run Benchmark on ${{ github.event.inputs.runner_name }}
-    runs-on: ${{ github.event.inputs.runner_name }}
+    runs-on: ${{ inputs.runner_name }}
     steps:
       - name: Echo Workflow Inputs
         run: |
@@ -57,8 +51,6 @@ jobs:
           echo "Trials: ${{ inputs.trials }}"
           echo "SP1 Ref: ${{ inputs.sp1_ref }}"
           echo "Additional Params: ${{ inputs.additional_params }}"
-      - name: Echo Unique ID
-        run: echo "Unique ID: ${{ github.event.inputs.unique_id }}"
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -142,7 +134,7 @@ jobs:
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
         with:
-          name: benchmark-results-${{ inputs.filename }}-${{ github.run_id }}
+          name: benchmark-results-${{ inputs.instance_type }}-${{ github.run_id }}
           path: ${{ github.workspace }}/benchmarks/*.csv
 
       - name: Print Results
