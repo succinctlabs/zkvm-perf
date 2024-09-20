@@ -40,6 +40,17 @@ jobs:
   run-benchmark:
     runs-on: ${{ inputs.runner_name }}
     steps:
+      - name: Echo Workflow Inputs
+        run: |
+          echo "Runner Name: ${{ inputs.runner_name }}"
+          echo "Instance Type: ${{ inputs.instance_type }}"
+          echo "Enable GPU: ${{ inputs.enable_gpu }}"
+          echo "Provers: ${{ inputs.provers }}"
+          echo "Programs: ${{ inputs.programs }}"
+          echo "Filename: ${{ inputs.filename }}"
+          echo "Trials: ${{ inputs.trials }}"
+          echo "SP1 Ref: ${{ inputs.sp1_ref }}"
+          echo "Additional Params: ${{ inputs.additional_params }}"
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -53,7 +64,7 @@ jobs:
           echo '${{ inputs.additional_params }}' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Update SP1 and build
+      - name: Update SP1 Pin
         env:
           SP1_REF: ${{ inputs.sp1_ref }}
           RUN_BUILD: "false"
@@ -61,9 +72,40 @@ jobs:
           chmod +x update_sp1_and_build.sh
           ./update_sp1_and_build.sh
 
-      - name: Build Docker image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and cache Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.gpu
+          push: false
+          load: true
+          tags: zkvm-perf
+          build-args: |
+            SP1_REF=${{ inputs.sp1_ref }}
+          platforms: linux/amd64
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # This step is necessary to prevent the cache from growing indefinitely
+      - name: Move cache
         run: |
-          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
 
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
