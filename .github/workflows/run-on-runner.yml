@@ -38,6 +38,7 @@ on:
 
 jobs:
   run-benchmark:
+    name: Run Benchmark on ${{ inputs.runner_name }}
     runs-on: ${{ inputs.runner_name }}
     steps:
       - name: Echo Workflow Inputs

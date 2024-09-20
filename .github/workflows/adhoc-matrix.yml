@@ -83,7 +83,7 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           script: |
             const runnerName = '${{ steps.start-ec2-runner.outputs.label }}';
-            const maxAttempts = 30; // Increased for polling
+            const maxAttempts = 30;
             const pollInterval = 10000; // 10 seconds
             let triggeredRunId = null;
             
@@ -125,38 +125,40 @@ jobs:
                   status: 'in_progress'
                 });
                 
+                console.log(`Found ${runs.data.workflow_runs.length} in-progress runs`);
+                
                 for (const run of runs.data.workflow_runs) {
                   if (new Date(run.created_at).getTime() > Date.now() - 300000) { // Within last 5 minutes
+                    console.log(`Checking run ${run.id} created at ${run.created_at}`);
                     try {
-                      const runDetails = await github.rest.actions.getWorkflowRun({
+                      const jobs = await github.rest.actions.listJobsForWorkflowRun({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         run_id: run.id
                       });
                       
-                      const inputs = runDetails.data.inputs;
-                      if (
-                        inputs.runner_name === runnerName &&
-                        inputs.instance_type === '${{ matrix.instance_type }}' &&
-                        inputs.enable_gpu === '${{ matrix.enable_gpu }}' &&
-                        inputs.provers === '${{ inputs.provers }}' &&
-                        inputs.programs === '${{ inputs.programs }}' &&
-                        inputs.filename === '${{ inputs.filename }}_${{ matrix.instance_type }}' &&
-                        inputs.trials === '${{ inputs.trials }}' &&
-                        inputs.sp1_ref === '${{ inputs.sp1_ref }}' &&
-                        inputs.additional_params === '${{ inputs.additional_params }}'
-                      ) {
+                      console.log(`Run ${run.id} has ${jobs.data.jobs.length} jobs`);
+                      for (const job of jobs.data.jobs) {
+                        console.log(`  Job: ${job.name}`);
+                      }
+                      
+                      const matchingJob = jobs.data.jobs.find(job => 
+                        job.name === `Run Benchmark on ${runnerName}`
+                      );
+                      
+                      if (matchingJob) {
                         triggeredRunId = run.id;
                         console.log(`Found matching run. Triggered run ID: ${triggeredRunId}`);
                         break;
+                      } else {
+                        console.log(`No matching job found for run ${run.id}`);
                       }
                     } catch (error) {
-                      console.log(`Error checking inputs for run ${run.id}: ${error.message}`);
-                      // log the run details
-                      console.log(JSON.stringify(run, null, 2));
-                      // Continue to the next run
+                      console.log(`Error checking jobs for run ${run.id}: ${error.message}`);
                       continue;
                     }
+                  } else {
+                    console.log(`Skipping run ${run.id} as it's older than 5 minutes`);
                   }
                 }
                 
@@ -169,7 +171,7 @@ jobs:
             }
             
             if (!triggeredRunId) {
-              core.setFailed('Failed to find the triggered workflow run with matching inputs after maximum attempts');
+              core.setFailed('Failed to find the triggered workflow run with matching job after maximum attempts');
               return;
             }
             
