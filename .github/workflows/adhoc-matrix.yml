@@ -247,7 +247,7 @@ jobs:
           cat combined_results.csv
 
       - name: Upload combined results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: combined-benchmark-results
           path: combined_results.csv
