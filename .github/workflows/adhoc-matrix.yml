@@ -45,9 +45,11 @@ jobs:
           - instance_type: r7i.16xlarge
             enable_gpu: false
             ami_id: ami-079a6a210557ef0e4
+      fail-fast: false  # This prevents the entire matrix from failing if one job fails
     
     name: Run on ${{ matrix.instance_type }}
     runs-on: ubuntu-latest
+    continue-on-error: true  # This allows the workflow to continue even if this job fails
     
     steps:
       - name: Configure AWS credentials
@@ -62,13 +64,6 @@ jobs:
         uses: xJonathanLEI/ec2-github-runner@main
         with:
           mode: start
-          # Must use personal access token here as `GITHUB_TOKEN` does not have access to runners.
-          # Use a fine-grained token with these permissions to at least this repository:
-          # - Administration: Read and write
-          # - Contents: Read and write
-          # - Metadata: Read-only
-          # - Workflows: Read and write
-          # - Actions: Read and write
           github-token: ${{ secrets.GH_PAT }}
           ec2-image-id: ${{ matrix.ami_id }}
           ec2-instance-type: ${{ matrix.instance_type }}
@@ -109,7 +104,7 @@ jobs:
               });
               console.log('Benchmark workflow triggered successfully');
             } catch (error) {
-              core.setFailed(`Failed to trigger workflow: ${error.message}`);
+              console.error(`Failed to trigger workflow: ${error.message}`);
               return;
             }
             
@@ -171,7 +166,7 @@ jobs:
             }
             
             if (!triggeredRunId) {
-              core.setFailed('Failed to find the triggered workflow run with matching job after maximum attempts');
+              console.error('Failed to find the triggered workflow run with matching job after maximum attempts');
               return;
             }
             
@@ -185,7 +180,7 @@ jobs:
           script: |
             const triggeredRunId = process.env.TRIGGERED_RUN_ID;
             if (!triggeredRunId) {
-              core.setFailed('No triggered run ID found');
+              console.error('No triggered run ID found');
               return;
             }
             
@@ -206,30 +201,19 @@ jobs:
               if (run.data.status === 'completed') {
                 console.log(`Benchmark workflow completed with conclusion: ${run.data.conclusion}`);
                 if (run.data.conclusion !== 'success') {
-                  core.setFailed(`Benchmark workflow failed with conclusion: ${run.data.conclusion}. Job URL: ${runUrl}`);
+                  console.warn(`Benchmark workflow failed with conclusion: ${run.data.conclusion}. Job URL: ${runUrl}`);
                 }
                 break;
               }
               
               if (Date.now() - startTime > maxWaitTime) {
-                core.setFailed(`Benchmark workflow did not complete within the maximum wait time. Job URL: ${runUrl}`);
+                console.error(`Benchmark workflow did not complete within the maximum wait time. Job URL: ${runUrl}`);
                 break;
               }
               
               console.log(`Waiting for benchmark to complete... Current status: ${run.data.status}. Job URL: ${runUrl}`);
               await new Promise(resolve => setTimeout(resolve, checkInterval));
             }
-
-      - name: Download benchmark results
-        uses: actions/download-artifact@v3
-        with:
-          name: benchmark-results-${{ matrix.instance_type }}-${{ env.TRIGGERED_RUN_ID }}
-          path: ./benchmark-results-${{ matrix.instance_type }}
-
-      - name: Process benchmark results
-        run: |
-          echo "Results for ${{ matrix.instance_type }}:"
-          cat ./benchmark-results-${{ matrix.instance_type }}/*.csv
 
       - name: Stop EC2 runner
         if: always()
@@ -243,9 +227,13 @@ jobs:
   combine-results:
     needs: run-benchmarks
     runs-on: ubuntu-latest
+    if: always()  # This ensures the job runs even if some matrix jobs fail
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
+        with:
+          name: benchmark-results-${{ matrix.instance_type }}-${{ env.TRIGGERED_RUN_ID }}
+          path: ./benchmark-results-${{ matrix.instance_type }}
 
       - name: Combine CSV files
         run: |

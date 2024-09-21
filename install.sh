@@ -25,9 +25,9 @@ export PATH="$PATH:$HOME/.sp1/bin"
 sp1up || error_exit "Updating Succinct toolchain"
 cargo prove --version || error_exit "Checking cargo prove version"
 
-# Install the jolt toolchain
-cargo install --git https://github.com/a16z/jolt --force --bins jolt || error_exit "Installing jolt toolchain"
-jolt install-toolchain || error_exit "Installing jolt runtime"
+# # Install the jolt toolchain
+# cargo install --git https://github.com/a16z/jolt --force --bins jolt || error_exit "Installing jolt toolchain"
+# jolt install-toolchain || error_exit "Installing jolt runtime"
 
 # Install the Risc0 toolchain
 cargo install cargo-binstall --force || error_exit "Installing cargo-binstall"
