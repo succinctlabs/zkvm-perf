@@ -184,8 +184,10 @@ jobs:
               return;
             }
             
-            const maxWaitTime = 7200000; // 2 hours in milliseconds
-            const checkInterval = 60000; // 1 minute in milliseconds
+            // 4 hours in milliseconds
+            const maxWaitTime = 14400000;
+            // 3 minutes in milliseconds
+            const checkInterval = 180000;
             const startTime = Date.now();
             
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${triggeredRunId}`;
