@@ -1,33 +1,105 @@
-# SP1 Benchmarks
+# ZKVM-Perf And You 🫵🏻
 
-A suite of benchmarks to evaluate SP1's performance.
+Welcome to ZKVM-Perf, a powerful benchmarking tool for ZKVM implementations. This guide covers both automated workflow-based benchmarking and manual benchmarking processes.
 
-## Setup
+## Automated Benchmarking
+
+### Quick Start Guide
+
+1. Go to the [Actions tab](https://github.com/succinctlabs/zkvm-perf/actions) in the ZKVM-Perf repository.
+2. Click on the "Execute ZKVM-Perf (Matrix)" workflow.
+3. Click the "Run workflow" button.
+4. (Optional) Customize parameters or use defaults.
+5. Click the green "Run workflow" button at the bottom.
+6. Wait for all matrix jobs to complete.
+7. Check individual job results and download CSV artifacts for detailed analysis.
+
+### Workflow Details
+
+The benchmarking process is split into two main workflows:
+
+1. `adhoc-matrix.yml`: Orchestrates the overall benchmarking process.
+2. `run-on-runner.yml`: Executes the actual benchmarks on EC2 instances.
+
+#### adhoc-matrix.yml
+
+This workflow sets up the benchmarking environment and triggers individual benchmark runs.
+
+##### Inputs
+
+- `provers`: Provers to use (comma-separated, default: 'sp1')
+- `programs`: Programs to benchmark (comma-separated, default: 'loop,fibonacci,tendermint,reth1,reth2')
+- `filename`: Filename for the benchmark (default: 'benchmark')
+- `trials`: Number of trials to run (default: '1')
+- `sp1_ref`: SP1 reference (commit hash or branch name, default: 'dev')
+- `additional_params`: Additional parameters as JSON (default: '{"hashfns":"poseidon","shard_sizes":"22"}')
+
+##### Matrix Strategy
+
+The workflow runs benchmarks on two types of EC2 instances:
+- GPU: g6.16xlarge
+- CPU: r7i.16xlarge
+
+#### run-on-runner.yml
+
+This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks on the specified EC2 instance.
+
+##### Key Steps
+
+1. Sets up the Docker environment.
+2. Builds the Docker image with the specified SP1 reference.
+3. Runs the benchmark using the `sweep.py` script.
+4. Uploads the benchmark results as artifacts.
+
+### Running Automated Benchmarks
+
+1. **Navigate to the Actions Tab**
+   Go to the [Actions tab](https://github.com/succinctlabs/zkvm-perf/actions) in the repository.
+
+2. **Select the Workflow**
+   Click on "Execute ZKVM-Perf (Matrix)".
+
+3. **Configure the Run**
+   - You can use the default settings for a quick start.
+   - Customize inputs as needed.
+
+4. **Start the Benchmark**
+   Click "Run workflow".
+
+5. **Monitor Progress**
+   - The workflow will start two jobs: one for GPU and one for CPU.
+   - Each job will trigger a separate `run-on-runner` workflow.
+
+6. **Access Results**
+   - Once complete, each job will upload its results as an artifact.
+   - Download the artifacts to analyze the benchmark data.
+   - A combined results file will also be available.
+
+## Manual Benchmarking
+
+### Setup
 
 1. Install Rust:
-
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-rustup install nightly
-```
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   rustup install nightly
+   ```
 
 2. Install the [SP1 toolchain](https://docs.succinct.xyz/getting-started/install.html):
-
-```sh
-curl -L https://sp1.succinct.xyz | bash
-source ~/.bashrc
-sp1up
-cargo prove --version
-```
+   ```sh
+   curl -L https://sp1.succinct.xyz | bash
+   source ~/.bashrc
+   sp1up
+   cargo prove --version
+   ```
 
 3. Install the [Risc0 toolchain](https://dev.risczero.com/api/zkvm/install):
-
-```sh
-curl -L https://risczero.com/install | bash
-source ~/.bashrc
-rzup
-cargo risczero --version
-```
+   ```sh
+   curl -L https://risczero.com/install | bash
+   source ~/.bashrc
+   rzup
+   cargo risczero --version
+   ```
 
 4. Install [Docker](https://docs.docker.com/engine/install/ubuntu/).
 
@@ -37,12 +109,9 @@ cargo risczero --version
 
 **Note:** On Ubuntu 22.04, you might need to install libssl1.0 for the Risc0 toolchain. Follow these [instructions](https://stackoverflow.com/questions/72133316/libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-directory/73604364#73604364).
 
-## Usage
-
-### Running a Sweep
+### Running a Manual Sweep
 
 To conduct a sweep of the benchmarks:
-
 ```sh
 python3 sweep.py [options]
 ```
@@ -65,68 +134,30 @@ To run a single benchmark:
 ./eval.sh <program> <prover> <hashfn> <shard_size> <filename> [block_number]
 ```
 
-Examples:
-
-```sh
+Examples: 
+```
 ./eval.sh fibonacci sp1 poseidon 22 benchmark
 ./eval.sh fibonacci jolt-zkvm poseidon 22 benchmark
 ./eval.sh fibonacci risc0 poseidon 22 benchmark
 ./eval.sh reth sp1 poseidon 22 benchmark 19409768
 ```
 
-Certainly. I'll add a note about authorization for the GitHub Action. Here's the updated section on Adhoc Performance Tests:
+## Analyzing Results
 
-## Adhoc Performance Tests
+- Each benchmark run produces a CSV file with detailed performance metrics.
+- The CSV includes the instance type, allowing for easy comparison between GPU and CPU performance.
+- Use the combined results file for a comprehensive view of all benchmarks.
 
-You can run adhoc performance tests using the GitHub Actions workflow defined in `adhoc.yaml`. This workflow allows you to customize various parameters for your benchmarks, including the SP1 reference version.
+## Troubleshooting
 
-**Note:** To run this GitHub Action, you need to be authorized on the original repository. If you're not authorized, you can fork the repository and run it on your own infrastructure by setting up the necessary secrets and modifying the workflow as needed.
+If you encounter issues:
 
-To run an adhoc test (if authorized):
+1. Check the logs of both the matrix job and the individual runner jobs.
+2. Ensure your AWS credentials and permissions are correctly set up.
+3. Verify that the SP1 reference is valid and accessible.
+4. For GPU jobs, confirm that GPU support is properly configured in the EC2 instance.
 
-1. Go to the "Actions" tab in your GitHub repository.
-2. Select the "Execute ZKVM-Perf" workflow.
-3. Click "Run workflow".
-4. Fill in the following parameters:
-   - Instance type (e.g., g6.16xlarge, r7i.16xlarge)
-   - Enable GPU usage (true/false)
-   - AMI ID
-   - Provers to use (sp1, risc0)
-   - Programs to benchmark (loop, fibonacci, tendermint, reth1, reth2)
-   - Filename for the benchmark
-   - Number of trials to run
-   - Hash functions to use (currently only poseidon)
-   - Shard sizes to use
-   - SP1 reference (commit hash or branch name) - This allows you to specify which version of SP1 to use for the benchmarks
-
-The workflow will start an EC2 instance with the specified configuration, update the SP1 reference in the Cargo.toml file, run the benchmarks, and then stop the instance. Results will be available in the workflow logs.
-
-If you're running this on your own infrastructure:
-
-1. Fork the repository to your own GitHub account.
-2. Set up the necessary secrets in your forked repository's settings:
-   - AWS_ACCESS_KEY_ID
-   - AWS_SECRET_ACCESS_KEY
-   - AWS_REGION
-   - AWS_SUBNET_ID
-   - AWS_SG_ID
-   - GH_PAT (a GitHub Personal Access Token with necessary permissions)
-3. Modify the `adhoc.yaml` workflow file if needed to fit your infrastructure setup.
-4. Follow the steps above to run the workflow from your forked repository's Actions tab.
-
-Remember to manage your AWS resources responsibly and ensure you understand the costs associated with running EC2 instances for benchmarking.
-
-### SP1 Reference Update
-
-The workflow uses a script (`update_sp1_and_build.sh`) to update the SP1 reference in the `eval/Cargo.toml` file before running the benchmarks. This allows you to easily test different versions of SP1 without manually editing the Cargo.toml file.
-
-When you specify an SP1 reference in the workflow input:
-- If it's a commit hash, the script will update the `rev` field for SP1 dependencies.
-- If it's a branch name, the script will update the `branch` field for SP1 dependencies.
-
-This update is performed both in the GitHub Actions environment and in the Docker container used for benchmarking, ensuring consistency across the entire benchmark process.
-
-## Common Issues
+### Common Issues
 
 For C++ compiler and library issues:
 
@@ -137,20 +168,32 @@ sudo apt install build-essential libc6
 ```
 
 CentOS/RHEL:
-```sh
+
+```
 sudo yum update
 sudo yum groupinstall "Development Tools"
 sudo yum install -y gcc-c++
 ```
 
-Fedora:
+Fedora: 
 ```sh
 sudo dnf update
 sudo dnf groupinstall "Development Tools"
 ```
 
 Setting up NVIDIA:
+
 ```sh
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
+
+## Contributing
+
+We welcome contributions to improve ZKVM-Perf! If you encounter issues or have suggestions:
+
+1. Check existing issues in the repository.
+2. If your issue is new, create a detailed bug report or feature request.
+3. For code contributions, please submit a pull request with a clear description of your changes.
+
+Happy benchmarking! 🚀
