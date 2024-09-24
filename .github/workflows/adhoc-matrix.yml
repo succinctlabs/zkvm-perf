@@ -79,6 +79,11 @@ jobs:
           subnet-id: ${{ secrets.AWS_SUBNET_ID }}
           security-group-id: ${{ secrets.AWS_SG_ID }}
           storage-size: 1024
+          aws-resource-tags: >
+            [
+              {"Key": "Name", "Value": "ec2-github-runner"},
+              {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
+            ]
 
       - name: Run benchmarks
         id: run-benchmarks
@@ -238,82 +243,3 @@ jobs:
 
     outputs:
       triggered_run_id: ${{ steps.run-benchmarks.outputs.triggered_run_id }}
-
-  combine-results:
-    needs: run-benchmarks
-    runs-on: ubuntu-latest
-    if: always()  # This ensures the job runs even if some matrix jobs fail
-    steps:
-      - name: Download all artifacts
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            // Function to download artifact
-            async function downloadArtifact(runId, artifactName, downloadPath) {
-              const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                run_id: runId
-              });
-              
-              const matchingArtifact = artifacts.data.artifacts.find(
-                (artifact) => artifact.name === artifactName
-              );
-              
-              if (matchingArtifact) {
-                const download = await github.rest.actions.downloadArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: matchingArtifact.id,
-                  archive_format: 'zip'
-                });
-                
-                fs.writeFileSync(`${downloadPath}.zip`, Buffer.from(download.data));
-                
-                console.log(`Downloaded artifact: ${artifactName}`);
-              } else {
-                console.log(`No matching artifact found: ${artifactName}`);
-              }
-            }
-
-            const runIds = ${{ toJson(needs.run-benchmarks.outputs) }};
-            
-            for (const [instanceType, runId] of Object.entries(runIds)) {
-              if (runId) {
-                await downloadArtifact(runId, `benchmark-results-${instanceType}`, `./benchmark-results-${instanceType}`);
-              }
-            }
-
-      - name: Unzip artifacts
-        run: |
-          for zip in benchmark-results-*.zip; do
-            unzip -o "$zip" -d "${zip%.zip}"
-          done
-
-      - name: Combine CSV files
-        run: |
-          echo "Combining CSV files:"
-          # Get the header from the first CSV file
-          head -n 1 $(ls benchmark-results-*/*.csv | head -n 1) > combined_results.csv
-          # Append data from all CSV files, skipping the header
-          for file in benchmark-results-*/*.csv; do
-            tail -n +2 "$file" >> combined_results.csv
-          done
-          cat combined_results.csv
-
-      - name: Upload combined results
-        uses: actions/upload-artifact@v3
-        with:
-          name: combined-benchmark-results
-          path: combined_results.csv
-
-      - name: Create summary
-        run: |
-          echo "## Benchmark Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          cat combined_results.csv >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
