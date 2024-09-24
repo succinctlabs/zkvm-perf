@@ -129,11 +129,11 @@ jobs:
       - name: List benchmark results
         run: ls -la ${{ github.workspace }}/benchmarks
 
-      - name: Add instance type to CSV
+      - name: Add instance type and SP1 ref to CSV
         run: |
           for file in ${{ github.workspace }}/benchmarks/*.csv; do
-            sed -i '1s/^/instance_type,/' "$file"
-            sed -i "2,\$s/^/${{ inputs.instance_type }},/" "$file"
+            sed -i '1s/^/instance_type,sp1_ref,/' "$file"
+            sed -i "2,\$s/^/${{ inputs.instance_type }},${{ inputs.sp1_ref }},/" "$file"
           done
 
       - name: Upload benchmark results
