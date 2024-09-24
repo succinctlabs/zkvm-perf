@@ -52,6 +52,15 @@ jobs:
     continue-on-error: true  # This allows the workflow to continue even if this job fails
     
     steps:
+      - name: Echo Workflow Inputs
+        run: |
+          echo "Provers: ${{ inputs.provers }}"
+          echo "Programs: ${{ inputs.programs }}"
+          echo "Filename: ${{ inputs.filename }}"
+          echo "Trials: ${{ inputs.trials }}"
+          echo "SP1 Reference: ${{ inputs.sp1_ref }}"
+          echo "Additional Parameters: ${{ inputs.additional_params }}"
+          
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -170,6 +179,7 @@ jobs:
               return;
             }
             
+            core.setOutput('triggered_run_id', triggeredRunId);
             core.exportVariable('TRIGGERED_RUN_ID', triggeredRunId);
             console.log(`Triggered run ID: ${triggeredRunId}`);
 
@@ -226,16 +236,63 @@ jobs:
           label: ${{ steps.start-ec2-runner.outputs.label }}
           ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
 
+    outputs:
+      triggered_run_id: ${{ steps.run-benchmarks.outputs.triggered_run_id }}
+
   combine-results:
     needs: run-benchmarks
     runs-on: ubuntu-latest
     if: always()  # This ensures the job runs even if some matrix jobs fail
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/github-script@v6
         with:
-          name: benchmark-results-${{ matrix.instance_type }}-${{ env.TRIGGERED_RUN_ID }}
-          path: ./benchmark-results-${{ matrix.instance_type }}
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Function to download artifact
+            async function downloadArtifact(runId, artifactName, downloadPath) {
+              const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId
+              });
+              
+              const matchingArtifact = artifacts.data.artifacts.find(
+                (artifact) => artifact.name === artifactName
+              );
+              
+              if (matchingArtifact) {
+                const download = await github.rest.actions.downloadArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: matchingArtifact.id,
+                  archive_format: 'zip'
+                });
+                
+                fs.writeFileSync(`${downloadPath}.zip`, Buffer.from(download.data));
+                
+                console.log(`Downloaded artifact: ${artifactName}`);
+              } else {
+                console.log(`No matching artifact found: ${artifactName}`);
+              }
+            }
+
+            const runIds = ${{ toJson(needs.run-benchmarks.outputs) }};
+            
+            for (const [instanceType, runId] of Object.entries(runIds)) {
+              if (runId) {
+                await downloadArtifact(runId, `benchmark-results-${instanceType}`, `./benchmark-results-${instanceType}`);
+              }
+            }
+
+      - name: Unzip artifacts
+        run: |
+          for zip in benchmark-results-*.zip; do
+            unzip -o "$zip" -d "${zip%.zip}"
+          done
 
       - name: Combine CSV files
         run: |
