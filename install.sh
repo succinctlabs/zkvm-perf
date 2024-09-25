@@ -31,7 +31,7 @@ cargo prove --version || error_exit "Checking cargo prove version"
 
 # Install the Risc0 toolchain
 curl -L https://risczero.com/install | bash || error_exit "Installing Risc Zero toolchain"
-source ~/.bashrc
+export PATH="$PATH:$HOME/.risc0/bin"
 rzup install || error_exit "Updating Risc Zero toolchain"
 cargo risczero --version || error_exit "Checking cargo risczero version"
 
