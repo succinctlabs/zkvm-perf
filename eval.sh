@@ -44,10 +44,14 @@ else
   GPU_EXISTS=false
 fi
 
-# Set the compilation flags.
-# if [ "$GPU_EXISTS" = false ]; then
-#   export RUSTFLAGS='-C target-cpu=native'
-# fi
+# Check for AVX-512 support
+if lscpu | grep -q avx512; then
+  # If AVX-512 is supported, add the specific features to RUSTFLAGS
+  export RUSTFLAGS="-C target-cpu=native -C target-feature=+avx512ifma,+avx512vl"
+else
+  # If AVX-512 is not supported, just set target-cpu=native
+  export RUSTFLAGS="-C target-cpu=native"
+fi
 
 # Set the logging level.
 export RUST_LOG=info
