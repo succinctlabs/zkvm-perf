@@ -97,7 +97,7 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
    ```sh
    curl -L https://risczero.com/install | bash
    source ~/.bashrc
-   rzup
+   rzup install
    cargo risczero --version
    ```
 

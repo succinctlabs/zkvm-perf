@@ -30,8 +30,9 @@ cargo prove --version || error_exit "Checking cargo prove version"
 # jolt install-toolchain || error_exit "Installing jolt runtime"
 
 # Install the Risc0 toolchain
-cargo install cargo-binstall --force || error_exit "Installing cargo-binstall"
-cargo binstall cargo-risczero -y || error_exit "Installing cargo-risczero"
-cargo risczero install || error_exit "Installing Risc0 toolchain"
+curl -L https://risczero.com/install | bash || error_exit "Installing Risc Zero toolchain"
+source ~/.bashrc
+rzup install || error_exit "Updating Risc Zero toolchain"
+cargo risczero --version || error_exit "Checking cargo risczero version"
 
 echo "All installations completed successfully."

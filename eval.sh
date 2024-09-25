@@ -63,6 +63,14 @@ else
   FEATURES="default"
 fi
 
+if [ "$2" == "risc0" ]; then
+ if [ "$GPU_EXISTS" = true ]; then 
+  FEATURES="risc0, cuda"
+ else
+ FEATURES="risc0" 
+ fi
+fi
+
 # Run the benchmark.
 cargo run \
     -p sp1-benchmarks-eval \
