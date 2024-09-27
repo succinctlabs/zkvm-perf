@@ -76,11 +76,11 @@ cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
-    --features $FEATURES \
+    --features "$FEATURES" \
     -- \
-    --program $1 \
-    --prover $2 \
-    --hashfn $3 \
-    --shard-size $4 \
-    --filename $5 \
+    --program "$1" \
+    --prover "$2" \
+    --hashfn "$3" \
+    --shard-size "$4" \
+    --filename "$5" \
     ${6:+--block-number $6}
