@@ -199,8 +199,8 @@ jobs:
               return;
             }
             
-            // 4 hours in milliseconds
-            const maxWaitTime = 14400000;
+            // 10 hours in milliseconds
+            const maxWaitTime = 36000000;
             // 3 minutes in milliseconds
             const checkInterval = 180000;
             const startTime = Date.now();
