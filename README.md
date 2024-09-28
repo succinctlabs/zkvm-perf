@@ -59,18 +59,18 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
 2. **Select the Workflow**
    Click on "Execute ZKVM-Perf (Matrix)".
 
-3. **Configure the Run**
+3. **Configure the Run**:
    - You can use the default settings for a quick start.
    - Customize inputs as needed.
 
 4. **Start the Benchmark**
    Click "Run workflow".
 
-5. **Monitor Progress**
+5. **Monitor Progress**:
    - The workflow will start two jobs: one for GPU and one for CPU.
    - Each job will trigger a separate `run-on-runner` workflow.
 
-6. **Access Results**
+6. **Access Results**:
    - Once complete, each job will upload its results as an artifact.
    - Download the artifacts to analyze the benchmark data.
    - A combined results file will also be available.
