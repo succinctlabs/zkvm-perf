@@ -1,8 +1,9 @@
 FROM nvidia/cuda:12.5.1-devel-ubuntu20.04
 
-ARG SP1_REF=2e8b0a8
+ARG SP1_REF=d706145821f6400eba5bf135f50fcda94b3de528
 ENV SP1_REF=${SP1_REF}
 
+# Install dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
     curl \
     build-essential \
@@ -12,31 +13,64 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install 
     pkg-config \
     python3 \
     python3-pip \
-    build-essential \ 
     libc6 \
     gcc \
     g++ \
     docker.io \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-# Install Toolchains
-ADD install.sh /install.sh
-RUN chmod +x /install.sh && /install.sh
-
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Add source code to container
-ADD . /usr/src/app
+# Copy the install script and make it executable
+COPY install.sh /usr/src/app/install.sh
+RUN chmod +x /usr/src/app/install.sh
+
+# Run the install script
+RUN /usr/src/app/install.sh
+
+# Add Rust binaries to PATH
+ENV PATH="/root/.cargo/bin:/root/.sp1/bin:/root/.risc0/bin:${PATH}"
+
+# Copy the entire project into the container
+COPY . .
+
+
+
+# Build all SP1 programs (CPU and GPU)
+RUN for dir in programs/*-sp1; do \
+    if [ -d "$dir" ]; then \
+        cd "$dir" && \
+        RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
+        RUSTUP_TOOLCHAIN=succinct \
+        CARGO_BUILD_TARGET=riscv32im-succinct-zkvm-elf \
+        cargo build --release --ignore-rust-version --features sp1 && \
+        cargo build --release --ignore-rust-version --features sp1,cuda && \
+        cd ../..; \
+    fi; \
+done
+
+# Build all RISC0 programs (CPU and GPU)
+RUN for dir in programs/*-risc0; do \
+    if [ -d "$dir" ]; then \
+        cd "$dir" && \
+        RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
+        RUSTUP_TOOLCHAIN=risc0 \
+        CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
+        cargo build --release --ignore-rust-version --features risc0 && \
+        cargo build --release --ignore-rust-version --features risc0,cuda && \
+        cd ../..; \
+    fi; \
+done
+
 
 # Run the update_sp1_and_build.sh script
 RUN chmod +x update_sp1_and_build.sh && \
-    SP1_REF=${SP1_REF} RUN_BUILD=false ./update_sp1_and_build.sh
+    SP1_REF=${SP1_REF} RUN_BUILD=true ./update_sp1_and_build.sh
 
-# RUN cargo build -p sp1-benchmarks-eval --all-features
-    
-ENTRYPOINT ["/bin/bash", "-c"]
+# Copy the eval script and make it executable
+COPY eval.sh /usr/local/bin/eval.sh
+RUN chmod +x /usr/local/bin/eval.sh
+
+# Set the entrypoint to run eval.sh
+ENTRYPOINT ["/usr/local/bin/eval.sh"]
