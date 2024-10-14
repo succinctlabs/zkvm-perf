@@ -72,7 +72,7 @@ if [ "$2" == "risc0" ]; then
 fi
 
 # Run the benchmark.
-cargo +nightly run \
+cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
