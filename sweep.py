@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--programs", nargs='+', default=['loop', 'fibonacci', 'tendermint', 'reth1', 'reth2'], help="List of programs to benchmark", choices=['loop', 'fibonacci', 'tendermint', 'reth1', 'reth2'])
     parser.add_argument("--provers", nargs='+', default=["sp1"], help="List of provers to use", choices=["sp1", "risc0"])
     parser.add_argument("--hashfns", nargs='+', default=['poseidon'], help="List of hash functions to use", choices=["poseidon"])
-    parser.add_argument("--shard-sizes", type=int, nargs='+', default=[22], help="List of shard sizes to use")
+    parser.add_argument("--shard-sizes", type=int, nargs='+', default=[21], help="List of shard sizes to use")
     parser.add_argument("--block-1", default="17106222", help="Block number for reth1")
     parser.add_argument("--block-2", default="19409768", help="Block number for reth2")
 
