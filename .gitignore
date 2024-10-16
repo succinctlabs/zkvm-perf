@@ -17,3 +17,7 @@ COMMIT_HASH
 # Benchmark results
 **/.csv
 **/*.csv
+
+# NVIDIA profiling files
+*.nsys-rep
+*.sqlite
