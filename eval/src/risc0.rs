@@ -2,18 +2,16 @@
 use std::fs;
 
 #[cfg(feature = "risc0")]
-use risc0_zkvm::{
-    compute_image_id, get_prover_server, ExecutorEnv, ExecutorImpl, ProverOpts, VerifierContext,
-};
-#[cfg(feature = "risc0")]
 use crate::{
     utils::{get_elf, get_reth_input, time_operation},
     HashFnId, ProgramId,
 };
-
-use crate::{
-    EvalArgs, PerformanceReport,
+#[cfg(feature = "risc0")]
+use risc0_zkvm::{
+    compute_image_id, get_prover_server, ExecutorEnv, ExecutorImpl, ProverOpts, VerifierContext,
 };
+
+use crate::{EvalArgs, PerformanceReport};
 
 pub struct Risc0Evaluator;
 
@@ -48,17 +46,36 @@ impl Risc0Evaluator {
         let cycles = session.user_cycles;
 
         // Setup the prover.
-        let env = if args.program == ProgramId::Reth {
-            let input = get_reth_input(args);
-            ExecutorEnv::builder()
-                .segment_limit_po2(args.shard_size as u32)
-                .write(&input)
-                .expect("Failed to write input to executor")
-                .build()
-                .unwrap()
-        } else {
-            ExecutorEnv::builder().segment_limit_po2(args.shard_size as u32).build().unwrap()
-        };
+        let mut builder = ExecutorEnv::builder().segment_limit_po2(args.shard_size as u32);
+        match args.program {
+            ProgramId::Reth => {
+                let input = get_reth_input(args);
+                builder.write(&input).expect("Failed to write input to executor");
+            }
+            ProgramId::Loop10k => {
+                builder.write::<usize>(&2500);
+            }
+            ProgramId::Loop100k => {
+                builder.write::<usize>(&25000);
+            }
+            ProgramId::Loop1m => {
+                builder.write::<usize>(&250000);
+            }
+            ProgramId::Loop3m => {
+                builder.write::<usize>(&750000);
+            }
+            ProgramId::Loop10m => {
+                builder.write::<usize>(&2500000);
+            }
+            ProgramId::Loop30m => {
+                builder.write::<usize>(&7500000);
+            }
+            ProgramId::Loop100m => {
+                builder.write::<usize>(&25000000);
+            }
+            _ => {}
+        }
+        let env = builder.build().unwrap();
         let opts = ProverOpts::default();
         let prover = get_prover_server(&opts).unwrap();
 

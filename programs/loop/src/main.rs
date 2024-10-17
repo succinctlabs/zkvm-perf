@@ -26,7 +26,11 @@ sp1_zkvm::entrypoint!(main);
 use core::arch::asm;
 
 fn main() {
-    let iterations = 3000 * 1024;
+    #[cfg(feature = "sp1")]
+    let iterations: usize = sp1_zkvm::io::read();
+    #[cfg(feature = "risc0")]
+    let iterations: usize = risc0_zkvm::guest::env::read();
+
     for i in 0..iterations {
         memory_barrier(&i);
     }

@@ -7,8 +7,8 @@ use crate::{
 
 use sp1_core_executor::SP1Context;
 
-use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover};
 use sp1_core_machine::io::SP1Stdin;
+use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover};
 
 #[cfg(feature = "cuda")]
 use sp1_cuda::SP1CudaProver;
@@ -30,14 +30,35 @@ impl SP1Evaluator {
         }
 
         // Get stdin.
-        let stdin = if args.program == ProgramId::Reth {
-            let input = get_reth_input(args);
-            let mut stdin = SP1Stdin::new();
-            stdin.write(&input);
-            stdin
-        } else {
-            SP1Stdin::new()
-        };
+        let mut stdin = SP1Stdin::new();
+        match args.program {
+            ProgramId::Reth => {
+                let input = get_reth_input(args);
+                stdin.write(&input);
+            }
+            ProgramId::Loop10k => {
+                stdin.write::<usize>(&2500);
+            }
+            ProgramId::Loop100k => {
+                stdin.write::<usize>(&25000);
+            }
+            ProgramId::Loop1m => {
+                stdin.write::<usize>(&250000);
+            }
+            ProgramId::Loop3m => {
+                stdin.write::<usize>(&750000);
+            }
+            ProgramId::Loop10m => {
+                stdin.write::<usize>(&2500000);
+            }
+            ProgramId::Loop30m => {
+                stdin.write::<usize>(&7500000);
+            }
+            ProgramId::Loop100m => {
+                stdin.write::<usize>(&25000000);
+            }
+            _ => {}
+        }
 
         // Get the elf.
         let elf_path = get_elf(args);

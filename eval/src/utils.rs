@@ -11,6 +11,9 @@ pub fn get_elf(args: &EvalArgs) -> String {
         program_dir += "-";
         program_dir += args.prover.to_string().as_str();
     }
+    if program_dir.starts_with("loop") {
+        program_dir = "loop".to_string();
+    }
 
     let current_dir = env::current_dir().expect("Failed to get current working directory");
 

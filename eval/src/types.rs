@@ -1,8 +1,16 @@
+use std::fmt::{Display, Formatter};
+
 /// An identifier used to select the program to evaluate.
 #[derive(clap::ValueEnum, Clone, PartialEq)]
 #[clap(rename_all = "kebab_case")]
 pub enum ProgramId {
-    Loop,
+    Loop10k,
+    Loop100k,
+    Loop1m,
+    Loop3m,
+    Loop10m,
+    Loop30m,
+    Loop100m,
     Fibonacci,
     SSZWithdrawals,
     Tendermint,
@@ -26,38 +34,41 @@ pub enum HashFnId {
     Keccak256,
 }
 
-impl ProgramId {
-    /// Convert the identifier to a string.
-    pub fn to_string(&self) -> String {
+impl Display for ProgramId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ProgramId::Loop => "loop".to_string(),
-            ProgramId::Fibonacci => "fibonacci".to_string(),
-            ProgramId::SSZWithdrawals => "ssz-withdrawals".to_string(),
-            ProgramId::Tendermint => "tendermint".to_string(),
-            ProgramId::Sha2Chain => "sha2-chain".to_string(),
-            ProgramId::Reth => "reth".to_string(),
+            ProgramId::Loop10k => write!(f, "loop10k"),
+            ProgramId::Loop100k => write!(f, "loop100k"),
+            ProgramId::Loop1m => write!(f, "loop1m"),
+            ProgramId::Loop3m => write!(f, "loop3m"),
+            ProgramId::Loop10m => write!(f, "loop10m"),
+            ProgramId::Loop30m => write!(f, "loop30m"),
+            ProgramId::Loop100m => write!(f, "loop100m"),
+            ProgramId::Fibonacci => write!(f, "fibonacci"),
+            ProgramId::SSZWithdrawals => write!(f, "ssz-withdrawals"),
+            ProgramId::Tendermint => write!(f, "tendermint"),
+            ProgramId::Sha2Chain => write!(f, "sha2-chain"),
+            ProgramId::Reth => write!(f, "reth"),
         }
     }
 }
 
-impl ProverId {
-    /// Convert the identifier to a string.
-    pub fn to_string(&self) -> String {
+impl Display for ProverId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ProverId::Risc0 => "risc0".to_string(),
-            ProverId::SP1 => "sp1".to_string(),
+            ProverId::Risc0 => write!(f, "risc0"),
+            ProverId::SP1 => write!(f, "sp1"),
         }
     }
 }
 
-impl HashFnId {
-    /// Convert the identifier to a string.
-    pub fn to_string(&self) -> String {
+impl Display for HashFnId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            HashFnId::Sha256 => "sha-256".to_string(),
-            HashFnId::Poseidon => "poseidon".to_string(),
-            HashFnId::Blake3 => "blake3".to_string(),
-            HashFnId::Keccak256 => "keccak256".to_string(),
+            HashFnId::Sha256 => write!(f, "sha-256"),
+            HashFnId::Poseidon => write!(f, "poseidon"),
+            HashFnId::Blake3 => write!(f, "blake3"),
+            HashFnId::Keccak256 => write!(f, "keccak256"),
         }
     }
 }

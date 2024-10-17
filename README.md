@@ -28,7 +28,7 @@ This workflow sets up the benchmarking environment and triggers individual bench
 ##### Inputs
 
 - `provers`: Provers to use (comma-separated, default: 'sp1')
-- `programs`: Programs to benchmark (comma-separated, default: 'loop,fibonacci,tendermint,reth1,reth2')
+- `programs`: Programs to benchmark (comma-separated, default: 'loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2')
 - `filename`: Filename for the benchmark (default: 'benchmark')
 - `trials`: Number of trials to run (default: '1')
 - `sp1_ref`: SP1 reference (commit hash or branch name, default: 'dev')
@@ -37,6 +37,7 @@ This workflow sets up the benchmarking environment and triggers individual bench
 ##### Matrix Strategy
 
 The workflow runs benchmarks on two types of EC2 instances:
+
 - GPU: g6.16xlarge
 - CPU: r7i.16xlarge
 
@@ -60,6 +61,7 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
    Click on "Execute ZKVM-Perf (Matrix)".
 
 3. **Configure the Run**
+
    - You can use the default settings for a quick start.
    - Customize inputs as needed.
 
@@ -67,6 +69,7 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
    Click "Run workflow".
 
 5. **Monitor Progress**
+
    - The workflow will start two jobs: one for GPU and one for CPU.
    - Each job will trigger a separate `run-on-runner` workflow.
 
@@ -80,12 +83,14 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
 ### Setup
 
 1. Install Rust:
+
    ```sh
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    rustup install nightly
    ```
 
 2. Install the [SP1 toolchain](https://docs.succinct.xyz/getting-started/install.html):
+
    ```sh
    curl -L https://sp1.succinct.xyz | bash
    source ~/.bashrc
@@ -94,6 +99,7 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
    ```
 
 3. Install the [Risc0 toolchain](https://dev.risczero.com/api/zkvm/install):
+
    ```sh
    curl -L https://risczero.com/install | bash
    source ~/.bashrc
@@ -112,11 +118,13 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
 ### Running a Manual Sweep
 
 To conduct a sweep of the benchmarks:
+
 ```sh
 python3 sweep.py [options]
 ```
 
 Available options:
+
 - `--filename`: Filename for the benchmark (default: "benchmark")
 - `--trials`: Number of trials to run (default: 1)
 - `--programs`: List of programs to benchmark (choices: loop, fibonacci, tendermint, reth1, reth2)
@@ -134,7 +142,8 @@ To run a single benchmark:
 ./eval.sh <program> <prover> <hashfn> <shard_size> <filename> [block_number]
 ```
 
-Examples: 
+Examples:
+
 ```
 ./eval.sh fibonacci sp1 poseidon 22 benchmark
 ./eval.sh fibonacci jolt-zkvm poseidon 22 benchmark
@@ -162,6 +171,7 @@ If you encounter issues:
 For C++ compiler and library issues:
 
 Ubuntu/Debian:
+
 ```sh
 sudo apt update && sudo apt upgrade
 sudo apt install build-essential libc6
@@ -175,7 +185,8 @@ sudo yum groupinstall "Development Tools"
 sudo yum install -y gcc-c++
 ```
 
-Fedora: 
+Fedora:
+
 ```sh
 sudo dnf update
 sudo dnf groupinstall "Development Tools"
