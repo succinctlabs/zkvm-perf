@@ -28,17 +28,37 @@ impl Risc0Evaluator {
 
         // If the program is Reth, read the block and set it as input. Otherwise, we assume other
         // benchmarking programs don't have input.
-        let env = if args.program == ProgramId::Reth {
-            let input = get_reth_input(args);
-            ExecutorEnv::builder()
-                .segment_limit_po2(args.shard_size as u32)
-                .write(&input)
-                .expect("Failed to write input to executor")
-                .build()
-                .unwrap()
-        } else {
-            ExecutorEnv::builder().segment_limit_po2(args.shard_size as u32).build().unwrap()
-        };
+        let mut builder = ExecutorEnv::builder();
+        builder.segment_limit_po2(args.shard_size as u32);
+        match args.program {
+            ProgramId::Reth => {
+                let input = get_reth_input(args);
+                builder.write(&input).expect("Failed to write input to executor");
+            }
+            ProgramId::Loop10k => {
+                builder.write::<usize>(&2500);
+            }
+            ProgramId::Loop100k => {
+                builder.write::<usize>(&25000);
+            }
+            ProgramId::Loop1m => {
+                builder.write::<usize>(&250000);
+            }
+            ProgramId::Loop3m => {
+                builder.write::<usize>(&750000);
+            }
+            ProgramId::Loop10m => {
+                builder.write::<usize>(&2500000);
+            }
+            ProgramId::Loop30m => {
+                builder.write::<usize>(&7500000);
+            }
+            ProgramId::Loop100m => {
+                builder.write::<usize>(&25000000);
+            }
+            _ => {}
+        }
+        let env = builder.build().unwrap();
 
         // Compute some statistics.
         let mut exec = ExecutorImpl::from_elf(env, &elf).unwrap();
@@ -46,7 +66,8 @@ impl Risc0Evaluator {
         let cycles = session.user_cycles;
 
         // Setup the prover.
-        let mut builder = ExecutorEnv::builder().segment_limit_po2(args.shard_size as u32);
+        let mut builder = ExecutorEnv::builder();
+        builder.segment_limit_po2(args.shard_size as u32);
         match args.program {
             ProgramId::Reth => {
                 let input = get_reth_input(args);
@@ -116,6 +137,9 @@ impl Risc0Evaluator {
         let recursive_proof_size = succinct_receipt.seal.len() * 4;
         let prove_duration = core_prove_duration + compress_duration;
 
+        let core_khz = cycles as f64 / core_prove_duration.as_secs_f64() / 1_000.0;
+        let overall_khz = cycles as f64 / prove_duration.as_secs_f64() / 1_000.0;
+
         // Create the performance report.
         PerformanceReport {
             program: args.program.to_string(),
@@ -130,9 +154,11 @@ impl Risc0Evaluator {
             core_prove_duration: core_prove_duration.as_secs_f64(),
             core_verify_duration: core_verify_duration.as_secs_f64(),
             core_proof_size,
+            core_khz,
             compress_prove_duration: compress_duration.as_secs_f64(),
             compress_verify_duration: recursive_verify_duration.as_secs_f64(),
             compress_proof_size: recursive_proof_size,
+            overall_khz,
         }
     }
 

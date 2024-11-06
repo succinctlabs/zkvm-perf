@@ -28,7 +28,7 @@ This workflow sets up the benchmarking environment and triggers individual bench
 ##### Inputs
 
 - `provers`: Provers to use (comma-separated, default: 'sp1')
-- `programs`: Programs to benchmark (comma-separated, default: 'loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2')
+- `programs`: Programs to benchmark (comma-separated, default: 'loop10k, loop100k, loop1m, loop3m, loop10m, loop30m, loop100m, fibonacci,tendermint,reth1,reth2')
 - `filename`: Filename for the benchmark (default: 'benchmark')
 - `trials`: Number of trials to run (default: '1')
 - `sp1_ref`: SP1 reference (commit hash or branch name, default: 'dev')
@@ -127,7 +127,7 @@ Available options:
 
 - `--filename`: Filename for the benchmark (default: "benchmark")
 - `--trials`: Number of trials to run (default: 1)
-- `--programs`: List of programs to benchmark (choices: loop, fibonacci, tendermint, reth1, reth2)
+- `--programs`: List of programs to benchmark (choices: loop10k, loop100k, loop1m, loop3m, loop10m, loop30m, loop100m, fibonacci, tendermint, reth1, reth2)
 - `--provers`: List of provers to use (choices: sp1, risc0)
 - `--hashfns`: List of hash functions to use (currently only poseidon is supported)
 - `--shard-sizes`: List of shard sizes to use

@@ -8,6 +8,10 @@ if [ "$1" = "tendermint" ] || [ "$1" = "reth" ]; then
 else
     program_directory="$1"
 fi
+# If program_directory starts with loop, then set it to loop
+if [[ $program_directory == loop* ]]; then
+    program_directory="loop"
+fi
 
 echo "Building program"
 

@@ -12,7 +12,7 @@ on:
         description: "Programs to benchmark (comma-separated)"
         required: false
         type: string
-        default: "loop,fibonacci,tendermint,reth1,reth2"
+        default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
       filename:
         description: "Filename for the benchmark"
         required: false

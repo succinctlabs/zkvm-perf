@@ -15,19 +15,19 @@ on:
       provers:
         required: false
         type: string
-        default: 'sp1'
+        default: "sp1"
       programs:
         required: false
         type: string
-        default: 'loop,fibonacci,tendermint,reth1,reth2'
+        default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
       filename:
         required: false
         type: string
-        default: 'benchmark'
+        default: "benchmark"
       trials:
         required: false
         type: string
-        default: '1'
+        default: "1"
       sp1_ref:
         required: false
         type: string

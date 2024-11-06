@@ -111,7 +111,14 @@ impl SP1Evaluator {
         let compress_bytes = bincode::serialize(&compress_proof).unwrap();
         println!("recursive proof size: {}", compress_bytes.len());
 
+        let (_, verify_compress_duration) = time_operation(|| {
+            prover.verify_compressed(&compress_proof, &vk).expect("Proof verification failed")
+        });
+
         let prove_duration = prove_core_duration + compress_duration;
+
+        let core_khz = cycles as f64 / prove_core_duration.as_secs_f64() / 1_000.0;
+        let overall_khz = cycles as f64 / prove_duration.as_secs_f64() / 1_000.0;
 
         // Create the performance report.
         PerformanceReport {
@@ -127,9 +134,11 @@ impl SP1Evaluator {
             core_prove_duration: prove_core_duration.as_secs_f64(),
             core_verify_duration: verify_core_duration.as_secs_f64(),
             core_proof_size: core_bytes.len(),
+            core_khz,
             compress_prove_duration: compress_duration.as_secs_f64(),
-            compress_verify_duration: 0.0, // TODO: fill this in.
+            compress_verify_duration: verify_compress_duration.as_secs_f64(),
             compress_proof_size: compress_bytes.len(),
+            overall_khz,
         }
     }
 }

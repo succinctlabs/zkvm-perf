@@ -60,12 +60,16 @@ pub struct PerformanceReport {
     pub core_verify_duration: f64,
     /// The size of the core proof.
     pub core_proof_size: usize,
+    /// The speed of the core proving time in KHz.
+    pub core_khz: f64,
     /// The reported duration of the recursive proving time in seconds.
     pub compress_prove_duration: f64,
     /// The reported duration of the verifier in seconds.
     pub compress_verify_duration: f64,
     /// The size of the recursive proof in bytes.
     pub compress_proof_size: usize,
+    /// The overall speed in KHz.
+    pub overall_khz: f64,
 }
 
 fn main() {
@@ -103,9 +107,11 @@ fn main() {
                 "core_prove_duration",
                 "core_verify_duration",
                 "core_proof_size",
+                "core_khz",
                 "compress_prove_duration",
                 "compress_verify_duration",
                 "compress_proof_size",
+                "overall_khz",
             ])
             .unwrap();
     }
@@ -123,9 +129,11 @@ fn main() {
             report.core_prove_duration.to_string(),
             report.core_verify_duration.to_string(),
             report.core_proof_size.to_string(),
+            report.core_khz.to_string(),
             report.compress_prove_duration.to_string(),
             report.compress_verify_duration.to_string(),
             report.compress_proof_size.to_string(),
+            report.overall_khz.to_string(),
         ])
         .unwrap();
     writer.flush().unwrap();
