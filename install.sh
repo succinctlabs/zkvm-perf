@@ -30,10 +30,9 @@ cargo prove --version || error_exit "Checking cargo prove version"
 # jolt install-toolchain || error_exit "Installing jolt runtime"
 
 # Install the Risc0 toolchain
-# export PS1="dummy$ "
-# curl -L https://risczero.com/install | bash || error_exit "Installing Risc Zero toolchain"
-# export PATH="$PATH:$HOME/.risc0/bin"
-# rzup install || error_exit "Updating Risc Zero toolchain"
-# cargo risczero --version || error_exit "Checking cargo risczero version"
+curl -L https://risczero.com/install | grep -v 'set -euo pipefail' | bash || error_exit "Installing Risc Zero toolchain"
+export PATH="$PATH:$HOME/.risc0/bin"
+rzup install || error_exit "Updating Risc Zero toolchain"
+cargo risczero --version || error_exit "Checking cargo risczero version"
 
 echo "All installations completed successfully."
