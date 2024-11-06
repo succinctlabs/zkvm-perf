@@ -24,6 +24,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install Toolchains
+ENV PS1="\u@\h:\w \$ "
 ADD install.sh /install.sh
 RUN chmod +x /install.sh && /install.sh
 
