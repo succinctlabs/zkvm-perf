@@ -10,8 +10,8 @@ jobs:
   sample:
     strategy:
       matrix:
-        instances: ["aws-g6-4xlarge", "aws-g6-8xlarge"]
-    name: ${{ matrix.workload }}
+        instance: ["aws-g6-4xlarge", "aws-g6-8xlarge"]
+    name: Benchmark (${{ matrix.instance }})
     runs-on:
       [
         "runs-on",
