@@ -6,19 +6,15 @@ on:
       instances:
         required: true
         type: string
-        default: "aws-g6-4xlarge"
       provers:
         required: true
         type: string
-        default: "sp1"
       programs:
         required: true
         type: string
-        default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
       shard_sizes:
         required: true
         type: string
-        default: "21"
 
 jobs:
   sample:
