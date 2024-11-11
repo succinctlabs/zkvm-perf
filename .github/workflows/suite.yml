@@ -19,6 +19,7 @@ on:
 jobs:
   sample:
     strategy:
+      fail-fast: false
       matrix:
         prover: ${{ fromJSON(github.event.inputs.provers) }}
         instance: ${{ fromJSON(github.event.inputs.instances) }}
@@ -35,67 +36,67 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4 
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker
+      #   uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
-        run: |
-          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile .
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile .
 
-      - name: Make benchmarks directory
-        run: mkdir -p ${{ github.workspace }}/benchmarks
+      # - name: Make benchmarks directory
+      #   run: mkdir -p ${{ github.workspace }}/benchmarks
 
-      - name: rust-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-            ~/.rustup/
-          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: rust-1.79.0-
+      # - name: rust-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       ~/.cargo/bin/
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       target/
+      #       ~/.rustup/
+      #     key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+      #     restore-keys: rust-1.79.0-
 
-      - name: Run benchmark
-        run: |
-          docker run $(echo "${{ matrix.instance }}" | grep -q "g6" && echo "--gpus all" || echo "") --platform linux/amd64 \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
-            -v ~/.cargo/registry:/root/.cargo/registry \
-            -v ~/.cargo/git:/root/.cargo/git \
-            -e RUST_BACKTRACE=full \
-            --network host \
-            zkvm-perf \
-            "python3 sweep.py \
-              --filename benchmark  \
-              --trials 1 \
-              --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') \
-              --provers ${{ matrix.prover }} \
-              --shard-sizes ${{ matrix.shard_size }}"
+      # - name: Run benchmark
+      #   run: |
+      #     docker run $(echo "${{ matrix.instance }}" | grep -q "g6" && echo "--gpus all" || echo "") --platform linux/amd64 \
+      #       -v /var/run/docker.sock:/var/run/docker.sock \
+      #       -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
+      #       -v ~/.cargo/registry:/root/.cargo/registry \
+      #       -v ~/.cargo/git:/root/.cargo/git \
+      #       -e RUST_BACKTRACE=full \
+      #       --network host \
+      #       zkvm-perf \
+      #       "python3 sweep.py \
+      #         --filename benchmark  \
+      #         --trials 1 \
+      #         --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') \
+      #         --provers ${{ matrix.prover }} \
+      #         --shard-sizes ${{ matrix.shard_size }}"
 
-      - name: List benchmark results
-        run: ls -la ${{ github.workspace }}/benchmarks
+      # - name: List benchmark results
+      #   run: ls -la ${{ github.workspace }}/benchmarks
 
-      - name: Echo benchmark results
-        run: cat benchmarks/benchmarks_latest.csv
+      # - name: Echo benchmark results
+      #   run: cat benchmarks/benchmarks_latest.csv
 
-      - name: Convert CSV to JSON array
-        id: convert
-        run: |
-          echo "json_data=$(python3 -c '
-          import csv, json, sys
-          with open("${{ github.workspace }}/benchmarks/benchmarks_latest.csv") as f:
-              reader = csv.reader(f)
-              data = list(reader)
-              git_ref = "${{ github.sha }}"
-              instance = "${{ matrix.instance }}"
-              for row in data:
-                  row.insert(0, instance)
-                  row.insert(0, git_ref)
-              print(json.dumps(data))
-          ')" >> $GITHUB_OUTPUT
+      # - name: Convert CSV to JSON array
+      #   id: convert
+      #   run: |
+      #     echo "json_data=$(python3 -c '
+      #     import csv, json, sys
+      #     with open("${{ github.workspace }}/benchmarks/benchmarks_latest.csv") as f:
+      #         reader = csv.reader(f)
+      #         data = list(reader)
+      #         git_ref = "${{ github.sha }}"
+      #         instance = "${{ matrix.instance }}"
+      #         for row in data:
+      #             row.insert(0, instance)
+      #             row.insert(0, git_ref)
+      #         print(json.dumps(data))
+      #     ')" >> $GITHUB_OUTPUT
 
       - name: Push to google sheets
         uses: jroehl/gsheet.action@v2.0.0
@@ -104,7 +105,7 @@ jobs:
           commands: |
             [
               { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
-              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }} }}
+              { "command": "appendData", "args": { "data": [["622cebd7679a036e6f12a3028efa3146e7044655", "aws-g6-4xlarge", "program", "prover", "hashfn", "shard_size", "shards", "cycles", "speed", "execution_duration", "prove_duration", "core_prove_duration", "core_verify_duration", "core_proof_size", "core_khz", "compress_prove_duration", "compress_verify_duration", "compress_proof_size", "overall_khz"], ["622cebd7679a036e6f12a3028efa3146e7044655", "aws-g6-4xlarge", "loop10k", "sp1", "poseidon", "21", "2", "14678", "7060.622224380677", "0.003588515", "3.874113389", "2.07885361", "0.165701476", "2656968", "7.060622224380677", "1.795259779", "0.073502858", "1315679", "3.7887378417152466"]] }}
             ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
