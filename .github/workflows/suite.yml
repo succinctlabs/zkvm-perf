@@ -77,3 +77,27 @@ jobs:
 
       - name: List benchmark results
         run: cat ${{ github.workspace }}/benchmarks/benchmark_latest.csv
+
+      - name: Convert CSV to JSON array
+        id: convert
+        run: |
+          echo "json_data=$(python3 -c '
+          import csv, json, sys
+          with open("${{ github.workspace }}/benchmarks/benchmark_latest.csv") as f:
+              reader = csv.reader(f)
+              data = list(reader)
+              print(json.dumps(data))
+          ')" >> $GITHUB_OUTPUT
+
+      - name: Push to google sheets
+        uses: jroehl/gsheet.action@v2.0.0
+        with:
+          spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
+          commands: |
+            [
+              { "command": "getWorksheet", "args": { "worksheetTitle": "${{ github.ref }}" }},
+              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }} }},
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
