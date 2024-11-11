@@ -1,0 +1,63 @@
+name: Testing Suite
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  merge_group:
+
+jobs:
+  sample:
+    strategy:
+      matrix:
+        workload: ${{ fromJSON(github.event.inputs.cpu_workloads) }}
+    name: ${{ matrix.workload }}
+    runs-on:
+      [
+        "runs-on",
+        "runner=aws-g6-4xlarge",
+        "spot=false",
+        "run-id=${{ github.run_id }}",
+      ]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4 
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile.gpu --build-arg SP1_REF=${{ inputs.sp1_ref }} .
+
+      - name: Make benchmarks directory
+        run: mkdir -p ${{ github.workspace }}/benchmarks
+
+      - name: rust-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+            ~/.rustup/
+          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: rust-1.79.0-
+
+      - name: Run benchmark
+        run: |
+          docker run ${{ inputs.enable_gpu == 'true' && '--gpus all' || '' }} --platform linux/amd64 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
+            -v ~/.cargo/registry:/root/.cargo/registry \
+            -v ~/.cargo/git:/root/.cargo/git \
+            -e RUST_BACKTRACE=full \
+            -e INSTANCE_TYPE=${{ inputs.instance_type }} \
+            --network host \
+            zkvm-perf \
+            "python3 sweep.py --filename ${{ inputs.filename }} --trials ${{ inputs.trials }} --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') --provers ${{ inputs.provers }} --hashfns ${{ fromJson(env.ADDITIONAL_PARAMS).hashfns }} --shard-sizes ${{ fromJson(env.ADDITIONAL_PARAMS).shard_sizes }}"
+
+      - name: List benchmark results
+        run: ls -la ${{ github.workspace }}/benchmarks
