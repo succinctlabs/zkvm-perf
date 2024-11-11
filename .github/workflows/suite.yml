@@ -40,7 +40,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile
+          docker build -t zkvm-perf --platform linux/amd64 -f Dockerfile .
 
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
