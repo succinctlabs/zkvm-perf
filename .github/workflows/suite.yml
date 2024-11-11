@@ -71,7 +71,7 @@ jobs:
             "python3 sweep.py \
               --filename benchmark  \
               --trials 1 \
-              --programs ${{ github.event.inputs.programs }} \
+              --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') \
               --provers ${{ matrix.prover }} \
               --shard-sizes ${{ matrix.shard_size }}"
 
