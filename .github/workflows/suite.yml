@@ -59,6 +59,10 @@ jobs:
           key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: rust-1.79.0-
 
+      - name: Test CUDA visibility
+        run: |
+          docker run --gpus all --platform linux/amd64 zkvm-perf nvidia-smi
+
       - name: Run benchmark
         run: |
           docker run $(echo "${{ matrix.instance }}" | grep -q "g6" && echo "--gpus all" || echo "") --platform linux/amd64 \
