@@ -39,6 +39,29 @@ jobs:
       - name: Setup workflow
         uses: ./.github/actions/setup
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC sudo apt-get install -y \
+            curl \
+            build-essential \
+            protobuf-compiler \
+            git \
+            libssl-dev \
+            pkg-config \
+            build-essential \
+            libc6 \
+            gcc \
+            g++
+
+      - name: Run nvidia-smi
+        run: |
+          nvidia-smi
+
+      - name: Check nvcc version
+        run: |
+          nvcc --version
+
       - name: Run install.sh
         run: |
           bash install.sh
