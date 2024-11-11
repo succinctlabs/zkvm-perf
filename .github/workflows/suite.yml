@@ -86,6 +86,9 @@ jobs:
           with open("${{ github.workspace }}/benchmarks/benchmark_latest.csv") as f:
               reader = csv.reader(f)
               data = list(reader)
+              git_ref = "${{ github.ref }}"
+              for row in data:
+                  row.insert(0, git_ref)
               print(json.dumps(data))
           ')" >> $GITHUB_OUTPUT
 
@@ -95,7 +98,7 @@ jobs:
           spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
           commands: |
             [
-              { "command": "getWorksheet", "args": { "worksheetTitle": "${{ github.ref }}" }},
+              { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
               { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }} }},
             ]
         env:
