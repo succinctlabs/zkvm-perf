@@ -89,7 +89,7 @@ jobs:
           with open("${{ github.workspace }}/benchmarks/benchmarks_latest.csv") as f:
               reader = csv.reader(f)
               data = list(reader)
-              git_ref = "${{ github.ref }}"
+              git_ref = "${{ github.sha }}"
               instance = "${{ matrix.instance }}"
               for row in data:
                   row.insert(0, instance)
@@ -104,7 +104,7 @@ jobs:
           commands: |
             [
               { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
-              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }} }},
+              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }} }}
             ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
