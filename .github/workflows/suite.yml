@@ -27,7 +27,7 @@ jobs:
         prover: ${{ fromJSON(github.event.inputs.provers) }}
         instance: ${{ fromJSON(github.event.inputs.instances) }}
         shard_size: ${{ github.event.inputs.shard_sizes }}
-    name: Benchmark (${{ matrix.instance }})
+    name: Benchmark (Instance=${{ matrix.instance }}, Prover=${{ matrix.prover }}, Shard Size=${{ matrix.shard_size }})
     runs-on:
       [
         "runs-on",
