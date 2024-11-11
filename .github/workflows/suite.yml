@@ -3,7 +3,11 @@ name: Benchmark Suite
 on:
   workflow_dispatch:
     inputs:
-      prover:
+      instances:
+        required: true
+        type: string
+        default: "aws-g6-4xlarge"
+      provers:
         required: true
         type: string
         default: "sp1"
@@ -20,7 +24,9 @@ jobs:
   sample:
     strategy:
       matrix:
-        instance: ["aws-g6-4xlarge"]
+        prover: ${{ fromJSON(github.event.inputs.provers) }}
+        instance: ${{ fromJSON(github.event.inputs.instances) }}
+        shard_size: ${{ github.event.inputs.shard_size }}
     name: Benchmark (${{ matrix.instance }})
     runs-on:
       [
@@ -69,9 +75,9 @@ jobs:
             "python3 sweep.py \
               --filename benchmark  \
               --trials 1 \
-              --programs loop10k \
-              --provers sp1 \
-              --shard-sizes 21"
+              --programs ${{ github.event.inputs.programs }} \
+              --provers ${{ matrix.prover }} \
+              --shard-sizes ${{ matrix.shard_size }}"
 
       - name: List benchmark results
         run: ls -la ${{ github.workspace }}/benchmarks
