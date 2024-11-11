@@ -17,7 +17,23 @@ on:
         type: string
 
 jobs:
-  sample:
+  create-worksheet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push to google sheets
+        uses: jroehl/gsheet.action@v2.0.0
+        with:
+          spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
+          commands: |
+            [
+              { "command": "addWorksheet", "args": { "worksheetTitle": "Run-${{ github.run_id }}" }},
+              { "command": "appendData", "args": { "data": ["ref", "instance", "program", "prover", "hashfn", "shard_size", "shards", "cycles", "speed", "execution_duration", "prove_duration", "core_prove_duration", "core_verify_duration", "core_proof_size", "core_khz", "compress_prove_duration", "compress_verify_duration", "compress_proof_size", "overall_khz"], "minCol": "1" }}
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+
+  run:
     strategy:
       fail-fast: false
       matrix:
@@ -105,7 +121,7 @@ jobs:
           spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
           commands: |
             [
-              { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
+              { "command": "getWorksheet", "args": { "worksheetTitle": "Run-${{ github.run_id }}" }},
               { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
             ]
         env:
