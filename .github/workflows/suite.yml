@@ -68,12 +68,6 @@ jobs:
           echo "LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
           echo "CUDA_HOME=/usr/local/cuda-12.4" >> $GITHUB_ENV
 
-      # - uses: Jimver/cuda-toolkit@v0.2.18
-      #   id: cuda-toolkit
-      #   with:
-      #     cuda: '12.4.0'
-      #     log-file-suffix: '${{matrix.prover}}-${{matrix.instance}}-${{matrix.shard_size}}.txt'
-
       - name: Run nvidia-smi
         run: |
           nvidia-smi
