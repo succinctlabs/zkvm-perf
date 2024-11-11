@@ -80,4 +80,4 @@ jobs:
               --shard-sizes ${{ matrix.shard_size }}"
 
       - name: List benchmark results
-        run: ls -la ${{ github.workspace }}/benchmarks
+        run: cat ${{ github.workspace }}/benchmarks/benchmark_latest.csv
