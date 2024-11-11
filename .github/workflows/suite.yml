@@ -6,12 +6,27 @@ on:
       - "**"
   merge_group:
 
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       prover:
+#         required: true
+#         type: string
+#         default: "sp1"
+#       programs:
+#         required: true
+#         type: string
+#         default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
+#       shard_size:
+#         required: true
+#         type: string
+#         default: "21"
 
 jobs:
   sample:
     strategy:
       matrix:
-        instance: ["aws-g6-16xlarge"]
+        instance: ["aws-g6-4xlarge"]
     name: Benchmark (${{ matrix.instance }})
     runs-on:
       [
