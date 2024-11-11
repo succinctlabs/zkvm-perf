@@ -1,24 +1,17 @@
 name: Testing Suite
 
 on:
-  workflow_dispatch:
-    inputs:
-      cpu_workloads:
-        description: "list of cpu workloads to run"
-        required: true
-      cuda_workloads:
-        description: "list of cuda workloads to run"
-        required: true
-      network_workloads:
-        description: "list of network workloads to run"
-        required: true
+  pull_request:
+    branches:
+      - "**"
   merge_group:
+
 
 jobs:
   sample:
     strategy:
       matrix:
-        instance: ["aws-g6-4xlarge", "aws-g6-8xlarge"]
+        instance: ["aws-g6-16xlarge"]
     name: Benchmark (${{ matrix.instance }})
     runs-on:
       [
