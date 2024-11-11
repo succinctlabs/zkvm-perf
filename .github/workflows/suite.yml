@@ -89,6 +89,7 @@ jobs:
           import csv, json, sys
           with open("${{ github.workspace }}/benchmarks/benchmarks_latest.csv") as f:
               reader = csv.reader(f)
+              next(reader)
               data = list(reader)
               git_ref = "${{ github.sha }}"
               instance = "${{ matrix.instance }}"
