@@ -15,7 +15,7 @@ on:
         required: true
         type: string
         default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
-      shard_size:
+      shard_sizes:
         required: true
         type: string
         default: "21"
