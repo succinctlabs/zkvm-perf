@@ -61,11 +61,11 @@ jobs:
 
       - name: Test CUDA visibility
         run: |
-          docker run --gpus all --platform linux/amd64 zkvm-perf nvidia-smi
+          docker run --runtime=nvidia --gpus all --platform linux/amd64 zkvm-perf nvidia-smi
 
       - name: Run benchmark
         run: |
-          docker run $(echo "${{ matrix.instance }}" | grep -q "g6" && echo "--gpus all" || echo "") --platform linux/amd64 \
+          docker run --runtime=nvidia --gpus all --platform linux/amd64 \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}/benchmarks:/usr/src/app/benchmarks \
             -v ~/.cargo/registry:/root/.cargo/registry \
