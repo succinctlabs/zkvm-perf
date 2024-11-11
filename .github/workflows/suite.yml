@@ -90,7 +90,9 @@ jobs:
               reader = csv.reader(f)
               data = list(reader)
               git_ref = "${{ github.ref }}"
+              instance = "${{ matrix.instance }}"
               for row in data:
+                  row.insert(0, instance)
                   row.insert(0, git_ref)
               print(json.dumps(data))
           ')" >> $GITHUB_OUTPUT
