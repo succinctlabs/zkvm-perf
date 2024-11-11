@@ -10,12 +10,12 @@ jobs:
   sample:
     strategy:
       matrix:
-        workload: ${{ fromJSON(github.event.inputs.cpu_workloads) }}
+        instances: ["aws-g6-4xlarge", "aws-g6-8xlarge"]
     name: ${{ matrix.workload }}
     runs-on:
       [
         "runs-on",
-        "runner=aws-g6-4xlarge",
+        "runner=${{ matrix.instance }}",
         "spot=false",
         "run-id=${{ github.run_id }}",
       ]
