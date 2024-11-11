@@ -46,18 +46,18 @@ jobs:
       - name: Make benchmarks directory
         run: mkdir -p ${{ github.workspace }}/benchmarks
 
-      - name: rust-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-            ~/.rustup/
-          key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: rust-1.79.0-
+      # - name: rust-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       ~/.cargo/bin/
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       target/
+      #       ~/.rustup/
+      #     key: rust-1.79.0-${{ hashFiles('**/Cargo.toml') }}
+      #     restore-keys: rust-1.79.0-
 
       - name: Test CUDA visibility
         run: |
