@@ -54,10 +54,24 @@ jobs:
             gcc \
             g++
 
-      - uses: Jimver/cuda-toolkit@v0.2.18
-        id: cuda-toolkit
-        with:
-          cuda: '12.4.0'
+      - name: Check CUDA installation
+        run: |
+          echo "Checking CUDA paths..."
+          ls -l /usr/local/cuda* || true
+          echo "CUDA_HOME=$CUDA_HOME"
+          echo "PATH=$PATH"
+          which nvcc || true
+
+      - name: Setup CUDA paths
+        run: |
+          echo "export PATH=/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
+          echo "export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+      # - uses: Jimver/cuda-toolkit@v0.2.18
+      #   id: cuda-toolkit
+      #   with:
+      #     cuda: '12.4.0'
+      #     log-file-suffix: '${{matrix.prover}}-${{matrix.instance}}-${{matrix.shard_size}}.txt'
 
       - name: Run nvidia-smi
         run: |
