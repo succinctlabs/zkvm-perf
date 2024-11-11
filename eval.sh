@@ -76,7 +76,7 @@ if [ "$2" == "risc0" ]; then
 fi
 
 # Run the benchmark.
-cargo run \
+CUDA_VISIBLE_DEVICES=0 cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
