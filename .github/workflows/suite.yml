@@ -1,26 +1,20 @@
-name: Testing Suite
+name: Benchmark Suite
 
 on:
-  pull_request:
-    branches:
-      - "**"
-  merge_group:
-
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       prover:
-#         required: true
-#         type: string
-#         default: "sp1"
-#       programs:
-#         required: true
-#         type: string
-#         default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
-#       shard_size:
-#         required: true
-#         type: string
-#         default: "21"
+  workflow_dispatch:
+    inputs:
+      prover:
+        required: true
+        type: string
+        default: "sp1"
+      programs:
+        required: true
+        type: string
+        default: "loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
+      shard_size:
+        required: true
+        type: string
+        default: "21"
 
 jobs:
   sample:
