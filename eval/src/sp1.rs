@@ -89,6 +89,24 @@ impl SP1Evaluator {
         let elf = fs::read(elf_path).unwrap();
         let cycles = get_cycles(&elf, &stdin);
 
+        // let stdin_bytes = bincode::serialize(&stdin).unwrap();
+        // let stdin_path = format!("{}/stdin.bin", args.program.to_string());
+        // let elf_path = format!("{}/elf.bin", args.program.to_string());
+        // fs::create_dir_all(args.program.to_string()).unwrap();
+        // fs::write(format!("{}/stdin.bin", args.program.to_string()), &stdin_bytes).unwrap();
+        // fs::write(format!("{}/program.bin", args.program.to_string()), &elf).unwrap();
+        // let command = format!(
+        //     "aws s3 cp --recursive {} s3://sp1-testing-suite/{}",
+        //     args.program.to_string(),
+        //     args.program.to_string()
+        // );
+        // Command::new("bash")
+        //     .arg("-c")
+        //     .arg(&command)
+        //     .status()
+        //     .expect("Failed to execute command");
+        // exit(0);
+
         let prover = SP1Prover::<DefaultProverComponents>::new();
 
         #[cfg(feature = "cuda")]

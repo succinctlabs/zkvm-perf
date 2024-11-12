@@ -27,20 +27,21 @@ use core::arch::asm;
 
 fn main() {
     #[cfg(feature = "sp1")]
-    let data: Vec<u8> = sp1_zkvm::io::read();
+    let iterations: usize = sp1_zkvm::io::read();
     #[cfg(feature = "risc0")]
-    let data: Vec<u8> = risc0_zkvm::guest::env::read();
+    let iterations: usize = risc0_zkvm::guest::env::read();
 
-    #[cfg(feature = "sp1")]
-    {
-
+    for i in 0..iterations {
+        memory_barrier(&i);
     }
+}
 
-    #[cfg(feature = "risc0")]
-    {
-        use risc0_zkvm::{guest::env, sha, sha::Sha256};
-        let data: Vec<u8> = env::read();
-        let hash = sha::Impl::hash_bytes(&data);
-        env::commit(hash)
+#[allow(unused_variables)]
+pub fn memory_barrier<T>(ptr: *const T) {
+    #[cfg(target_os = "zkvm")]
+    unsafe {
+        asm!("/* {0} */", in(reg) (ptr))
     }
+    #[cfg(not(target_os = "zkvm"))]
+    core::sync::atomic::fence(core::sync::atomic::Ordering::SeqCst)
 }
