@@ -1,7 +1,6 @@
 #! /bin/bash
 
 INSTANCES=(
-    "aws-g6-xlarge"
     "aws-g6-2xlarge"
     "aws-g6-16xlarge"
 )
@@ -12,7 +11,7 @@ PROVERS=(
 SHARD_SIZES=(
     "21"
 )
-PROGRAMS="loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2,sha256-1mb,sha256-3mb,sha256-10mb,keccak256-1mb,keccak256-3mb,keccak256-10mb"
+PROGRAMS="loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,sha256100kb,sha256300kb,sha2561mb,keccak256100kb,keccak256300kb,fibonacci,tendermint,reth1,reth2"
 
 # Get the current git branch.
 GIT_REF=$(git rev-parse --abbrev-ref HEAD)

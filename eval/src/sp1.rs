@@ -57,23 +57,29 @@ impl SP1Evaluator {
             ProgramId::Loop100m => {
                 stdin.write::<usize>(&25000000);
             }
+            ProgramId::Sha256100kb => {
+                stdin.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Sha256300kb => {
+                stdin.write(&vec![0u8; 102400 * 3]);
+            }
             ProgramId::Sha2561mb => {
                 stdin.write(&vec![0u8; 1048576]);
             }
             ProgramId::Sha2563mb => {
                 stdin.write(&vec![0u8; 1048576 * 3]);
             }
-            ProgramId::Sha25610mb => {
-                stdin.write(&vec![0u8; 10485760]);
+            ProgramId::Keccak256100kb => {
+                stdin.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Keccak256300kb => {
+                stdin.write(&vec![0u8; 102400 * 3]);
             }
             ProgramId::Keccak2561mb => {
                 stdin.write(&vec![0u8; 1048576]);
             }
             ProgramId::Keccak2563mb => {
                 stdin.write(&vec![0u8; 1048576 * 3]);
-            }
-            ProgramId::Keccak25610mb => {
-                stdin.write(&vec![0u8; 10485760]);
             }
             _ => {}
         }

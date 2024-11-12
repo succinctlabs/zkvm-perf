@@ -55,24 +55,30 @@ impl Risc0Evaluator {
             }
             ProgramId::Loop100m => {
                 builder.write::<usize>(&25000000);
-            } 
+            }
+            ProgramId::Sha256100kb => {
+                builder.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Sha256300kb => {
+                builder.write(&vec![0u8; 102400 * 3]);
+            }
             ProgramId::Sha2561mb => {
                 builder.write(&vec![0u8; 1048576]);
             }
             ProgramId::Sha2563mb => {
                 builder.write(&vec![0u8; 1048576 * 3]);
             }
-            ProgramId::Sha25610mb => {
-                builder.write(&vec![0u8; 10485760]);
+            ProgramId::Keccak256100kb => {
+                builder.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Keccak256300kb => {
+                builder.write(&vec![0u8; 102400 * 3]);
             }
             ProgramId::Keccak2561mb => {
                 builder.write(&vec![0u8; 1048576]);
             }
             ProgramId::Keccak2563mb => {
                 builder.write(&vec![0u8; 1048576 * 3]);
-            }
-            ProgramId::Keccak25610mb => {
-                builder.write(&vec![0u8; 10485760]);
             }
             _ => {}
         }
@@ -82,6 +88,7 @@ impl Risc0Evaluator {
         let mut exec = ExecutorImpl::from_elf(env, &elf).unwrap();
         let session = exec.run().unwrap();
         let cycles = session.user_cycles;
+        println!("cycles: {}", cycles);
 
         // Setup the prover.
         let mut builder = ExecutorEnv::builder();
@@ -112,17 +119,29 @@ impl Risc0Evaluator {
             ProgramId::Loop100m => {
                 builder.write::<usize>(&25000000);
             }
+            ProgramId::Sha256100kb => {
+                builder.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Sha256300kb => {
+                builder.write(&vec![0u8; 102400 * 3]);
+            }
             ProgramId::Sha2561mb => {
                 builder.write(&vec![0u8; 1048576]);
             }
-            ProgramId::Sha25610mb => {
-                builder.write(&vec![0u8; 10485760]);
+            ProgramId::Sha2563mb => {
+                builder.write(&vec![0u8; 1048576 * 3]);
+            }
+            ProgramId::Keccak256100kb => {
+                builder.write(&vec![0u8; 102400]);
+            }
+            ProgramId::Keccak256300kb => {
+                builder.write(&vec![0u8; 102400 * 3]);
             }
             ProgramId::Keccak2561mb => {
                 builder.write(&vec![0u8; 1048576]);
             }
-            ProgramId::Keccak25610mb => {
-                builder.write(&vec![0u8; 10485760]);
+            ProgramId::Keccak2563mb => {
+                builder.write(&vec![0u8; 1048576 * 3]);
             }
             _ => {}
         }
