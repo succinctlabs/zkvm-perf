@@ -132,7 +132,7 @@ impl SP1Evaluator {
         // Generate the core proof (CUDA).
         #[cfg(feature = "cuda")]
         let (core_proof, prove_core_duration) =
-            time_operation(|| server.prove_core(&pk, &stdin).unwrap());
+            time_operation(|| server.prove_core(&pk.elf, &stdin).unwrap());
 
         let num_shards = core_proof.proof.0.len();
 
