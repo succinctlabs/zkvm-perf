@@ -60,11 +60,17 @@ impl SP1Evaluator {
             ProgramId::Sha2561mb => {
                 stdin.write(&vec![0u8; 1048576]);
             }
+            ProgramId::Sha2563mb => {
+                stdin.write(&vec![0u8; 1048576 * 3]);
+            }
             ProgramId::Sha25610mb => {
                 stdin.write(&vec![0u8; 10485760]);
             }
             ProgramId::Keccak2561mb => {
                 stdin.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Keccak2563mb => {
+                stdin.write(&vec![0u8; 1048576 * 3]);
             }
             ProgramId::Keccak25610mb => {
                 stdin.write(&vec![0u8; 10485760]);

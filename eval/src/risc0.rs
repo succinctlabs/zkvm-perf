@@ -59,11 +59,17 @@ impl Risc0Evaluator {
             ProgramId::Sha2561mb => {
                 builder.write(&vec![0u8; 1048576]);
             }
+            ProgramId::Sha2563mb => {
+                builder.write(&vec![0u8; 1048576 * 3]);
+            }
             ProgramId::Sha25610mb => {
                 builder.write(&vec![0u8; 10485760]);
             }
             ProgramId::Keccak2561mb => {
                 builder.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Keccak2563mb => {
+                builder.write(&vec![0u8; 1048576 * 3]);
             }
             ProgramId::Keccak25610mb => {
                 builder.write(&vec![0u8; 10485760]);
