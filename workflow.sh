@@ -12,7 +12,7 @@ PROVERS=(
 SHARD_SIZES=(
     "21"
 )
-PROGRAMS="loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint"
+PROGRAMS="loop10k,loop100k,loop1m,loop3m,loop10m,loop30m,loop100m,fibonacci,tendermint,reth1,reth2"
 
 # Get the current git branch.
 GIT_REF=$(git rev-parse --abbrev-ref HEAD)

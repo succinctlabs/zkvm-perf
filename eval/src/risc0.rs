@@ -55,6 +55,18 @@ impl Risc0Evaluator {
             }
             ProgramId::Loop100m => {
                 builder.write::<usize>(&25000000);
+            } 
+            ProgramId::Sha2561mb => {
+                builder.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Sha25610mb => {
+                builder.write(&vec![0u8; 10485760]);
+            }
+            ProgramId::Keccak2561mb => {
+                builder.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Keccak25610mb => {
+                builder.write(&vec![0u8; 10485760]);
             }
             _ => {}
         }
@@ -93,6 +105,18 @@ impl Risc0Evaluator {
             }
             ProgramId::Loop100m => {
                 builder.write::<usize>(&25000000);
+            }
+            ProgramId::Sha2561mb => {
+                builder.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Sha25610mb => {
+                builder.write(&vec![0u8; 10485760]);
+            }
+            ProgramId::Keccak2561mb => {
+                builder.write(&vec![0u8; 1048576]);
+            }
+            ProgramId::Keccak25610mb => {
+                builder.write(&vec![0u8; 10485760]);
             }
             _ => {}
         }

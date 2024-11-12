@@ -7,12 +7,24 @@ use crate::{EvalArgs, ProgramId, ProverId};
 
 pub fn get_elf(args: &EvalArgs) -> String {
     let mut program_dir = args.program.to_string();
-    if args.program == ProgramId::Tendermint || args.program == ProgramId::Reth {
+    if args.program == ProgramId::Tendermint ||
+        args.program == ProgramId::Reth
+    {
         program_dir += "-";
         program_dir += args.prover.to_string().as_str();
     }
     if program_dir.starts_with("loop") {
         program_dir = "loop".to_string();
+    }
+    if program_dir.starts_with("sha256") {
+        program_dir = "sha256".to_string();
+        program_dir += "-";
+        program_dir += args.prover.to_string().as_str();
+    }
+    if program_dir.starts_with("keccak256") {
+        program_dir = "keccak256".to_string();
+        program_dir += "-";
+        program_dir += args.prover.to_string().as_str();
     }
 
     let current_dir = env::current_dir().expect("Failed to get current working directory");

@@ -16,31 +16,14 @@
 
 #![no_main]
 
-#[cfg(feature = "risc0")]
-risc0_zkvm::guest::entry!(main);
+use sha2::{Digest, Sha256};
 
-#[cfg(feature = "sp1")]
 sp1_zkvm::entrypoint!(main);
 
-#[cfg(target_os = "zkvm")]
-use core::arch::asm;
-
 fn main() {
-    #[cfg(feature = "sp1")]
     let data: Vec<u8> = sp1_zkvm::io::read();
-    #[cfg(feature = "risc0")]
-    let data: Vec<u8> = risc0_zkvm::guest::env::read();
-
-    #[cfg(feature = "sp1")]
-    {
-
-    }
-
-    #[cfg(feature = "risc0")]
-    {
-        use risc0_zkvm::{guest::env, sha, sha::Sha256};
-        let data: Vec<u8> = env::read();
-        let hash = sha::Impl::hash_bytes(&data);
-        env::commit(hash)
-    }
+    let mut hasher = Sha256::new();
+    hasher.update(&data);
+    let hash = hasher.finalize();
+    sp1_zkvm::io::commit(&hash.to_vec())
 }

@@ -16,31 +16,18 @@
 
 #![no_main]
 
-#[cfg(feature = "risc0")]
+use risc0_zkvm::{guest::env, sha, sha::Sha256};
+use sha3::{Digest as _, Keccak256};
+
 risc0_zkvm::guest::entry!(main);
 
-#[cfg(feature = "sp1")]
-sp1_zkvm::entrypoint!(main);
-
-#[cfg(target_os = "zkvm")]
-use core::arch::asm;
-
 fn main() {
-    #[cfg(feature = "sp1")]
-    let data: Vec<u8> = sp1_zkvm::io::read();
-    #[cfg(feature = "risc0")]
-    let data: Vec<u8> = risc0_zkvm::guest::env::read();
+    let data: Vec<u8> = env::read();
+    let hash = keccak(&data);
+    env::commit(&hash)
+}
 
-    #[cfg(feature = "sp1")]
-    {
-
-    }
-
-    #[cfg(feature = "risc0")]
-    {
-        use risc0_zkvm::{guest::env, sha, sha::Sha256};
-        let data: Vec<u8> = env::read();
-        let hash = sha::Impl::hash_bytes(&data);
-        env::commit(hash)
-    }
+#[inline]
+pub fn keccak(data: impl AsRef<[u8]>) -> [u8; 32] {
+    Keccak256::digest(data).into()
 }
