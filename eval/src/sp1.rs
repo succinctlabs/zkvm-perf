@@ -113,7 +113,11 @@ impl SP1Evaluator {
         let server = SP1CudaProver::new().expect("Failed to initialize CUDA prover");
 
         // Setup the program.
+        #[cfg(not(feature = "cuda"))]
         let (pk, vk) = prover.setup(&elf);
+
+        #[cfg(feature = "cuda")]
+        let (pk, vk) = server.setup(&elf).unwrap();
 
         // Execute the program.
         let context = SP1Context::default();
@@ -132,7 +136,7 @@ impl SP1Evaluator {
         // Generate the core proof (CUDA).
         #[cfg(feature = "cuda")]
         let (core_proof, prove_core_duration) =
-            time_operation(|| server.prove_core(&pk.elf, &stdin).unwrap());
+            time_operation(|| server.prove_core(&stdin).unwrap());
 
         let num_shards = core_proof.proof.0.len();
 

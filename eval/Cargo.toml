@@ -19,11 +19,11 @@ serde_json = "1.0"
 chrono = "0.4.38"
 
 # sp1
-sp1-prover = { git = "https://github.com/succinctlabs/sp1", rev = "1780b80d1687a8f20688242d12bd103233a4ca9e" }
-sp1-core-executor = { git = "https://github.com/succinctlabs/sp1.git", rev = "1780b80d1687a8f20688242d12bd103233a4ca9e" }
-sp1-core-machine = { git = "https://github.com/succinctlabs/sp1.git", rev = "1780b80d1687a8f20688242d12bd103233a4ca9e" }
-sp1-cuda = { git = "https://github.com/succinctlabs/sp1.git", rev = "1780b80d1687a8f20688242d12bd103233a4ca9e", optional = true }
-sp1-stark = { git = "https://github.com/succinctlabs/sp1.git", rev = "1780b80d1687a8f20688242d12bd103233a4ca9e" }
+sp1-prover = { git = "https://github.com/succinctlabs/sp1", rev = "cba87a21f93366f799bf5ba64d11fe99d0d02836" }
+sp1-core-executor = { git = "https://github.com/succinctlabs/sp1.git", rev = "cba87a21f93366f799bf5ba64d11fe99d0d02836" }
+sp1-core-machine = { git = "https://github.com/succinctlabs/sp1.git", rev = "cba87a21f93366f799bf5ba64d11fe99d0d02836" }
+sp1-cuda = { git = "https://github.com/succinctlabs/sp1.git", rev = "cba87a21f93366f799bf5ba64d11fe99d0d02836", optional = true }
+sp1-stark = { git = "https://github.com/succinctlabs/sp1.git", rev = "cba87a21f93366f799bf5ba64d11fe99d0d02836" }
 
 # risc0
 risc0-zkvm = { version = "=1.1.3", default-features = false, features = [
