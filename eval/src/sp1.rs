@@ -57,6 +57,33 @@ impl SP1Evaluator {
             ProgramId::Loop100m => {
                 stdin.write::<usize>(&25000000);
             }
+            ProgramId::Loop300m => {
+                stdin.write::<usize>(&75000000);
+            }
+            ProgramId::Fibonacci20k => {
+                stdin.write::<u32>(&1500);
+            }
+            ProgramId::Fibonacci200k => {
+                stdin.write::<u32>(&15000);
+            }
+            ProgramId::Fibonacci2m => {
+                stdin.write::<u32>(&150000);
+            }
+            ProgramId::Fibonacci4m => {
+                stdin.write::<u32>(&300000);
+            }
+            ProgramId::Fibonacci20m => {
+                stdin.write::<u32>(&1500000);
+            }
+            ProgramId::Fibonacci40m => {
+                stdin.write::<u32>(&3000000);
+            }
+            ProgramId::Fibonacci200m => {
+                stdin.write::<u32>(&15000000);
+            }
+            ProgramId::Fibonacci400m => {
+                stdin.write::<u32>(&300000000);
+            } 
             ProgramId::Sha256100kb => {
                 stdin.write(&vec![0u8; 102400]);
             }
@@ -68,6 +95,9 @@ impl SP1Evaluator {
             }
             ProgramId::Sha2563mb => {
                 stdin.write(&vec![0u8; 1048576 * 3]);
+            }
+            ProgramId::Sha25610mb => {
+                stdin.write(&vec![0u8; 1048576 * 10]);
             }
             ProgramId::Keccak256100kb => {
                 stdin.write(&vec![0u8; 102400]);
@@ -81,6 +111,9 @@ impl SP1Evaluator {
             ProgramId::Keccak2563mb => {
                 stdin.write(&vec![0u8; 1048576 * 3]);
             }
+            ProgramId::Keccak25610mb => {
+                stdin.write(&vec![0u8; 1048576 * 10]);
+            }
             _ => {}
         }
 
@@ -88,24 +121,6 @@ impl SP1Evaluator {
         let elf_path = get_elf(args);
         let elf = fs::read(elf_path).unwrap();
         let cycles = get_cycles(&elf, &stdin);
-
-        // let stdin_bytes = bincode::serialize(&stdin).unwrap();
-        // let stdin_path = format!("{}/stdin.bin", args.program.to_string());
-        // let elf_path = format!("{}/elf.bin", args.program.to_string());
-        // fs::create_dir_all(args.program.to_string()).unwrap();
-        // fs::write(format!("{}/stdin.bin", args.program.to_string()), &stdin_bytes).unwrap();
-        // fs::write(format!("{}/program.bin", args.program.to_string()), &elf).unwrap();
-        // let command = format!(
-        //     "aws s3 cp --recursive {} s3://sp1-testing-suite/{}",
-        //     args.program.to_string(),
-        //     args.program.to_string()
-        // );
-        // Command::new("bash")
-        //     .arg("-c")
-        //     .arg(&command)
-        //     .status()
-        //     .expect("Failed to execute command");
-        // exit(0);
 
         let prover = SP1Prover::<DefaultProverComponents>::new();
 

@@ -119,6 +119,33 @@ impl Risc0Evaluator {
             ProgramId::Loop100m => {
                 builder.write::<usize>(&25000000);
             }
+            ProgramId::Loop300m => {
+                builder.write::<usize>(&75000000);
+            }
+            ProgramId::Fibonacci20k => {
+                builder.write::<u32>(&5000);
+            }
+            ProgramId::Fibonacci200k => {
+                builder.write::<u32>(&15000);
+            }
+            ProgramId::Fibonacci2m => {
+                builder.write::<u32>(&150000);
+            }
+            ProgramId::Fibonacci4m => {
+                builder.write::<u32>(&300000);
+            }
+            ProgramId::Fibonacci20m => {
+                builder.write::<u32>(&1500000);
+            }
+            ProgramId::Fibonacci40m => {
+                builder.write::<u32>(&3000000);
+            }
+            ProgramId::Fibonacci200m => {
+                builder.write::<u32>(&15000000);
+            }
+            ProgramId::Fibonacci400m => {
+                builder.write::<u32>(&30000000);
+            }
             ProgramId::Sha256100kb => {
                 builder.write(&vec![0u8; 102400]);
             }

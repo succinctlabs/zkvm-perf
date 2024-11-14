@@ -12,11 +12,17 @@ fi
 if [[ $program_directory == loop* ]]; then
     program_directory="loop"
 fi
+if [[ $program_directory == fibonacci* ]]; then
+    program_directory="fibonacci"
+fi
 if [[ $program_directory == sha256* ]]; then
     program_directory="sha256-$2"
 fi
 if [[ $program_directory == keccak256* ]]; then
     program_directory="keccak256-$2"
+fi
+if [[ $program_directory == rsp* ]]; then
+    program_directory="rsp-$2"
 fi
 
 echo "Building program"

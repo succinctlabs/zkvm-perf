@@ -16,6 +16,9 @@ pub fn get_elf(args: &EvalArgs) -> String {
     if program_dir.starts_with("loop") {
         program_dir = "loop".to_string();
     }
+    if program_dir.starts_with("fibonacci") {
+        program_dir = "fibonacci".to_string();
+    }
     if program_dir.starts_with("sha256") {
         program_dir = "sha256".to_string();
         program_dir += "-";
