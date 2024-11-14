@@ -51,7 +51,7 @@ WORKLOADS=$(jq -n \
     --arg instances "$(printf '%s\n' "${INSTANCES[@]}" | jq -R . | jq -s 'map(select(length > 0))')" \
     --arg provers "$(printf '%s\n' "${PROVERS[@]}" | jq -R . | jq -s 'map(select(length > 0))')" \
     --arg shard_sizes "$(printf '%s\n' "${SHARD_SIZES[@]}" | jq -R . | jq -s 'map(select(length > 0))')" \
-    --arg programs "$(printf '%s\n' "${PROGRAMS[@]}" | jq -R . | jq -s 'map(select(length > 0))')" \
+    --arg programs "$(IFS=,; echo "${PROGRAMS[*]}")" \
     '{instances: $instances, provers: $provers, shard_sizes: $shard_sizes, programs: $programs}')
 
 # Run the workflow with the list of workloads.
