@@ -25,7 +25,7 @@ jobs:
         instance: ${{ fromJSON(github.event.inputs.instances) }}
         shard_size: ${{ fromJSON(github.event.inputs.shard_sizes) }}
         program: ${{ fromJSON(github.event.inputs.programs) }}
-    name: ${{matrix.prover}}-${{matrix.program}}-${{ matrix.instance }}-${{ matrix.shard_size }}
+    name: Run (${{matrix.prover}}, ${{matrix.program}}, ${{ matrix.instance }}, ${{ matrix.shard_size }})
     runs-on:
       [
         "runs-on",

@@ -2,11 +2,11 @@
 
 INSTANCES=(
     "aws-g6-2xlarge"
-    "aws-g6-16xlarge"
+    # "aws-g6-16xlarge"
 )
 PROVERS=(
     "sp1"
-    "risc0"
+    # "risc0"
 )
 SHARD_SIZES=(
     "21"
