@@ -24,7 +24,8 @@ jobs:
         prover: ${{ fromJSON(github.event.inputs.provers) }}
         instance: ${{ fromJSON(github.event.inputs.instances) }}
         shard_size: ${{ fromJSON(github.event.inputs.shard_sizes) }}
-    name: Run (${{ matrix.instance }}, ${{ matrix.prover }}, ${{ matrix.shard_size }})
+        program: ${{ fromJSON(github.event.inputs.programs) }}
+    name: ${{matrix.prover}}-${{matrix.program}}-${{ matrix.instance }}-${{ matrix.shard_size }}
     runs-on:
       [
         "runs-on",
@@ -88,7 +89,7 @@ jobs:
           python3 sweep.py \
             --filename benchmark  \
             --trials 1 \
-            --programs $(echo ${{ inputs.programs }} | sed 's/,/ /g') \
+            --programs ${{ matrix.program }} \
             --provers ${{ matrix.prover }} \
             --shard-sizes ${{ matrix.shard_size }}
 
