@@ -31,11 +31,7 @@ impl SP1Evaluator {
 
         // Get stdin.
         let mut stdin = SP1Stdin::new();
-        match args.program {
-            ProgramId::Reth => {
-                let input = get_reth_input(args);
-                stdin.write(&input);
-            }
+        match args.program { 
             ProgramId::Loop10k => {
                 stdin.write::<usize>(&2500);
             }
@@ -114,6 +110,50 @@ impl SP1Evaluator {
             ProgramId::Keccak25610mb => {
                 stdin.write(&vec![0u8; 1048576 * 10]);
             }
+            ProgramId::Reth => {
+                let input = get_reth_input(args);
+                stdin.write(&input);
+            }
+            ProgramId::Rsp20526626 => {
+                let input = include_bytes!("../../fixtures/20526626.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20526627 => {
+                let input = include_bytes!("../../fixtures/20526627.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20526628 => {
+                let input = include_bytes!("../../fixtures/20526628.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20526629 => {
+                let input = include_bytes!("../../fixtures/20526629.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20526630 => {
+                let input = include_bytes!("../../fixtures/20526630.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20528708 => {
+                let input = include_bytes!("../../fixtures/20528708.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20528709 => {
+                let input = include_bytes!("../../fixtures/20528709.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20528710 => {
+                let input = include_bytes!("../../fixtures/20528710.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20528711 => {
+                let input = include_bytes!("../../fixtures/20528711.bin");
+                stdin.write_vec(input.to_vec());
+            }
+            ProgramId::Rsp20528712 => {
+                let input = include_bytes!("../../fixtures/20528712.bin");
+                stdin.write_vec(input.to_vec());
+            }
             _ => {}
         }
 
@@ -129,7 +169,7 @@ impl SP1Evaluator {
 
         // Setup the program.
         #[cfg(not(feature = "cuda"))]
-        let (pk, vk) = prover.setup(&elf);
+        let (pk, pk_d, program, vk) = prover.setup(&elf);
 
         #[cfg(feature = "cuda")]
         let (pk, vk) = server.setup(&elf).unwrap();
@@ -146,7 +186,7 @@ impl SP1Evaluator {
         // Generate the core proof (CPU).
         #[cfg(not(feature = "cuda"))]
         let (core_proof, prove_core_duration) =
-            time_operation(|| prover.prove_core(&pk, &stdin, opts, context).unwrap());
+            time_operation(|| prover.prove_core(&pk_d, program, &stdin, opts, context).unwrap());
 
         // Generate the core proof (CUDA).
         #[cfg(feature = "cuda")]
