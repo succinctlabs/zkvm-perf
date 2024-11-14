@@ -67,7 +67,7 @@ def main():
         "--programs",
         nargs="+",
         default=[
-            "rsp20526626",
+            # "rsp20526626",
             # "loop10k",
             # "loop100k",
             # "loop1m",
@@ -76,7 +76,7 @@ def main():
             # "loop30m",
             # "loop100m",
             # "loop300m",
-            # "fibonacci20k",
+            "fibonacci20k",
             # "fibonacci200k",
             # "fibonacci2m",
             # "fibonacci4m",
@@ -142,7 +142,7 @@ def main():
     parser.add_argument(
         "--provers",
         nargs="+",
-        default=["sp1"],
+        default=["risc0"],
         help="List of provers to use",
         choices=["sp1", "risc0"],
     )

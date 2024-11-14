@@ -78,7 +78,7 @@ impl SP1Evaluator {
                 stdin.write::<u32>(&15000000);
             }
             ProgramId::Fibonacci400m => {
-                stdin.write::<u32>(&300000000);
+                stdin.write::<u32>(&30000000);
             } 
             ProgramId::Sha256100kb => {
                 stdin.write(&vec![0u8; 102400]);
