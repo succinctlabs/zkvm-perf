@@ -1,7 +1,7 @@
-use std::{fs, process::{exit, Command}};
+use std::fs;
 
 use crate::{
-    utils::{get_elf, get_reth_input, time_operation},
+    utils::{get_elf, gas_amount, get_reth_input, time_operation, hashes_per_second, hash_bytes_per_second},
     EvalArgs, PerformanceReport, ProgramId,
 };
 
@@ -157,31 +157,10 @@ impl SP1Evaluator {
             _ => {}
         }
 
-
-   
         // Get the elf.
         let elf_path = get_elf(args);
         let elf = fs::read(elf_path).unwrap();
         let cycles = get_cycles(&elf, &stdin);
-
-        // let stdin_bytes = bincode::serialize(&stdin).unwrap();
-        // let stdin_path = format!("{}/stdin.bin", args.program.to_string());
-        // let elf_path = format!("{}/elf.bin", args.program.to_string());
-        // fs::create_dir_all(args.program.to_string()).unwrap();
-        // fs::write(format!("{}/stdin.bin", args.program.to_string()), &stdin_bytes).unwrap();
-        // fs::write(format!("{}/program.bin", args.program.to_string()), &elf).unwrap();
-        // let command = format!(
-        //     "aws s3 cp --recursive {} s3://sp1-testing-suite/{}",
-        //     args.program.to_string(),
-        //     args.program.to_string()
-        // );
-        // Command::new("bash")
-        //     .arg("-c")
-        //     .arg(&command)
-        //     .status()
-        //     .expect("Failed to execute command");
-        // exit(0);
-
 
         let prover = SP1Prover::<DefaultProverComponents>::new();
 
@@ -190,7 +169,7 @@ impl SP1Evaluator {
 
         // Setup the program.
         #[cfg(not(feature = "cuda"))]
-        let (pk, pk_d, program, vk) = prover.setup(&elf);
+        let (_, pk_d, program, vk) = prover.setup(&elf);
 
         #[cfg(feature = "cuda")]
         let (pk, vk) = server.setup(&elf).unwrap();
@@ -261,6 +240,27 @@ impl SP1Evaluator {
             compress_verify_duration: verify_compress_duration.as_secs_f64(),
             compress_proof_size: compress_bytes.len(),
             overall_khz,
+            gas: gas_amount(&args.program),
+            hashes_per_second: hashes_per_second(&args.program, prove_duration),
+            hash_bytes_per_second: hash_bytes_per_second(&args.program, prove_duration),
         }
     }
 }
+
+// let stdin_bytes = bincode::serialize(&stdin).unwrap();
+// let stdin_path = format!("{}/stdin.bin", args.program.to_string());
+// let elf_path = format!("{}/elf.bin", args.program.to_string());
+// fs::create_dir_all(args.program.to_string()).unwrap();
+// fs::write(format!("{}/stdin.bin", args.program.to_string()), &stdin_bytes).unwrap();
+// fs::write(format!("{}/program.bin", args.program.to_string()), &elf).unwrap();
+// let command = format!(
+//     "aws s3 cp --recursive {} s3://sp1-testing-suite/{}",
+//     args.program.to_string(),
+//     args.program.to_string()
+// );
+// Command::new("bash")
+//     .arg("-c")
+//     .arg(&command)
+//     .status()
+//     .expect("Failed to execute command");
+// exit(0);

@@ -70,6 +70,12 @@ pub struct PerformanceReport {
     pub compress_proof_size: usize,
     /// The overall speed in KHz.
     pub overall_khz: f64,
+    /// The number of hashes per second
+    pub hashes_per_second: Option<f64>,
+    /// The number of bytes hashed per second
+    pub hash_bytes_per_second: Option<f64>,
+    /// The gas used by the program (if RSP)
+    pub gas: Option<u64>,
 }
 
 fn main() {
@@ -112,6 +118,9 @@ fn main() {
                 "compress_verify_duration",
                 "compress_proof_size",
                 "overall_khz",
+                "hashes_per_second",
+                "hash_bytes_per_second",
+                "gas"
             ])
             .unwrap();
     }
@@ -134,6 +143,9 @@ fn main() {
             report.compress_verify_duration.to_string(),
             report.compress_proof_size.to_string(),
             report.overall_khz.to_string(),
+            report.hashes_per_second.map(|x| x.to_string()).unwrap_or_default(),
+            report.hash_bytes_per_second.map(|x| x.to_string()).unwrap_or_default(),
+            report.gas.map(|x| x.to_string()).unwrap_or_default(),
         ])
         .unwrap();
     writer.flush().unwrap();

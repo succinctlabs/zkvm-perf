@@ -386,6 +386,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "keccak256-sp1"
+version = "0.1.0"
+dependencies = [
+ "risc0-zkvm",
+ "serde",
+ "sha3",
+ "sp1-zkvm",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -697,16 +707,6 @@ dependencies = [
  "cfg-if",
  "cpufeatures",
  "digest",
-]
-
-[[package]]
-name = "sha256-risc0"
-version = "0.1.0"
-dependencies = [
- "risc0-zkvm",
- "serde",
- "sha3",
- "sp1-zkvm",
 ]
 
 [[package]]
