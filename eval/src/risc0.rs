@@ -3,7 +3,7 @@ use std::fs;
 
 #[cfg(feature = "risc0")]
 use crate::{
-    utils::{get_elf, get_reth_input, time_operation},
+    utils::{get_elf, gas_amount, get_reth_input, time_operation, hashes_per_second, hash_bytes_per_second},
     HashFnId, ProgramId,
 };
 #[cfg(feature = "risc0")]
@@ -265,6 +265,9 @@ impl Risc0Evaluator {
             compress_verify_duration: recursive_verify_duration.as_secs_f64(),
             compress_proof_size: recursive_proof_size,
             overall_khz,
+            gas: gas_amount(&args.program),
+            hashes_per_second: hashes_per_second(&args.program, prove_duration),
+            hash_bytes_per_second: hash_bytes_per_second(&args.program, prove_duration),
         }
     }
 
