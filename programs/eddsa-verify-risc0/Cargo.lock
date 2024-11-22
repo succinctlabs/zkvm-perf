@@ -629,7 +629,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "eddsa-verify-sp1"
+name = "eddsa-verify-risc0"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
