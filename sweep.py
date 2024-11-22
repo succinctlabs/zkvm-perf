@@ -96,7 +96,8 @@ def main():
             # "tendermint",
             # "reth1",
             # "reth2",
-            "ecdsa-verify"
+            "ecdsa-verify",
+            "eddsa-verify"
         ],
         help="List of programs to benchmark",
         choices=[
@@ -138,7 +139,8 @@ def main():
             "rsp20528710",
             "rsp20528711",
             "rsp20528712",
-            "ecdsa-verify"
+            "ecdsa-verify",
+            "eddsa-verify",
         ],
     )
     parser.add_argument(
