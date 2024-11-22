@@ -3,7 +3,10 @@ use std::fs;
 
 #[cfg(feature = "risc0")]
 use crate::{
-    utils::{get_elf, gas_amount, get_reth_input, time_operation, hashes_per_second, hash_bytes_per_second, rand_ecdsa_signature},
+    utils::{
+        gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second,
+        rand_ecdsa_signature, rand_eddsa_signature, time_operation,
+    },
     HashFnId, ProgramId,
 };
 #[cfg(feature = "risc0")]
@@ -111,10 +114,13 @@ impl Risc0Evaluator {
             }
             ProgramId::Keccak25610mb => {
                 builder.write(&vec![0u8; 1048576 * 10]);
-            },
+            }
             ProgramId::ECDSAVerify => {
                 builder.write(&rand_ecdsa_signature());
-            }
+            },
+            ProgramId::EDDSAVerify => {
+                builder.write(&rand_eddsa_signature());
+            },
             _ => {}
         }
         let env = builder.build().unwrap();

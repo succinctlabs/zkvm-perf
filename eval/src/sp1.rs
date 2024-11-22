@@ -1,7 +1,7 @@
 use std::fs;
 
 use crate::{
-    utils::{gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second, rand_ecdsa_signature, time_operation},
+    utils::{gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second, rand_ecdsa_signature, rand_eddsa_signature, time_operation},
     EvalArgs, PerformanceReport, ProgramId,
 };
 
@@ -156,7 +156,10 @@ impl SP1Evaluator {
             },
             ProgramId::ECDSAVerify => {
                 stdin.write(&rand_ecdsa_signature());
-            }
+            },
+            ProgramId::EDDSAVerify => {
+                stdin.write(&rand_eddsa_signature());
+            },
             _ => {}
         }
 

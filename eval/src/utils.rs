@@ -228,3 +228,14 @@ pub fn rand_ecdsa_signature() -> (k256::EncodedPoint, Vec<u8>, k256::ecdsa::Sign
 
     (verifying_key.to_encoded_point(true), message.to_vec(), signature)
 }
+
+pub fn rand_eddsa_signature() -> (ed25519_dalek::VerifyingKey, Vec<u8>, ed25519_dalek::Signature) {
+    use rand::rngs::OsRng;
+    use ed25519_dalek::{SigningKey, Signer};
+
+    let signing_key = SigningKey::generate(&mut OsRng);
+    let message = b"Hello, world!";
+    let signature = signing_key.sign(message);
+
+    (signing_key.verifying_key(), message.to_vec(), signature)
+}
