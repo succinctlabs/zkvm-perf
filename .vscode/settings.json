@@ -8,5 +8,5 @@
         // "programs/ssz-withdrawals/Cargo.toml",
     ],
     "rust-analyzer.procMacro.enable": true,
-    "rust-analyzer.cargo.features": ["risc0"]
+    "rust-analyzer.cargo.features": ["risc0", "sp1"]
 }

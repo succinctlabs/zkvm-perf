@@ -24,6 +24,12 @@ fi
 if [[ $program_directory == rsp* ]]; then
     program_directory="rsp-$2"
 fi
+if [[ $program_directory == eddsa-verify* ]]; then
+    program_directory="eddsa-verify-$2"
+fi
+if [[ $program_directory == ecdsa-verify* ]]; then
+    program_directory="ecdsa-verify-$2"
+fi
 
 echo "Building program"
 

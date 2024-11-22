@@ -4,6 +4,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use k256::ecdsa::signature::SignerMut;
 use sp1_reth_primitives::SP1RethInput;
 
 use crate::{EvalArgs, ProgramId, ProverId};
@@ -32,6 +33,14 @@ pub fn get_elf(args: &EvalArgs) -> String {
     }
     if program_dir.starts_with("rsp") {
         program_dir = "rsp".to_string();
+        program_dir += "-";
+        program_dir += args.prover.to_string().as_str();
+    }
+    if program_dir.starts_with("ecdsa-verify") {
+        program_dir += "-";
+        program_dir += args.prover.to_string().as_str();
+    }
+    if program_dir.starts_with("eddsa-verify") {
         program_dir += "-";
         program_dir += args.prover.to_string().as_str();
     }
@@ -205,3 +214,17 @@ pub fn hash_input_size_bytes(program: &ProgramId) -> Option<u64> {
 //
 //    Some(raw)
 //}
+
+
+pub fn rand_ecdsa_signature() -> (k256::EncodedPoint, Vec<u8>, k256::ecdsa::Signature) {
+    use rand::rngs::OsRng;
+    use k256::ecdsa::{SigningKey, VerifyingKey};
+
+    let mut signing_key = SigningKey::random(&mut OsRng);
+    let verifying_key = VerifyingKey::from(&signing_key);
+
+    let message = b"Hello, world!";
+    let signature = signing_key.sign(message);
+
+    (verifying_key.to_encoded_point(true), message.to_vec(), signature)
+}

@@ -1,7 +1,7 @@
 use std::fs;
 
 use crate::{
-    utils::{get_elf, gas_amount, get_reth_input, time_operation, hashes_per_second, hash_bytes_per_second},
+    utils::{gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second, rand_ecdsa_signature, time_operation},
     EvalArgs, PerformanceReport, ProgramId,
 };
 
@@ -153,6 +153,9 @@ impl SP1Evaluator {
             ProgramId::Rsp20528712 => {
                 let input = include_bytes!("../../fixtures/20528712.bin");
                 stdin.write_vec(input.to_vec());
+            },
+            ProgramId::ECDSAVerify => {
+                stdin.write(&rand_ecdsa_signature());
             }
             _ => {}
         }
