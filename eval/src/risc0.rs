@@ -210,7 +210,13 @@ impl Risc0Evaluator {
             }
             ProgramId::Keccak2563mb => {
                 builder.write(&vec![0u8; 1048576 * 3]);
-            }
+            },
+            ProgramId::ECDSAVerify => {
+                builder.write(&rand_ecdsa_signature());
+            },
+            ProgramId::EDDSAVerify => {
+                builder.write(&rand_eddsa_signature());
+            },
             _ => {}
         }
         let env = builder.build().unwrap();
