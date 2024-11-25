@@ -37,6 +37,13 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4 
 
+      - name: Configure Cargo for private repositories
+        run: |
+          git config --global url."https://${{ secrets.PRIVATE_PULL_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          mkdir -p ~/.cargo
+          echo "[net]" >> ~/.cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> ~/.cargo/config.toml
+
       - name: Setup workflow
         uses: ./.github/actions/setup
 
