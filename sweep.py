@@ -6,8 +6,8 @@ from itertools import product
 def run_benchmark(
     filename, trials, programs, provers, hashfns, shard_sizes, block_1, block_2
 ):
-    option_combinations = product(programs, provers, hashfns, shard_sizes)
-    for program, prover, hashfn, shard_size in option_combinations:
+    option_combinations = product(provers, programs, hashfns, shard_sizes)
+    for prover, program, hashfn, shard_size in option_combinations:
         first_shard_size = shard_sizes[0]
         if (
             prover != "sp1" and shard_size != first_shard_size
@@ -68,7 +68,7 @@ def main():
         nargs="+",
         default=[
             # "rsp20526626",
-            # "loop10k",
+            "loop100k",
             # "loop100k",
             # "loop1m",
             # "loop3m",
@@ -96,8 +96,8 @@ def main():
             # "tendermint",
             # "reth1",
             # "reth2",
-            "ecdsa-verify",
-            "eddsa-verify"
+            # "ecdsa-verify",
+            # "eddsa-verify"
         ],
         help="List of programs to benchmark",
         choices=[
@@ -109,38 +109,38 @@ def main():
             "loop30m",
             "loop100m",
             "loop300m",
-            "fibonacci20k",
-            "fibonacci200k",
-            "fibonacci2m",
-            "fibonacci4m",
-            "fibonacci20m",
-            "fibonacci40m",
-            "fibonacci200m",
-            "fibonacci400m",
-            "sha256100kb",
-            "sha256300kb",
-            "sha2561mb",
-            "sha2563mb",
-            "keccak256100kb",
-            "keccak256300kb",
-            "keccak2561mb",
-            "keccak2563mb",
-            "fibonacci",
-            "tendermint",
-            "reth1",
-            "reth2",
-            "rsp20526626",
-            "rsp20526627",
-            "rsp20526628",
-            "rsp20526629",
-            "rsp20526630",
-            "rsp20528708",
-            "rsp20528709",
-            "rsp20528710",
-            "rsp20528711",
-            "rsp20528712",
-            "ecdsa-verify",
-            "eddsa-verify",
+            # "fibonacci20k",
+            # "fibonacci200k",
+            # "fibonacci2m",
+            # "fibonacci4m",
+            # "fibonacci20m",
+            # "fibonacci40m",
+            # "fibonacci200m",
+            # "fibonacci400m",
+            # "sha256100kb",
+            # "sha256300kb",
+            # "sha2561mb",
+            # "sha2563mb",
+            # "keccak256100kb",
+            # "keccak256300kb",
+            # "keccak2561mb",
+            # "keccak2563mb",
+            # "fibonacci",
+            # "tendermint",
+            # "reth1",
+            # "reth2",
+            # "rsp20526626",
+            # "rsp20526627",
+            # "rsp20526628",
+            # "rsp20526629",
+            # "rsp20526630",
+            # "rsp20528708",
+            # "rsp20528709",
+            # "rsp20528710",
+            # "rsp20528711",
+            # "rsp20528712",
+            # "ecdsa-verify",
+            # "eddsa-verify",
         ],
     )
     parser.add_argument(

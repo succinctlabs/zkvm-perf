@@ -76,7 +76,7 @@ else
 fi
 
 # Set the logging level.
-export RUST_LOG=info
+export RUST_LOG=debug
 
 # Determine the features based on GPU existence.
 if [ "$GPU_EXISTS" = true ]; then
@@ -94,7 +94,7 @@ if [ "$2" == "risc0" ]; then
 fi
 
 # Run the benchmark.
-CUDA_VISIBLE_DEVICES=0 SP1_GPU_IMAGE="public.ecr.aws/succinct-labs/sp1-gpu:5a0a637" cargo run \
+CUDA_VISIBLE_DEVICES=0 cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
