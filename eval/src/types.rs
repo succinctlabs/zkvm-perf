@@ -62,6 +62,74 @@ pub enum ProgramId {
     EDDSAVerify,
 }
 
+impl ProgramId {
+    /// The "priority" of a program is used to sort the programs in the performance report.
+    ///
+    /// The higher the priority, the more work the proof requires. 
+    pub(crate) fn priority(&self) -> usize {
+        match self {
+            // Loop
+            ProgramId::Loop10k => 1,
+            ProgramId::Loop100k => 2,
+            ProgramId::Loop1m => 3,
+            ProgramId::Loop3m => 4,
+            ProgramId::Loop10m => 5,
+            ProgramId::Loop30m => 6,
+            ProgramId::Loop100m => 7,
+            ProgramId::Loop300m => 8,
+            
+            // Fibonacci
+            ProgramId::Fibonacci20k => 1,
+            ProgramId::Fibonacci200k => 2,
+            ProgramId::Fibonacci2m => 3,
+            ProgramId::Fibonacci4m => 4,
+            ProgramId::Fibonacci20m => 5,
+            ProgramId::Fibonacci40m => 6,
+            ProgramId::Fibonacci200m => 7,
+            ProgramId::Fibonacci400m => 8,
+            
+            // SHA-256
+            ProgramId::Sha256100kb => 1,
+            ProgramId::Sha256300kb => 2,
+            ProgramId::Sha2561mb => 3,
+            ProgramId::Sha2563mb => 4,
+            ProgramId::Sha25610mb => 5,
+            
+            // Keccak-256
+            ProgramId::Keccak256100kb => 1,
+            ProgramId::Keccak256300kb => 2,
+            ProgramId::Keccak2561mb => 3,
+            ProgramId::Keccak2563mb => 4,
+            ProgramId::Keccak25610mb => 5,
+            
+            // SSZ Withdrawals
+            ProgramId::SSZWithdrawals => 1,
+            
+            // Tendermint
+            ProgramId::Tendermint => 1,
+            
+            // Reth
+            ProgramId::Reth => 1,
+            
+            // RSP
+            ProgramId::Rsp20526626 => 1,
+            ProgramId::Rsp20526627 => 1,
+            ProgramId::Rsp20526628 => 1,
+            ProgramId::Rsp20526629 => 1,
+            ProgramId::Rsp20526630 => 1,
+            ProgramId::Rsp20528708 => 1,
+            ProgramId::Rsp20528709 => 1,
+            ProgramId::Rsp20528710 => 1,
+            ProgramId::Rsp20528711 => 1,
+            ProgramId::Rsp20528712 => 1,
+            
+            // Signatures
+            ProgramId::ECDSAVerify => 1,
+            ProgramId::EDDSAVerify => 1,
+        }
+    }
+}
+
 /// An identifier used to select the prover to evaluate.
 #[derive(clap::ValueEnum, Clone, PartialEq)]
 pub enum ProverId {

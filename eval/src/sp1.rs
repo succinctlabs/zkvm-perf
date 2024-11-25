@@ -230,6 +230,7 @@ impl SP1Evaluator {
         // Create the performance report.
         PerformanceReport {
             program: args.program.to_string(),
+            priority: args.program.priority(),
             prover: args.prover.to_string(),
             hashfn: args.hashfn.to_string(),
             shard_size: args.shard_size,

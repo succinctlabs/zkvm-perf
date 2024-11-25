@@ -34,6 +34,7 @@ pub struct EvalArgs {
 /// The performance report of a zkVM on a program.
 #[derive(Debug, Serialize, Default)]
 pub struct PerformanceReport {
+    pub priority: usize,
     /// The program that is being evaluated.
     pub program: String,
     /// The prover that is being evaluated.
@@ -102,6 +103,7 @@ fn main() {
         writer
             .write_record(&[
                 "program",
+                "priority",
                 "prover",
                 "hashfn",
                 "shard_size",
@@ -127,6 +129,7 @@ fn main() {
     writer
         .serialize(&[
             report.program,
+            report.priority.to_string(),
             report.prover,
             report.hashfn,
             report.shard_size.to_string(),
