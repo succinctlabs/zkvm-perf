@@ -175,7 +175,7 @@ impl SP1Evaluator {
 
         // Setup the program.
         #[cfg(not(feature = "cuda"))]
-        let (_, pk_d, program, vk) = prover.setup(&elf);
+        let (pk_d, vk) = prover.setup(&elf);
 
         #[cfg(feature = "cuda")]
         let (pk, vk) = server.setup(&elf).unwrap();
@@ -192,7 +192,7 @@ impl SP1Evaluator {
         // Generate the core proof (CPU).
         #[cfg(not(feature = "cuda"))]
         let (core_proof, prove_core_duration) =
-            time_operation(|| prover.prove_core(&pk_d, program, &stdin, opts, context).unwrap());
+            time_operation(|| prover.prove_core(&pk_d, &stdin, opts, context).unwrap());
 
         // Generate the core proof (CUDA).
         #[cfg(feature = "cuda")]
