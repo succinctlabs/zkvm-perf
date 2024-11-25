@@ -41,6 +41,8 @@ PROGRAMS=(
     # "tendermint"
     # "reth1"
     # "reth2"
+    # "ecdsa-verify"
+    # "eddsa-verify"
 )
 
 # Get the current git branch.

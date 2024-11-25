@@ -3,7 +3,10 @@ use std::fs;
 
 #[cfg(feature = "risc0")]
 use crate::{
-    utils::{get_elf, get_reth_input, time_operation},
+    utils::{
+        gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second,
+        rand_ecdsa_signature, rand_eddsa_signature, time_operation,
+    },
     HashFnId, ProgramId,
 };
 #[cfg(feature = "risc0")]
@@ -18,6 +21,8 @@ pub struct Risc0Evaluator;
 impl Risc0Evaluator {
     #[cfg(feature = "risc0")]
     pub fn eval(args: &EvalArgs) -> PerformanceReport {
+        use crate::ProgramId;
+
         if args.hashfn != HashFnId::Poseidon {
             panic!("Only Poseidon hash function is supported for Risc0.");
         }
@@ -110,6 +115,12 @@ impl Risc0Evaluator {
             ProgramId::Keccak25610mb => {
                 builder.write(&vec![0u8; 1048576 * 10]);
             }
+            ProgramId::ECDSAVerify => {
+                builder.write(&rand_ecdsa_signature());
+            },
+            ProgramId::EDDSAVerify => {
+                builder.write(&rand_eddsa_signature());
+            },
             _ => {}
         }
         let env = builder.build().unwrap();
@@ -199,7 +210,13 @@ impl Risc0Evaluator {
             }
             ProgramId::Keccak2563mb => {
                 builder.write(&vec![0u8; 1048576 * 3]);
-            }
+            },
+            ProgramId::ECDSAVerify => {
+                builder.write(&rand_ecdsa_signature());
+            },
+            ProgramId::EDDSAVerify => {
+                builder.write(&rand_eddsa_signature());
+            },
             _ => {}
         }
         let env = builder.build().unwrap();
@@ -265,6 +282,9 @@ impl Risc0Evaluator {
             compress_verify_duration: recursive_verify_duration.as_secs_f64(),
             compress_proof_size: recursive_proof_size,
             overall_khz,
+            gas: gas_amount(&args.program),
+            hashes_per_second: hashes_per_second(&args.program, prove_duration),
+            hash_bytes_per_second: hash_bytes_per_second(&args.program, prove_duration),
         }
     }
 

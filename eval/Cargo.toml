@@ -13,7 +13,6 @@ vergen = { version = "8", default-features = false, features = [
 [dependencies]
 clap = { version = "4.5.9", features = ["derive"] }
 csv = "1.3.0"
-serde = { version = "1.0.207", features = ["derive"] }
 bincode = "1.3.3"
 serde_json = "1.0"
 chrono = "0.4.38"
@@ -32,6 +31,11 @@ risc0-zkvm = { version = "=1.1.3", default-features = false, features = [
 
 # sp1-reth
 sp1-reth-primitives = { git = "https://github.com/succinctlabs/sp1-reth.git", branch = "john/update-for-v1" }
+ed25519-dalek = { version = "2.1.1", features = ["digest", "rand_core", "serde", "signature"] }
+k256 = { version = "=0.13.3", features = ["serde"] }
+rand = "0.8.5"
+rand_core = "0.6.4"
+serde = "1.0.215"
 
 [features]
 default = []

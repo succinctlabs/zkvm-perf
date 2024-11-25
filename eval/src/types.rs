@@ -56,6 +56,10 @@ pub enum ProgramId {
     Rsp20528710,
     Rsp20528711,
     Rsp20528712,
+    
+    // Signatures
+    ECDSAVerify,    
+    EDDSAVerify,
 }
 
 /// An identifier used to select the prover to evaluate.
@@ -116,6 +120,8 @@ impl Display for ProgramId {
             ProgramId::Rsp20528710 => write!(f, "rsp-20528710"),
             ProgramId::Rsp20528711 => write!(f, "rsp-20528711"),
             ProgramId::Rsp20528712 => write!(f, "rsp-20528712"),
+            ProgramId::ECDSAVerify => write!(f, "ecdsa-verify"),
+            ProgramId::EDDSAVerify => write!(f, "eddsa-verify"),
         }
     }
 }
