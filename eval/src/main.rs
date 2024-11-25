@@ -129,7 +129,6 @@ fn main() {
     writer
         .serialize(&[
             report.program,
-            report.priority.to_string(),
             report.prover,
             report.hashfn,
             report.shard_size.to_string(),
@@ -146,6 +145,7 @@ fn main() {
             report.compress_verify_duration.to_string(),
             report.compress_proof_size.to_string(),
             report.overall_khz.to_string(),
+            report.priority.to_string(),
             report.hashes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.hash_bytes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.gas.map(|x| x.to_string()).unwrap_or_default(),
