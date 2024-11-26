@@ -130,18 +130,14 @@ jobs:
           ')" >> $GITHUB_OUTPUT
 
       - name: Push to google sheets
-        uses: nick-fields/retry@v2
+        uses: jroehl/gsheet.action@v2.0.0
         with:
-          timeout_minutes: 1
-          max_attempts: 3
-          command: |
-            jroehl/gsheet.action@v2.0.0 \
-            spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw \
-            commands: |
-              [
-                { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
-                { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
-              ]
+          spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
+          commands: |
+            [
+              { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
+              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
+            ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
