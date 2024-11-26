@@ -95,7 +95,7 @@ def main():
             # "tendermint",
             # "reth1",
             # "reth2",
-            "rsp20526626",
+            # "rsp20526626",
             # "rsp20526627",
             # "rsp20526628",
             # "rsp20526629",
@@ -157,7 +157,7 @@ def main():
     parser.add_argument(
         "--provers",
         nargs="+",
-        default=["risc0"],
+        default=["sp1"],
         help="List of provers to use",
         choices=["sp1", "risc0"],
     )

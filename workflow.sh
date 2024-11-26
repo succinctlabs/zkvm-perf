@@ -36,7 +36,6 @@ PROGRAMS=(
     "keccak256300kb"
     "keccak2561mb"
     "keccak2563mb"
-    "keccak25610mb"
     "ssz-withdrawals"
     "tendermint"
     "reth1"
