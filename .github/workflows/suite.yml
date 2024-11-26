@@ -110,58 +110,13 @@ jobs:
       - name: Echo benchmark results
         run: cat benchmarks/benchmarks_latest.csv
 
-      - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-results-${{ matrix.prover }}-${{ matrix.program }}-${{ matrix.instance }}-${{ matrix.shard_size }}
-          path: benchmarks/benchmarks_latest.csv
-          retention-days: 1
-
-      - name: Convert CSV to JSON array
-        id: convert
+      - name: Append the benchmark results to the google sheet with a lock
+        working-directory: ${{ github.workspace }}
         run: |
-          echo "json_data=$(python3 -c '
-          import csv, json, sys
-          with open("${{ github.workspace }}/benchmarks/benchmarks_latest.csv") as f:
-              reader = csv.reader(f)
-              next(reader)
-              data = list(reader)
-              run_id = "${{ github.run_id }}"
-              git_ref = "${{ github.sha }}"
-              instance = "${{ matrix.instance }}"
-              for row in data:
-                  row.insert(0, instance)
-                  row.insert(0, git_ref)
-                  row.insert(0, run_id)
-              print(json.dumps(data))
-          ')" >> $GITHUB_OUTPUT
-
-      - name: Add distributed delay
-        run: |
-          # Hash the matrix values to get a consistent base delay for each job
-          HASH_INPUT="${{ matrix.prover }}-${{ matrix.program }}-${{ matrix.instance }}-${{ matrix.shard_size }}"
-          HASH_VALUE=$(echo -n "$HASH_INPUT" | md5sum | tr -d -c 0-9 | head -c 6)
-          
-          # Use modulo to get a base delay between 0-300 seconds (5 minutes)
-          BASE_DELAY=$((HASH_VALUE % 300))
-          
-          # Add small random component (0-30 seconds) to avoid unlikely collisions
-          RANDOM_DELAY=$((RANDOM % 30))
-          TOTAL_DELAY=$((BASE_DELAY + RANDOM_DELAY))
-          
-          echo "Using matrix values hash: $HASH_INPUT"
-          echo "Sleeping for ${TOTAL_DELAY} seconds to avoid concurrent writes..."
-          sleep ${TOTAL_DELAY}
-
-      - name: Push to google sheets
-        uses: jroehl/gsheet.action@v2.0.0
-        with:
-          spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
-          commands: |
-            [
-              { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
-              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
-            ]
+          python3 -m pip install gspread redis python-redis-lock google-auth
+          python3 append.py
         env:
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
-          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }} 
