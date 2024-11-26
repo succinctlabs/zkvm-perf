@@ -34,6 +34,7 @@ pub struct EvalArgs {
 /// The performance report of a zkVM on a program.
 #[derive(Debug, Serialize, Default)]
 pub struct PerformanceReport {
+    pub priority: usize,
     /// The program that is being evaluated.
     pub program: String,
     /// The prover that is being evaluated.
@@ -102,6 +103,7 @@ fn main() {
         writer
             .write_record(&[
                 "program",
+                "priority",
                 "prover",
                 "hashfn",
                 "shard_size",
@@ -143,6 +145,7 @@ fn main() {
             report.compress_verify_duration.to_string(),
             report.compress_proof_size.to_string(),
             report.overall_khz.to_string(),
+            report.priority.to_string(),
             report.hashes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.hash_bytes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.gas.map(|x| x.to_string()).unwrap_or_default(),

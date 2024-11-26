@@ -265,6 +265,7 @@ impl Risc0Evaluator {
 
         // Create the performance report.
         PerformanceReport {
+            priority: args.program.priority(),
             program: args.program.to_string(),
             prover: args.prover.to_string(),
             hashfn: args.hashfn.to_string(),
