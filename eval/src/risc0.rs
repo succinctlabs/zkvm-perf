@@ -115,6 +115,46 @@ impl Risc0Evaluator {
             ProgramId::Keccak25610mb => {
                 builder.write(&vec![0u8; 1048576 * 10]);
             }
+            ProgramId::Rsp20526626 => {
+                let input = include_bytes!("../../fixtures/20526626.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526627 => {
+                let input = include_bytes!("../../fixtures/20526627.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526628 => {
+                let input = include_bytes!("../../fixtures/20526628.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526629 => {
+                let input = include_bytes!("../../fixtures/20526629.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526630 => {
+                let input = include_bytes!("../../fixtures/20526630.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528708 => {
+                let input = include_bytes!("../../fixtures/20528708.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528709 => {
+                let input = include_bytes!("../../fixtures/20528709.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528710 => {
+                let input = include_bytes!("../../fixtures/20528710.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528711 => {
+                let input = include_bytes!("../../fixtures/20528711.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528712 => {
+                let input = include_bytes!("../../fixtures/20528712.bin");
+                builder.write(&input.to_vec());
+            },
             ProgramId::ECDSAVerify => {
                 builder.write(&rand_ecdsa_signature());
             },
@@ -210,6 +250,46 @@ impl Risc0Evaluator {
             }
             ProgramId::Keccak2563mb => {
                 builder.write(&vec![0u8; 1048576 * 3]);
+            },
+            ProgramId::Rsp20526626 => {
+                let input = include_bytes!("../../fixtures/20526626.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526627 => {
+                let input = include_bytes!("../../fixtures/20526627.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526628 => {
+                let input = include_bytes!("../../fixtures/20526628.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526629 => {
+                let input = include_bytes!("../../fixtures/20526629.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20526630 => {
+                let input = include_bytes!("../../fixtures/20526630.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528708 => {
+                let input = include_bytes!("../../fixtures/20528708.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528709 => {
+                let input = include_bytes!("../../fixtures/20528709.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528710 => {
+                let input = include_bytes!("../../fixtures/20528710.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528711 => {
+                let input = include_bytes!("../../fixtures/20528711.bin");
+                builder.write(&input.to_vec());
+            }
+            ProgramId::Rsp20528712 => {
+                let input = include_bytes!("../../fixtures/20528712.bin");
+                builder.write(&input.to_vec());
             },
             ProgramId::ECDSAVerify => {
                 builder.write(&rand_ecdsa_signature());
