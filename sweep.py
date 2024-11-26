@@ -127,6 +127,7 @@ def main():
             "keccak2563mb",
             "keccak25610mb",
             "tendermint",
+            "ssz-withdrawals",
             "reth1",
             "reth2",
             "rsp20526626",

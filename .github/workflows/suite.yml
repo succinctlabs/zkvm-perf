@@ -92,13 +92,17 @@ jobs:
         run: mkdir -p ${{ github.workspace }}/benchmarks
 
       - name: Run benchmark
-        run: |
-          python3 sweep.py \
-            --filename benchmark  \
-            --trials 1 \
-            --programs ${{ matrix.program }} \
-            --provers ${{ matrix.prover }} \
-            --shard-sizes ${{ matrix.shard_size }}
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 300
+          max_attempts: 3
+          command: |
+            python3 sweep.py \
+              --filename benchmark  \
+              --trials 1 \
+              --programs ${{ matrix.program }} \
+              --provers ${{ matrix.prover }} \
+              --shard-sizes ${{ matrix.shard_size }}
 
       - name: List benchmark results
         run: ls -la ${{ github.workspace }}/benchmarks
@@ -126,14 +130,18 @@ jobs:
           ')" >> $GITHUB_OUTPUT
 
       - name: Push to google sheets
-        uses: jroehl/gsheet.action@v2.0.0
+        uses: nick-fields/retry@v2
         with:
-          spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw
-          commands: |
-            [
-              { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
-              { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
-            ]
+          timeout_minutes: 1
+          max_attempts: 3
+          command: |
+            jroehl/gsheet.action@v2.0.0 \
+            spreadsheetId: 1dGzQbLxlQTaYgvUSnU9xmgrluE2G9WjM6cpdWC04kiw \
+            commands: |
+              [
+                { "command": "getWorksheet", "args": { "worksheetTitle": "Runs" }},
+                { "command": "appendData", "args": { "data": ${{ steps.convert.outputs.json_data }}, "minCol": "1" }}
+              ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
