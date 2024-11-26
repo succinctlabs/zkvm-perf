@@ -10,6 +10,9 @@ REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 GSHEET_CLIENT_EMAIL = os.getenv("GSHEET_CLIENT_EMAIL")
 GSHEET_PRIVATE_KEY = os.getenv("GSHEET_PRIVATE_KEY")
+GITHUB_RUN_ID = os.getenv("GITHUB_RUN_ID")
+GITHUB_SHA = os.getenv("GITHUB_SHA")
+GITHUB_MATRIX_INSTANCE = os.getenv("GITHUB_MATRIX_INSTANCE")
 
 rc = redis.Redis(
     host=REDIS_HOST,
@@ -34,11 +37,8 @@ with redis_lock.Lock(rc, "zkvm-perf-wip-gh-action", expire=60):
         reader = csv.reader(f)
         next(reader)
         data = list(reader)
-        run_id = "${{ github.run_id }}"
-        git_ref = "${{ github.sha }}"
-        instance = "${{ matrix.instance }}"
         for row in data:
-            row.insert(0, instance)
-            row.insert(0, git_ref)
-            row.insert(0, run_id)
+            row.insert(0, GITHUB_MATRIX_INSTANCE)
+            row.insert(0, GITHUB_SHA)
+            row.insert(0, GITHUB_RUN_ID)
             worksheet.append_row(row)
