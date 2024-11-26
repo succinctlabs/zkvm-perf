@@ -103,7 +103,6 @@ fn main() {
         writer
             .write_record(&[
                 "program",
-                "priority",
                 "prover",
                 "hashfn",
                 "shard_size",
@@ -120,6 +119,7 @@ fn main() {
                 "compress_verify_duration",
                 "compress_proof_size",
                 "overall_khz",
+                "priority",
                 "hashes_per_second",
                 "hash_bytes_per_second",
                 "gas"
