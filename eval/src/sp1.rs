@@ -206,7 +206,9 @@ impl SP1Evaluator {
         let mut prover = SP1Prover::<DefaultProverComponents>::new();
 
         #[cfg(feature = "cuda")]
-        prover.single_shard_programs = None;
+        {
+            prover.single_shard_programs = None;
+        }
 
         #[cfg(feature = "cuda")]
         let server = SP1CudaProver::new().expect("Failed to initialize CUDA prover");
