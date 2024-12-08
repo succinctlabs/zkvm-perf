@@ -67,7 +67,7 @@ def main():
         "--programs",
         nargs="+",
         default=[
-            "loop10k",
+            "sha2563mb",
             # "loop100k",
             # "loop1m",
             # "loop3m",
