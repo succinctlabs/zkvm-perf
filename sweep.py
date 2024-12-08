@@ -165,7 +165,7 @@ def main():
     parser.add_argument(
         "--provers",
         nargs="+",
-        default=["sp1", "risc0"],
+        default=["risc0"],
         help="List of provers to use",
         choices=["sp1", "risc0"],
     )
