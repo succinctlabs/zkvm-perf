@@ -4419,9 +4419,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-binfmt"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b955226bf6eb5c253033d53b1df0e1dcde70a6fcb99b2a5675af3bd382bcc761"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "borsh",
@@ -4434,9 +4433,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-build"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ca637f7e7fa674adcc9c054b4cbb8db9b72cd7ffc83c3946daa362506a7c123"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -4453,9 +4451,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-build-kernel"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e086f0a89faa346c0c4f8bd7b01bd76993131fc5e54ae2af61a714e6b79e5e17"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "cc",
  "directories",
@@ -4469,9 +4466,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-circuit-recursion"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd7691a27b9f1f605c9c456cb7f9e5136e2fe52d9d3a59dd96f12c28ef47e358"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "bytemuck",
@@ -4495,9 +4491,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-circuit-recursion-sys"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e75493f114e2799f1377f3b5f1bedcffbdcdb5cf964ed3aae469caee0546568"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -4508,9 +4503,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-circuit-rv32im"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cbc12e1239b0140c6123f0e3f558a6a27260d09840c986e671b4f26afc73109"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "auto_ops",
@@ -4541,9 +4535,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-circuit-rv32im-sys"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2512d2373dd7b4bdb8e982bb4ff90c1453ce8552947e26ad3c5508f84ff3f5b6"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -4554,9 +4547,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-core"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2532188911aad4c2302029f8df217137881fec213c71a8776581ba6f2d6bfbbe"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "bytemuck",
  "nvtx",
@@ -4566,9 +4558,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-groth16"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b0a96017f756c512d7d7409a46a15f12fe98b90a3f56d117d3e4148bf28a891"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "ark-bn254",
@@ -4591,9 +4582,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-sys"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f1c3db7237d8248149db6e382ac1e6d74b2720dcb61d2574876ab9e817b3b78"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "cc",
@@ -4604,9 +4594,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-zkp"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3fb399c51a971357aa83826d8b3476a8730b38a7f061a1fd1fbde61ad8062c1"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "anyhow",
  "blake2",
@@ -4635,9 +4624,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-zkvm"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39d05fc65302f675d6211aa34be0d750ae4bfc4c93982b9f60748f15dc91478f"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "addr2line",
  "anyhow",
@@ -4676,9 +4664,8 @@ dependencies = [
 
 [[package]]
 name = "risc0-zkvm-platform"
-version = "1.2.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d447ce26b96637d7822ced6f82d65c2e72741f5258fecb6a59640b21f39f8dcc"
+version = "1.2.0"
+source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
 dependencies = [
  "bytemuck",
  "getrandom",
@@ -5258,8 +5245,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-core-executor"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "bincode",
  "bytemuck",
@@ -5272,11 +5259,13 @@ dependencies = [
  "log",
  "nohash-hasher",
  "num",
+ "p3-baby-bear",
  "p3-field",
  "p3-maybe-rayon",
  "rand",
  "rrs-succinct",
  "serde",
+ "serde_json",
  "sp1-curves",
  "sp1-primitives",
  "sp1-stark",
@@ -5291,8 +5280,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-core-machine"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "bincode",
  "cbindgen",
@@ -5316,6 +5305,8 @@ dependencies = [
  "p3-keccak-air",
  "p3-matrix",
  "p3-maybe-rayon",
+ "p3-poseidon2",
+ "p3-symmetric",
  "p3-uni-stark",
  "p3-util",
  "pathdiff",
@@ -5323,6 +5314,7 @@ dependencies = [
  "rayon",
  "rayon-scan",
  "serde",
+ "serde_json",
  "size",
  "snowbridge-amcl",
  "sp1-core-executor",
@@ -5344,8 +5336,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-cuda"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "bincode",
  "ctrlc",
@@ -5360,8 +5352,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-curves"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "cfg-if",
  "curve25519-dalek",
@@ -5382,8 +5374,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-derive"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -5403,8 +5395,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-primitives"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "bincode",
  "hex",
@@ -5420,8 +5412,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-prover"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "anyhow",
  "bincode",
@@ -5438,6 +5430,7 @@ dependencies = [
  "p3-field",
  "p3-matrix",
  "p3-symmetric",
+ "rayon",
  "serde",
  "serde_json",
  "serial_test",
@@ -5451,13 +5444,14 @@ dependencies = [
  "sp1-stark",
  "thiserror",
  "tracing",
+ "tracing-appender",
  "tracing-subscriber 0.3.18",
 ]
 
 [[package]]
 name = "sp1-recursion-circuit"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "hashbrown 0.14.5",
  "itertools 0.13.0",
@@ -5489,8 +5483,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-compiler"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "backtrace",
  "itertools 0.13.0",
@@ -5510,8 +5504,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-core"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "backtrace",
  "cbindgen",
@@ -5536,6 +5530,7 @@ dependencies = [
  "p3-symmetric",
  "p3-util",
  "pathdiff",
+ "rand",
  "serde",
  "sp1-core-machine",
  "sp1-derive",
@@ -5550,8 +5545,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-derive"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -5559,8 +5554,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-gnark-ffi"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "anyhow",
  "bincode",
@@ -5604,8 +5599,8 @@ dependencies = [
 
 [[package]]
 name = "sp1-stark"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=51e22e04f3bfbef5469d07110607c6c91a9c3d6c#51e22e04f3bfbef5469d07110607c6c91a9c3d6c"
+version = "4.0.0-rc.1"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?rev=b3d293b9916aeca9dba59d8778e796335b7f6e58#b3d293b9916aeca9dba59d8778e796335b7f6e58"
 dependencies = [
  "arrayref",
  "hashbrown 0.14.5",
@@ -6096,6 +6091,18 @@ dependencies = [
  "pin-project-lite",
  "tracing-attributes",
  "tracing-core",
+]
+
+[[package]]
+name = "tracing-appender"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3566e8ce28cc0a3fe42519fc80e6b4c943cc4c8cef275620eb8dac2d3d4e06cf"
+dependencies = [
+ "crossbeam-channel",
+ "thiserror",
+ "time",
+ "tracing-subscriber 0.3.18",
 ]
 
 [[package]]

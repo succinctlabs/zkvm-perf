@@ -23,7 +23,10 @@ pub enum ProgramId {
     Fibonacci40m,
     Fibonacci200m,
     Fibonacci400m,
-    
+    Fibonacci1b,
+    Fibonacci2b,
+    Fibonacci4b,
+
     // SHA-256.
     Sha256100kb,
     Sha256300kb,
@@ -87,6 +90,9 @@ impl ProgramId {
             ProgramId::Fibonacci40m => 6,
             ProgramId::Fibonacci200m => 7,
             ProgramId::Fibonacci400m => 8,
+            ProgramId::Fibonacci1b => 9,
+            ProgramId::Fibonacci2b => 10,
+            ProgramId::Fibonacci4b => 11,
             
             // SHA-256
             ProgramId::Sha256100kb => 1,
@@ -165,6 +171,9 @@ impl Display for ProgramId {
             ProgramId::Fibonacci40m => write!(f, "fibonacci-40m"),
             ProgramId::Fibonacci200m => write!(f, "fibonacci-200m"),
             ProgramId::Fibonacci400m => write!(f, "fibonacci-400m"),
+            ProgramId::Fibonacci1b => write!(f, "fibonacci-1b"),
+            ProgramId::Fibonacci2b => write!(f, "fibonacci-2b"),
+            ProgramId::Fibonacci4b => write!(f, "fibonacci-4b"),
             ProgramId::Sha256100kb => write!(f, "sha256-100kb"),
             ProgramId::Sha256300kb => write!(f, "sha256-300kb"),
             ProgramId::Sha2561mb => write!(f, "sha256-1mb"),

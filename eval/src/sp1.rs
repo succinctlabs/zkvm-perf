@@ -79,7 +79,16 @@ impl SP1Evaluator {
             }
             ProgramId::Fibonacci400m => {
                 stdin.write::<u32>(&30000000);
-            } 
+            }
+            ProgramId::Fibonacci1b => {
+                stdin.write::<u32>(&75000000);
+            }
+            ProgramId::Fibonacci2b => {
+                stdin.write::<u32>(&150000000);
+            }
+            ProgramId::Fibonacci4b => {
+                stdin.write::<u32>(&300000000);
+            }
             ProgramId::Sha256100kb => {
                 stdin.write(&vec![0u8; 102400]);
             }
@@ -163,10 +172,36 @@ impl SP1Evaluator {
             _ => {}
         }
 
-        // Get the elf.
         let elf_path = get_elf(args);
         let elf = fs::read(elf_path).unwrap();
-        let cycles = get_cycles(&elf, &stdin);
+        if std::env::var("SAVE").unwrap_or_default() == "1" {
+            let stdin_bytes = bincode::serialize(&stdin).unwrap();
+            fs::write("stdin.bin", &stdin_bytes).unwrap();
+            std::process::Command::new("aws")
+                .args(&[
+                    "s3",
+                    "cp",
+                    &format!("stdin.bin"),
+                    &format!("s3://sp1-testing-suite/{}/stdin.bin", args.program.to_string())
+                ])
+                .status()
+                .expect("Failed to upload stdin.bin to S3");
+
+            fs::write("program.bin", &elf).unwrap();
+            std::process::Command::new("aws")
+                .args(&[
+                    "s3", 
+                    "cp",
+                    &format!("program.bin"),
+                    &format!("s3://sp1-testing-suite/{}/program.bin", args.program.to_string())
+                ])
+                .status()
+                .expect("Failed to upload program.bin to S3");
+            std::process::exit(0);
+        }
+
+        // Get the elf. 
+        let cycles = get_cycles(&elf, &stdin); 
 
         let prover = SP1Prover::<DefaultProverComponents>::new();
 

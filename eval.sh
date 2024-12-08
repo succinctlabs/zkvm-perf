@@ -94,7 +94,7 @@ if [ "$2" == "risc0" ]; then
 fi
 
 # Run the benchmark.
-CUDA_VISIBLE_DEVICES=0 SP1_GPU_IMAGE="public.ecr.aws/succinct-labs/moongate:latest" cargo run \
+CUDA_VISIBLE_DEVICES=0 cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
