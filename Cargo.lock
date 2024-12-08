@@ -4420,7 +4420,7 @@ dependencies = [
 [[package]]
 name = "risc0-binfmt"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "borsh",
@@ -4434,7 +4434,7 @@ dependencies = [
 [[package]]
 name = "risc0-build"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -4452,7 +4452,7 @@ dependencies = [
 [[package]]
 name = "risc0-build-kernel"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "cc",
  "directories",
@@ -4467,7 +4467,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-recursion"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "bytemuck",
@@ -4492,7 +4492,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-recursion-sys"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -4504,7 +4504,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-rv32im"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "auto_ops",
@@ -4536,7 +4536,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-rv32im-sys"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -4548,7 +4548,7 @@ dependencies = [
 [[package]]
 name = "risc0-core"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "bytemuck",
  "nvtx",
@@ -4559,7 +4559,7 @@ dependencies = [
 [[package]]
 name = "risc0-groth16"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "ark-bn254",
@@ -4583,7 +4583,7 @@ dependencies = [
 [[package]]
 name = "risc0-sys"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "cc",
@@ -4595,7 +4595,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkp"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "anyhow",
  "blake2",
@@ -4625,7 +4625,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkvm"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "addr2line",
  "anyhow",
@@ -4665,7 +4665,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkvm-platform"
 version = "1.2.0"
-source = "git+https://github.com/risc0/risc0.git?branch=erik%2Fbump-1.2.0#f50162dcd3468d51e454853a85cc697903304e05"
+source = "git+https://github.com/risc0/risc0.git?rev=baf81cdbab100e706f5f8241fc47701c662111cd#baf81cdbab100e706f5f8241fc47701c662111cd"
 dependencies = [
  "bytemuck",
  "getrandom",

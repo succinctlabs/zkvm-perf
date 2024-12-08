@@ -25,7 +25,7 @@ sp1-cuda = { git = "https://github.com/succinctlabs/sp1-wip.git", rev = "b3d293b
 sp1-stark = { git = "https://github.com/succinctlabs/sp1-wip.git", rev = "b3d293b9916aeca9dba59d8778e796335b7f6e58" }
 
 # risc0
-risc0-zkvm = { git = "https://github.com/risc0/risc0.git", branch = "erik/bump-1.2.0", default-features = false, features = [
+risc0-zkvm = { git = "https://github.com/risc0/risc0.git", rev = "baf81cdbab100e706f5f8241fc47701c662111cd", default-features = false, features = [
   "prove",
 ], optional = true }
 
