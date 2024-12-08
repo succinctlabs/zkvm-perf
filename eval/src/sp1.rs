@@ -203,7 +203,10 @@ impl SP1Evaluator {
         // Get the elf. 
         let cycles = get_cycles(&elf, &stdin); 
 
-        let prover = SP1Prover::<DefaultProverComponents>::new();
+        let mut prover = SP1Prover::<DefaultProverComponents>::new();
+
+        #[cfg(feature = "cuda")]
+        prover.single_shard_programs = None;
 
         #[cfg(feature = "cuda")]
         let server = SP1CudaProver::new().expect("Failed to initialize CUDA prover");
