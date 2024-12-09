@@ -93,7 +93,7 @@ if [ "$2" == "risc0" ]; then
  fi
 fi
 
-# Run the benchmark.
+# Run the benchmark and capture its exit status
 CUDA_VISIBLE_DEVICES=0 cargo run \
     -p sp1-benchmarks-eval \
     --release \
@@ -106,3 +106,5 @@ CUDA_VISIBLE_DEVICES=0 cargo run \
     --shard-size "$4" \
     --filename "$5" \
     ${6:+--block-number $6}
+
+exit $?
