@@ -1,6 +1,5 @@
-
 #![no_main]
-risc0_zkvm::guest::entry!(main);
+sp1_zkvm::entrypoint!(main);
 
 use helios_consensus_core::consensus_spec::MainnetConsensusSpec;
 use helios_consensus_core::types::Forks;
@@ -24,7 +23,7 @@ pub struct ProofInputs {
 }
 
 fn main() {
-    let encoded_inputs: Vec<u8> = risc0_zkvm::guest::env::read();
+    let encoded_inputs = sp1_zkvm::io::read_vec();
 
     let ProofInputs {
         sync_committee_updates,

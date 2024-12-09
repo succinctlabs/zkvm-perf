@@ -1,0 +1,27 @@
+[workspace]
+[package]
+name = "helios-sp1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# helios
+helios-consensus-core = { git = "https://github.com/a16z/helios", version = "0.7.0" }
+serde_cbor = "0.11.2"
+ssz-rs = { package = "ssz_rs", version = "0.9.0" }
+alloy-primitives = "0.7.7"
+sp1-zkvm = { git = "https://github.com/succinctlabs/sp1", branch = "dev" }
+tree_hash = "0.7.0"
+serde = "1.0.203"
+
+[patch.crates-io]
+sha2-v0-9-9 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", branch = "patch-sha2-v0.9.9" }
+sha2-v0-10-8 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", branch = "patch-sha2-v0.10.8" }
+tiny-keccak = { git = "https://github.com/sp1-patches/tiny-keccak", branch = "patch-v2.0.2" }
+# From upstream: https://github.com/a16z/helios/blob/master/Cargo.toml#L116C29-L116C72
+ethereum_hashing = { git = "https://github.com/ncitron/ethereum_hashing", rev = "7ee70944ed4fabe301551da8c447e4f4ae5e6c35" }
+bls12_381 = { git = "https://github.com/sp1-patches/bls12_381", branch = "patch-v0.8.0" }
+
+[features]
+risc0 = []
+sp1 = []

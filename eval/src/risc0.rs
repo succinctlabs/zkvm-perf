@@ -163,7 +163,7 @@ impl Risc0Evaluator {
             },
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
-                build.write(input.to_vec());
+                builder.write(&input.to_vec());
             }
             _ => {}
         }
@@ -303,7 +303,7 @@ impl Risc0Evaluator {
             },
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
-                build.write(input.to_vec());
+                builder.write(&input.to_vec());
             }
             _ => {}
         }
