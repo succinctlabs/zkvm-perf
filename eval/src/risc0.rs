@@ -161,6 +161,10 @@ impl Risc0Evaluator {
             ProgramId::EDDSAVerify => {
                 builder.write(&rand_eddsa_signature());
             },
+            ProgramId::Helios => {
+                let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
+                build.write(input.to_vec());
+            }
             _ => {}
         }
         let env = builder.build().unwrap();
@@ -297,6 +301,10 @@ impl Risc0Evaluator {
             ProgramId::EDDSAVerify => {
                 builder.write(&rand_eddsa_signature());
             },
+            ProgramId::Helios => {
+                let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
+                build.write(input.to_vec());
+            }
             _ => {}
         }
         let env = builder.build().unwrap();
