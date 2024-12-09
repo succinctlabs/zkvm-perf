@@ -54,7 +54,7 @@ if [ "$2" == "risc0" ]; then
     # Use the risc0 toolchain.
     CC=clang \
     CFLAGS_riscv32im_risc0_zkvm_elf="-target riscv32-unknown-elf" \
-    CFLAGS="--sysroot=/opt/riscv/bin/riscv32-unknown-elf --gcc-toolchain=/opt/riscv32-unknown-elf-gcc" \
+    CFLAGS_riscv32im_risc0_zkvm_elf="--sysroot=/opt/riscv/riscv32-unknown-elf --gcc-toolchain=/opt/riscv32-unknown-elf-gcc" \
     RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
         RUSTUP_TOOLCHAIN=risc0 \
         CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
