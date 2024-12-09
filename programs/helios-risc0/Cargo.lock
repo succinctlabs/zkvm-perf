@@ -4425,8 +4425,3 @@ dependencies = [
  "quote",
  "syn 2.0.90",
 ]
-
-[[patch.unused]]
-name = "ed25519-consensus"
-version = "2.1.0"
-source = "git+https://github.com/risc0/ed25519-consensus?rev=8a6d26d1fcd377f9322ba83d3732d04c157e4778#8a6d26d1fcd377f9322ba83d3732d04c157e4778"

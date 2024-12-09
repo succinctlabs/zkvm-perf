@@ -52,7 +52,9 @@ fi
 if [ "$2" == "risc0" ]; then
     echo "Building Risc0"
     # Use the risc0 toolchain.
-    CC=clang CFLAGS_riscv32im_risc0_zkvm_elf="-target riscv32-unknown-elf" \
+    CC=gcc \
+    CC_riscv32im_risc0_zkvm_elf=/opt/riscv/bin/riscv32-unknown-elf-gcc \
+    CFLAGS="-I/opt/riscv/riscv32-unknown-elf/include/"
     RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
         RUSTUP_TOOLCHAIN=risc0 \
         CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
