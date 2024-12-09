@@ -51,7 +51,8 @@ PROGRAMS=(
     "rsp20528711"
     "rsp20528712"
     "ecdsa-verify"
-    "eddsa-verify"
+    "eddsa-verify",
+    "helios"
 )
 
 # Get the current git branch.

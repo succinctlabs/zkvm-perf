@@ -30,6 +30,9 @@ fi
 if [[ $program_directory == ecdsa-verify* ]]; then
     program_directory="ecdsa-verify-$2"
 fi
+if [[ $program_directory == helios* ]]; then
+    program_directory="helios-$2"
+fi
 
 echo "Building program"
 

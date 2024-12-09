@@ -169,6 +169,10 @@ impl SP1Evaluator {
             ProgramId::EDDSAVerify => {
                 stdin.write(&rand_eddsa_signature());
             },
+            ProgramId::Helios => {
+                let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
+                stdin.write_vec(input.to_vec());
+            }
             _ => {}
         }
 

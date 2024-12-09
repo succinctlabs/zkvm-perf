@@ -63,6 +63,8 @@ pub enum ProgramId {
     // Signatures
     ECDSAVerify,    
     EDDSAVerify,
+
+    Helios,
 }
 
 impl ProgramId {
@@ -132,6 +134,8 @@ impl ProgramId {
             // Signatures
             ProgramId::ECDSAVerify => 1,
             ProgramId::EDDSAVerify => 1,
+
+            ProgramId::Helios => 1,
         }
     }
 }
@@ -199,6 +203,7 @@ impl Display for ProgramId {
             ProgramId::Rsp20528712 => write!(f, "rsp-20528712"),
             ProgramId::ECDSAVerify => write!(f, "ecdsa-verify"),
             ProgramId::EDDSAVerify => write!(f, "eddsa-verify"),
+            ProgramId::Helios => write!(f, "helios"),
         }
     }
 }
