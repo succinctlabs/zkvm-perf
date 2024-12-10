@@ -164,6 +164,16 @@ impl Risc0Evaluator {
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
                 builder.write(&input.to_vec());
+            },
+            ProgramId::Groth16ProofVerify => {
+                // let current_dir = std::env::current_dir().expect("Failed to get current working directory");
+                //
+                //let elf_path = 
+                //    current_dir.join("programs/fibonacci/target/riscv32im-risc0-zkvm-elf/release/fibonacci"); 
+                //
+                //let elf = fs::read(elf_path).unwrap();
+                
+                
             }
             _ => {}
         }
