@@ -63,6 +63,7 @@ jobs:
             g++
 
       - name: Check CUDA installation
+        if: ${{ contains(matrix.instance, 'g6') }}
         run: |
           echo "Checking CUDA paths..."
           ls -l /usr/local/cuda* || true
@@ -71,16 +72,19 @@ jobs:
           which nvcc || true
 
       - name: Setup CUDA paths
+        if: ${{ contains(matrix.instance, 'g6') }}
         run: |
           echo "/usr/local/cuda-12.4/bin" >> $GITHUB_PATH
           echo "LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
           echo "CUDA_HOME=/usr/local/cuda-12.4" >> $GITHUB_ENV
 
       - name: Run nvidia-smi
+        if: ${{ contains(matrix.instance, 'g6') }}
         run: |
           nvidia-smi
 
       - name: Check nvcc version
+        if: ${{ contains(matrix.instance, 'g6') }}
         run: |
           nvcc --version
 

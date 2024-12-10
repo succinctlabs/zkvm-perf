@@ -40,5 +40,6 @@ rand_core = "0.6.4"
 serde = "1.0.215"
 
 [features]
+default = []
 cuda = ["dep:sp1-cuda", "risc0-zkvm?/cuda"]
 risc0 = ["dep:risc0-zkvm"]
