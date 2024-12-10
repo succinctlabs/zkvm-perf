@@ -5732,6 +5732,7 @@ dependencies = [
  "k256",
  "rand",
  "rand_core",
+ "risc0-groth16",
  "risc0-zkvm",
  "serde",
  "serde_json",

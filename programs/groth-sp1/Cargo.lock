@@ -43,7 +43,7 @@ checksum = "bcfcc3cd946cb52f0bbfdbbcfa2f4e24f75ebb6c0e1002f7c25904fada18b9ec"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.90",
 ]
 
 [[package]]
@@ -257,7 +257,7 @@ checksum = "ad1e866f866923f252f05c889987993144fb74e722403468a4ebd70c3cd756c0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.90",
 ]
 
 [[package]]
@@ -273,15 +273,6 @@ dependencies = [
 
 [[package]]
 name = "sp1-lib"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1?branch=dev#aa5d95360403878c947d1e72b84d7f24cc5ce228"
-dependencies = [
- "bincode",
- "serde",
-]
-
-[[package]]
-name = "sp1-lib"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5729da1b05d56c01457e5ecabdc77f1cc941df23f2921163a2f325aec22428"
@@ -291,21 +282,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "sp1-lib"
+version = "4.0.0-rc.2"
+source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+dependencies = [
+ "bincode",
+ "serde",
+]
+
+[[package]]
 name = "sp1-verifier"
-version = "3.0.0"
-source = "git+https://github.com/succinctlabs/sp1?branch=dev#aa5d95360403878c947d1e72b84d7f24cc5ce228"
+version = "4.0.0-rc.2"
+source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
 dependencies = [
  "hex",
  "lazy_static",
  "sha2",
  "substrate-bn-succinct",
- "thiserror",
+ "thiserror-no-std",
 ]
 
 [[package]]
 name = "sp1-zkvm"
-version = "3.0.1"
-source = "git+https://github.com/succinctlabs/sp1?branch=dev#aa5d95360403878c947d1e72b84d7f24cc5ce228"
+version = "4.0.0-rc.2"
+source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
 dependencies = [
  "cfg-if",
  "getrandom",
@@ -313,7 +313,7 @@ dependencies = [
  "libm",
  "rand",
  "sha2",
- "sp1-lib 3.0.0",
+ "sp1-lib 4.0.0-rc.2",
 ]
 
 [[package]]
@@ -341,6 +341,17 @@ dependencies = [
 
 [[package]]
 name = "syn"
+version = "1.0.109"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
+name = "syn"
 version = "2.0.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "919d3b74a5dd0ccd15aeb8f93e7006bd9e14c295087c9896a110f490752bcf31"
@@ -351,23 +362,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "thiserror"
-version = "2.0.6"
+name = "thiserror-impl-no-std"
+version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fec2a1820ebd077e2b90c4df007bebf344cd394098a13c563957d0afc83ea47"
-dependencies = [
- "thiserror-impl",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "2.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d65750cab40f4ff1929fb1ba509e9914eb756131cef4210da8d5d700d26f6312"
+checksum = "58e6318948b519ba6dc2b442a6d0b904ebfb8d411a3ad3e07843615a72249758"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "thiserror-no-std"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3ad459d94dd517257cc96add8a43190ee620011bb6e6cdc82dafd97dfafafea"
+dependencies = [
+ "thiserror-impl-no-std",
 ]
 
 [[package]]
@@ -412,5 +423,5 @@ checksum = "fa4f8080344d4671fb4e831a13ad1e68092748387dfc4f55e356242fae12ce3e"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn",
+ "syn 2.0.90",
 ]
