@@ -67,7 +67,7 @@ def main():
         "--programs",
         nargs="+",
         default=[
-            "sha2563mb",
+            # "sha2563mb",
             # "loop100k",
             # "loop1m",
             # "loop3m",
@@ -160,6 +160,8 @@ def main():
             "rsp20528712",
             "ecdsa-verify",
             "eddsa-verify",
+            "helios",
+            "groth16-proof-verify"
         ],
     )
     parser.add_argument(

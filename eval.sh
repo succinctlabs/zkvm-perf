@@ -30,6 +30,12 @@ fi
 if [[ $program_directory == ecdsa-verify* ]]; then
     program_directory="ecdsa-verify-$2"
 fi
+if [[ $program_directory == helios* ]]; then
+    program_directory="helios-$2"
+fi
+if [[ $program_directory == groth16-proof-verify* ]]; then
+    program_directory="groth-$2"
+fi
 
 echo "Building program"
 
@@ -48,7 +54,6 @@ fi
 # If the prover is risc0, then build the program.
 if [ "$2" == "risc0" ]; then
     echo "Building Risc0"
-    # Use the risc0 toolchain.
     RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
         RUSTUP_TOOLCHAIN=risc0 \
         CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
@@ -80,7 +85,7 @@ export RUST_LOG=debug
 
 # Determine the features based on GPU existence.
 if [ "$GPU_EXISTS" = true ]; then
-  FEATURES="cuda"
+  FEATURES="default"
 else
   FEATURES="default"
 fi

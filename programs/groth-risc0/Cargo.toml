@@ -1,0 +1,14 @@
+[workspace]
+[package]
+name = "groth-risc0"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+risc0-zkvm = { version = "1.2.0", default-features = false, features = ["std"] }
+risc0-groth16 = { version = "1.2.0"  }
+serde_json = "1.0.133"
+
+[features]
+risc0 = []
+sp1 = []
