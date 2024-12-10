@@ -33,6 +33,9 @@ fi
 if [[ $program_directory == helios* ]]; then
     program_directory="helios-$2"
 fi
+if [[ $program_directory == groth16-proof-verify* ]]; then
+    program_directory="groth-$2"
+fi
 
 echo "Building program"
 

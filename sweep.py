@@ -160,7 +160,8 @@ def main():
             "rsp20528712",
             "ecdsa-verify",
             "eddsa-verify",
-            "helios"
+            "helios",
+            "groth16-proof-verify"
         ],
     )
     parser.add_argument(

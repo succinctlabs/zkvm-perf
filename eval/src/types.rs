@@ -65,6 +65,8 @@ pub enum ProgramId {
     EDDSAVerify,
 
     Helios,
+
+    Groth16ProofVerify,
 }
 
 impl ProgramId {
@@ -136,6 +138,8 @@ impl ProgramId {
             ProgramId::EDDSAVerify => 1,
 
             ProgramId::Helios => 1,
+
+            ProgramId::Groth16ProofVerify => 1,
         }
     }
 }
@@ -204,6 +208,7 @@ impl Display for ProgramId {
             ProgramId::ECDSAVerify => write!(f, "ecdsa-verify"),
             ProgramId::EDDSAVerify => write!(f, "eddsa-verify"),
             ProgramId::Helios => write!(f, "helios"),
+            ProgramId::Groth16ProofVerify => write!(f, "groth16-proof-verify"),
         }
     }
 }

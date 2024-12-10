@@ -9,6 +9,7 @@ use sp1_core_executor::SP1Context;
 
 use sp1_core_machine::io::SP1Stdin;
 use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover};
+use sp1_prover::HashableKey;
 
 #[cfg(feature = "cuda")]
 use sp1_cuda::SP1CudaProver;
@@ -172,6 +173,25 @@ impl SP1Evaluator {
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
                 stdin.write_vec(input.to_vec());
+            },
+            ProgramId::Groth16ProofVerify => {
+                let current_dir = std::env::current_dir().expect("Failed to get current working directory");
+
+                let elf_path = 
+                    current_dir.join("programs/fibonacci/target/riscv32im-succinct-zkvm-elf/release/fibonacci"); 
+
+                let elf = fs::read(elf_path).unwrap();
+
+                let mut input = SP1Stdin::new();
+                input.write(&20_u32);
+
+                let client = sp1_sdk::ProverClient::cpu();
+                let (pk, vk) = client.setup(&elf);
+                let proof = client.prove(&pk, input).groth16().run().unwrap();
+                
+                stdin.write_vec(proof.bytes());
+                stdin.write_vec(proof.public_values.to_vec());
+                stdin.write(&vk.bytes32());
             }
             _ => {}
         }
