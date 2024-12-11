@@ -18,6 +18,8 @@ use risc0_groth16::{
     Fr, ProofJson, PublicInputsJson, Seal, Verifier, VerifyingKey, VerifyingKeyJson,
 };
 
+use serde::{Deserialize, Serialize};
+
 use crate::{EvalArgs, PerformanceReport};
 use std::time::Duration;
 
@@ -192,6 +194,7 @@ impl Risc0Evaluator {
             },
             ProgramId::ZKEmail => {
                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                #[serde(rename_all = "camelCase")]
                 struct EmailInputs {
                     public_key: String,
                     signature: String,
@@ -366,6 +369,7 @@ impl Risc0Evaluator {
             },
             ProgramId::ZKEmail => {
                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                #[serde(rename_all = "camelCase")]
                 struct EmailInputs {
                     public_key: String,
                     signature: String,

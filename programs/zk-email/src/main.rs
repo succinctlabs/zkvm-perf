@@ -1,5 +1,11 @@
 #![no_main]
+
+#[cfg(feature = "sp1")]
 sp1_zkvm::entrypoint!(main);
+
+#[cfg(feature = "risc0")]
+risc0_zkvm::guest::entry!(main);
+
 use std::str::FromStr;
 
 use base64::prelude::*;
@@ -10,7 +16,12 @@ use rsa::{BigUint, Pkcs1v15Sign, RsaPublicKey};
 use sp1_rsa::{BigUint, Pkcs1v15Sign, RsaPublicKey};
 
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
+
+#[cfg(feature = "risc0")]
+use sha2_risc0::{Digest, Sha256};
+
+#[cfg(feature = "sp1")]
+use sha2_sp1::{Digest, Sha256};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct EmailInputs {
@@ -22,13 +33,26 @@ struct EmailInputs {
 }
 
 pub fn main() {
-    let email_inputs = sp1_zkvm::io::read::<EmailInputs>();
+    #[cfg(feature = "sp1")]
+    let email_inputs: EmailInputs = sp1_zkvm::io::read();
+
+    #[cfg(feature = "risc0")]
+    let email_inputs: EmailInputs = risc0_zkvm::guest::env::read();
 
     let signature_verified = verify_signature(&email_inputs);
     let body_verified = verify_body(&email_inputs);
+    
+    #[cfg(feature = "sp1")]
+    {
+        sp1_zkvm::io::commit(&signature_verified);
+        sp1_zkvm::io::commit(&body_verified);
+    }
 
-    sp1_zkvm::io::commit(&signature_verified);
-    sp1_zkvm::io::commit(&body_verified);
+    #[cfg(feature = "risc0")]
+    {
+        risc0_zkvm::guest::env::commit(&signature_verified);
+        risc0_zkvm::guest::env::commit(&body_verified);
+    }
 }
 
 fn verify_body(email_inputs: &EmailInputs) -> bool {
