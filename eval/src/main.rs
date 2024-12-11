@@ -29,6 +29,10 @@ pub struct EvalArgs {
     filename: String,
     #[arg(long)]
     block_number: Option<u64>,
+    #[arg(long)]
+    groth16: bool,
+    #[arg(long)]
+    plonk: bool,
 }
 
 /// The performance report of a zkVM on a program.
@@ -55,6 +59,7 @@ pub struct PerformanceReport {
     pub execution_duration: f64,
     /// The reported duration of the prover in seconds.
     pub prove_duration: f64,
+
     /// The reported duration of the core proving time in seconds.
     pub core_prove_duration: f64,
     /// The reported duration of the verifier in seconds.
@@ -63,12 +68,23 @@ pub struct PerformanceReport {
     pub core_proof_size: usize,
     /// The speed of the core proving time in KHz.
     pub core_khz: f64,
+
     /// The reported duration of the recursive proving time in seconds.
     pub compress_prove_duration: f64,
     /// The reported duration of the verifier in seconds.
     pub compress_verify_duration: f64,
     /// The size of the recursive proof in bytes.
     pub compress_proof_size: usize,
+
+    /// The reported duration of the shrink proving time in seconds.
+    pub shrink_prove_duration: f64,
+    /// The reported duration of the wrap proving time in seconds.
+    pub wrap_prove_duration: f64,
+    /// The reported duration of the groth16 proving time in seconds.
+    pub groth16_prove_duration: f64,
+    /// The reported duration of the plonk proving time in seconds.
+    pub plonk_prove_duration: f64,
+
     /// The overall speed in KHz.
     pub overall_khz: f64,
     /// The number of hashes per second

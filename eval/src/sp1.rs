@@ -1,3 +1,4 @@
+use core::time;
 use std::fs;
 
 use crate::{
@@ -6,9 +7,9 @@ use crate::{
 };
 
 use sp1_core_executor::SP1Context;
-
+use sp1_prover::build::try_build_groth16_bn254_artifacts_dev;
 use sp1_core_machine::io::SP1Stdin;
-use sp1_prover::{components::DefaultProverComponents, utils::get_cycles, SP1Prover};
+use sp1_prover::{components::CpuProverComponents, utils::get_cycles, SP1Prover};
 use sp1_prover::HashableKey;
 
 #[cfg(feature = "cuda")]
@@ -228,8 +229,10 @@ impl SP1Evaluator {
         let cycles = get_cycles(&elf, &stdin); 
         println!("cycles: {}", cycles);
 
-        let mut prover = SP1Prover::<DefaultProverComponents>::new();
+        let prover = SP1Prover::<CpuProverComponents>::new();
 
+        // why did i do this, i do not remember.
+        //
         // #[cfg(feature = "cuda")]
         // {
         //     prover.single_shard_programs = None;
@@ -247,8 +250,8 @@ impl SP1Evaluator {
 
         // Execute the program.
         let context = SP1Context::default();
-        let (_, execution_duration) =
-            time_operation(|| prover.execute(&elf, &stdin, context.clone()));
+        let ((pv, _), execution_duration) =
+            time_operation(|| prover.execute(&elf, &stdin, context.clone()).unwrap());
 
         // Setup the prover opionts.
         #[cfg(not(feature = "cuda"))]
@@ -287,8 +290,61 @@ impl SP1Evaluator {
             prover.verify_compressed(&compress_proof, &vk).expect("Proof verification failed")
         });
 
-        let prove_duration = prove_core_duration + compress_duration;
+        #[cfg(not(feature = "cuda"))]
+        let (shrink_proof, shrink_prove_duration) =
+            time_operation(|| prover.shrink(compress_proof.clone(), opts).unwrap());
 
+        #[cfg(feature = "cuda")]
+        let (shrink_proof, shrink_prove_duration) =
+            time_operation(|| server.shrink(compress_proof.clone()).unwrap());
+
+        let shrink_bytes = bincode::serialize(&shrink_proof).unwrap();
+
+        prover.verify_shrink(&shrink_proof, &vk).expect("Proof verification failed");
+
+        // Warm up the prover.
+        #[cfg(not(feature = "cuda"))]
+        let (wrap_proof, wrap_prove_duration) =
+            time_operation(|| prover.wrap_bn254(shrink_proof.clone(), opts).unwrap());
+
+        #[cfg(not(feature = "cuda"))]
+        let (wrap_proof, wrap_prove_duration) =
+            time_operation(|| prover.wrap_bn254(shrink_proof, opts).unwrap());
+
+        // Warm up the prover.
+        #[cfg(feature = "cuda")]
+        let (wrap_proof, wrap_prove_duration) =
+            time_operation(|| server.wrap_bn254(shrink_proof.clone()).unwrap());
+
+        #[cfg(feature = "cuda")]
+        let (wrap_proof, wrap_prove_duration) =
+            time_operation(|| server.wrap_bn254(shrink_proof).unwrap());
+
+        let wrap_bytes = bincode::serialize(&wrap_proof).unwrap();
+
+        let mut groth16_prove_duration = time::Duration::from_secs(0);
+        if args.groth16 { 
+            let artifacts_dir =
+                try_build_groth16_bn254_artifacts_dev(&wrap_proof.vk, &wrap_proof.proof);
+
+            // Warm up the prover.
+            prover.wrap_groth16_bn254(wrap_proof.clone(), &artifacts_dir);
+
+            let (groth16_proof, tmp_groth16_duration) =
+                time_operation(|| prover.wrap_groth16_bn254(wrap_proof, &artifacts_dir));
+            groth16_prove_duration = tmp_groth16_duration;
+
+            prover
+                .verify_groth16_bn254(&groth16_proof, &vk, &pv, &artifacts_dir)
+                .expect("Proof verification failed");
+        } 
+ 
+        let plonk_prove_duration = time::Duration::from_secs(0);
+        if args.plonk {
+            todo!()
+        }
+
+        let prove_duration = prove_core_duration + compress_duration;
         let core_khz = cycles as f64 / prove_core_duration.as_secs_f64() / 1_000.0;
         let overall_khz = cycles as f64 / prove_duration.as_secs_f64() / 1_000.0;
 
@@ -311,6 +367,10 @@ impl SP1Evaluator {
             compress_prove_duration: compress_duration.as_secs_f64(),
             compress_verify_duration: verify_compress_duration.as_secs_f64(),
             compress_proof_size: compress_bytes.len(),
+            shrink_prove_duration: shrink_prove_duration.as_secs_f64(),
+            wrap_prove_duration: wrap_prove_duration.as_secs_f64(),
+            groth16_prove_duration: groth16_prove_duration.as_secs_f64(),
+            plonk_prove_duration: plonk_prove_duration.as_secs_f64(),
             overall_khz,
             gas: gas_amount(&args.program),
             hashes_per_second: hashes_per_second(&args.program, prove_duration),
@@ -318,21 +378,3 @@ impl SP1Evaluator {
         }
     }
 }
-
-// let stdin_bytes = bincode::serialize(&stdin).unwrap();
-// let stdin_path = format!("{}/stdin.bin", args.program.to_string());
-// let elf_path = format!("{}/elf.bin", args.program.to_string());
-// fs::create_dir_all(args.program.to_string()).unwrap();
-// fs::write(format!("{}/stdin.bin", args.program.to_string()), &stdin_bytes).unwrap();
-// fs::write(format!("{}/program.bin", args.program.to_string()), &elf).unwrap();
-// let command = format!(
-//     "aws s3 cp --recursive {} s3://sp1-testing-suite/{}",
-//     args.program.to_string(),
-//     args.program.to_string()
-// );
-// Command::new("bash")
-//     .arg("-c")
-//     .arg(&command)
-//     .status()
-//     .expect("Failed to execute command");
-// exit(0);
