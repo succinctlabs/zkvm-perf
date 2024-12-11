@@ -249,7 +249,7 @@ impl SP1Evaluator {
 
         // Setup the prover opionts.
         #[cfg(not(feature = "cuda"))]
-        let opts = SP1ProverOpts::default();
+        let opts = SP1ProverOpts::auto();
 
         // Generate the core proof (CPU).
         #[cfg(not(feature = "cuda"))]
