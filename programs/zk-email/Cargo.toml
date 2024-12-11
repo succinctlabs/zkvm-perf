@@ -1,6 +1,6 @@
 [workspace]
 [package]
-name = "zk-email-sp1"
+name = "zk-email"
 version = "0.1.0"
 edition = "2021"
 
