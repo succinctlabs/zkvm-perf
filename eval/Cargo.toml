@@ -18,19 +18,19 @@ serde_json = "1.0"
 chrono = "0.4.38"
 
 # sp1
-# sp1-prover = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
-# sp1-core-executor = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
-# sp1-core-machine = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
-# sp1-cuda = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2", optional = true }
-# sp1-stark = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
-# sp1-sdk = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
+sp1-prover = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen" }
+sp1-core-executor = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen" }
+sp1-core-machine = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen" }
+sp1-cuda = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen", optional = true }
+sp1-stark = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen" }
+sp1-sdk = { git = "https://github.com/succinctlabs/sp1-wip.git", branch = "min/eclogup-tracegen" }
 
-sp1-prover = { path = "../../sp1/crates/prover", features = ["native-gnark"] }
-sp1-core-executor = { path = "../../sp1/crates/core/executor" }
-sp1-core-machine = { path = "../../sp1/crates/core/machine" }
-sp1-cuda = { path = "../../sp1/crates/cuda", optional = true }
-sp1-stark = { path = "../../sp1/crates/stark" }
-sp1-sdk = { path = "../../sp1/crates/sdk" }
+# sp1-prover = { path = "../../sp1/crates/prover", features = ["native-gnark"] }
+# sp1-core-executor = { path = "../../sp1/crates/core/executor" }
+# sp1-core-machine = { path = "../../sp1/crates/core/machine" }
+# sp1-cuda = { path = "../../sp1/crates/cuda", optional = true }
+# sp1-stark = { path = "../../sp1/crates/stark" }
+# sp1-sdk = { path = "../../sp1/crates/sdk" }
 
 # risc0
 risc0-zkvm = { version = "1.2.0", default-features = false, features = [

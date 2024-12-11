@@ -24,13 +24,7 @@ impl SP1Evaluator {
     pub fn eval(args: &EvalArgs) -> PerformanceReport {
         // Setup the logger.
         sp1_core_machine::utils::setup_logger();
-
-        // Set enviroment variables to configure the prover.
-        std::env::set_var("SHARD_SIZE", format!("{}", 1 << args.shard_size));
-        if args.program == ProgramId::Reth {
-            std::env::set_var("SHARD_CHUNKING_MULTIPLIER", "4");
-        }
-
+ 
         // Get stdin.
         let mut stdin = SP1Stdin::new();
         match args.program { 

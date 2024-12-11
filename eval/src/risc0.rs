@@ -202,7 +202,6 @@ impl Risc0Evaluator {
 
         // Setup the prover.
         let mut builder = ExecutorEnv::builder();
-        builder.segment_limit_po2(args.shard_size as u32);
         match args.program {
             ProgramId::Reth => {
                 let input = get_reth_input(args);
