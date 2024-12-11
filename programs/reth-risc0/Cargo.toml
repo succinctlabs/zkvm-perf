@@ -5,7 +5,7 @@ name = "reth-risc0"
 edition = "2021"
 
 [dependencies]
-risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["std"] }
+risc0-zkvm = { version = "1.2.0", default-features = false, features = ["std"] }
 sp1-reth-primitives = { git = "https://github.com/succinctlabs/sp1-reth.git", branch = "john/update-for-v1" }
 
 alloy-rlp = { version = "0.3", default-features = false }

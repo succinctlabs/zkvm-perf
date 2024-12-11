@@ -12,6 +12,30 @@ fi
 if [[ $program_directory == loop* ]]; then
     program_directory="loop"
 fi
+if [[ $program_directory == fibonacci* ]]; then
+    program_directory="fibonacci"
+fi
+if [[ $program_directory == sha256* ]]; then
+    program_directory="sha256-$2"
+fi
+if [[ $program_directory == keccak256* ]]; then
+    program_directory="keccak256-$2"
+fi
+if [[ $program_directory == rsp* ]]; then
+    program_directory="rsp-$2"
+fi
+if [[ $program_directory == eddsa-verify* ]]; then
+    program_directory="eddsa-verify-$2"
+fi
+if [[ $program_directory == ecdsa-verify* ]]; then
+    program_directory="ecdsa-verify-$2"
+fi
+if [[ $program_directory == helios* ]]; then
+    program_directory="helios-$2"
+fi
+if [[ $program_directory == groth16-proof-verify* ]]; then
+    program_directory="groth-$2"
+fi
 
 echo "Building program"
 
@@ -30,7 +54,6 @@ fi
 # If the prover is risc0, then build the program.
 if [ "$2" == "risc0" ]; then
     echo "Building Risc0"
-    # Use the risc0 toolchain.
     RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
         RUSTUP_TOOLCHAIN=risc0 \
         CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
@@ -58,7 +81,7 @@ else
 fi
 
 # Set the logging level.
-export RUST_LOG=info
+export RUST_LOG=debug
 
 # Determine the features based on GPU existence.
 if [ "$GPU_EXISTS" = true ]; then
@@ -75,16 +98,19 @@ if [ "$2" == "risc0" ]; then
  fi
 fi
 
-# Run the benchmark.
-cargo run \
+# Run the benchmark and capture its exit status
+CUDA_VISIBLE_DEVICES=0 cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \
     --features "$FEATURES" \
     -- \
+    --groth16 \
     --program "$1" \
     --prover "$2" \
     --hashfn "$3" \
     --shard-size "$4" \
     --filename "$5" \
     ${6:+--block-number $6}
+
+exit $?

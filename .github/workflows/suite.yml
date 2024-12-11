@@ -1,0 +1,129 @@
+name: Benchmark Suite
+
+on:
+  workflow_dispatch:
+    inputs:
+      instances:
+        required: true
+        type: string
+      provers:
+        required: true
+        type: string
+      programs:
+        required: true
+        type: string
+      shard_sizes:
+        required: true
+        type: string
+
+jobs:
+  run:
+    strategy:
+      fail-fast: false
+      matrix:
+        prover: ${{ fromJSON(github.event.inputs.provers) }}
+        instance: ${{ fromJSON(github.event.inputs.instances) }}
+        shard_size: ${{ fromJSON(github.event.inputs.shard_sizes) }}
+        program: ${{ fromJSON(github.event.inputs.programs) }}
+    name: Run (${{matrix.prover}}, ${{matrix.program}}, ${{ matrix.instance }}, ${{ matrix.shard_size }})
+    runs-on:
+      [
+        "runs-on",
+        "runner=${{ matrix.instance }}",
+        "spot=false",
+        "run-id=${{ github.run_id }}",
+      ]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4 
+
+      - name: Configure Cargo for private repositories
+        run: |
+          git config --global url."https://${{ secrets.PRIVATE_PULL_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          mkdir -p ~/.cargo
+          echo "[net]" >> ~/.cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> ~/.cargo/config.toml
+
+      - name: Setup workflow
+        uses: ./.github/actions/setup
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC sudo apt-get install -y \
+            curl \
+            build-essential \
+            protobuf-compiler \
+            git \
+            libssl-dev \
+            pkg-config \
+            build-essential \
+            libc6 \
+            gcc \
+            g++
+
+      - name: Check CUDA installation
+        if: ${{ contains(matrix.instance, 'g6') }}
+        run: |
+          echo "Checking CUDA paths..."
+          ls -l /usr/local/cuda* || true
+          echo "CUDA_HOME=$CUDA_HOME"
+          echo "PATH=$PATH"
+          which nvcc || true
+
+      - name: Setup CUDA paths
+        if: ${{ contains(matrix.instance, 'g6') }}
+        run: |
+          echo "/usr/local/cuda-12.4/bin" >> $GITHUB_PATH
+          echo "LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
+          echo "CUDA_HOME=/usr/local/cuda-12.4" >> $GITHUB_ENV
+
+      - name: Run nvidia-smi
+        if: ${{ contains(matrix.instance, 'g6') }}
+        run: |
+          nvidia-smi
+
+      - name: Check nvcc version
+        if: ${{ contains(matrix.instance, 'g6') }}
+        run: |
+          nvcc --version
+
+      - name: Run install.sh
+        run: |
+          bash install.sh
+
+      - name: Make benchmarks directory
+        run: mkdir -p ${{ github.workspace }}/benchmarks
+
+      - name: Run benchmark
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 300
+          max_attempts: 3
+          command: |
+            python3 sweep.py \
+              --filename benchmark  \
+              --trials 1 \
+              --programs ${{ matrix.program }} \
+              --provers ${{ matrix.prover }} \
+              --shard-sizes ${{ matrix.shard_size }}
+
+      - name: List benchmark results
+        run: ls -la ${{ github.workspace }}/benchmarks
+
+      - name: Echo benchmark results
+        run: cat benchmarks/benchmarks_latest.csv
+
+      - name: Append the benchmark results to the google sheet with a lock
+        working-directory: ${{ github.workspace }}
+        run: |
+          python3 -m pip install gspread redis python-redis-lock google-auth
+          python3 append.py
+        env:
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }} 
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_MATRIX_INSTANCE: ${{ matrix.instance }}

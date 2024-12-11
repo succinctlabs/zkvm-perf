@@ -17,7 +17,7 @@ serde_with = { version = "3.4.0", features = ["hex"] }
 serde = { version = "1.0.204", default-features = false, features = ["derive"] }
 alloy-primitives = "0.6.0"
 cfg-if = "1.0.0"
-risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["std"] }
+risc0-zkvm = { version = "1.2.0", default-features = false, features = ["std"] }
 
 [features]
 sp1 = []

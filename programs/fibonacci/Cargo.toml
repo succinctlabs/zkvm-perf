@@ -8,7 +8,7 @@ edition = "2021"
 
 [dependencies]
 sp1-zkvm = { git = "https://github.com/succinctlabs/sp1", branch = "dev" }
-risc0-zkvm = { version = "=1.0.0", default-features = false, features = ["std"] }
+risc0-zkvm = { version = "1.2.0", default-features = false, features = ["std"] }
 serde = { version = "1.0.204", default-features = false, features = ["derive"] }
 
 [features]

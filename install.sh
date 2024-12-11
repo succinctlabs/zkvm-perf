@@ -25,14 +25,10 @@ export PATH="$PATH:$HOME/.sp1/bin"
 sp1up || error_exit "Updating Succinct toolchain"
 cargo prove --version || error_exit "Checking cargo prove version"
 
-# # Install the jolt toolchain
-# cargo install --git https://github.com/a16z/jolt --force --bins jolt || error_exit "Installing jolt toolchain"
-# jolt install-toolchain || error_exit "Installing jolt runtime"
-
 # Install the Risc0 toolchain
-# curl -L https://risczero.com/install | grep -v 'set -euo pipefail' | bash || error_exit "Installing Risc Zero toolchain"
-# export PATH="$PATH:$HOME/.risc0/bin"
-# rzup install || error_exit "Updating Risc Zero toolchain"
-# cargo risczero --version || error_exit "Checking cargo risczero version"
+curl -L https://risczero.com/install | grep -v 'set -euo pipefail' | bash || error_exit "Installing Risc Zero toolchain"
+export PATH="$PATH:$HOME/.risc0/bin"
+rzup install || error_exit "Updating Risc Zero toolchain"
+cargo risczero --version || error_exit "Checking cargo risczero version"
 
 echo "All installations completed successfully."

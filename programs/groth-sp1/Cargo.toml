@@ -1,0 +1,14 @@
+[workspace]
+[package]
+name = "groth-sp1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+sp1-zkvm = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
+sp1-verifier = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
+
+[features]
+risc0 = []
+sp1 = []
