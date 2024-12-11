@@ -138,7 +138,11 @@ fn main() {
                 "priority",
                 "hashes_per_second",
                 "hash_bytes_per_second",
-                "gas"
+                "gas",
+                "shrink_prove_duration",
+                "wrap_prove_duration",
+                "groth16_prove_duration",
+                "plonk_prove_duration",
             ])
             .unwrap();
     }
@@ -165,6 +169,10 @@ fn main() {
             report.hashes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.hash_bytes_per_second.map(|x| x.to_string()).unwrap_or_default(),
             report.gas.map(|x| x.to_string()).unwrap_or_default(),
+            report.shrink_prove_duration.to_string(),
+            report.wrap_prove_duration.to_string(),
+            report.groth16_prove_duration.to_string(),
+            report.plonk_prove_duration.to_string(),
         ])
         .unwrap();
     writer.flush().unwrap();

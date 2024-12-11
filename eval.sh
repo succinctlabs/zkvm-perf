@@ -85,7 +85,7 @@ export RUST_LOG=debug
 
 # Determine the features based on GPU existence.
 if [ "$GPU_EXISTS" = true ]; then
-  FEATURES="cuda"
+  FEATURES="default"
 else
   FEATURES="default"
 fi
