@@ -18,6 +18,7 @@ on:
 
 jobs:
   run:
+    timeout-minutes: 1440
     strategy:
       fail-fast: false
       matrix:
