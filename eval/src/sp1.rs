@@ -192,6 +192,7 @@ impl SP1Evaluator {
             },
             ProgramId::ZKEmail => {
                 #[derive(Serialize, Deserialize, Debug, Clone)]
+                #[serde(rename_all = "camelCase")]
                 struct EmailInputs {
                     public_key: String,
                     signature: String,
