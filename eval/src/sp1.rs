@@ -267,7 +267,7 @@ impl SP1Evaluator {
 
         // Setup the prover opionts.
         #[cfg(not(feature = "cuda"))]
-        let opts = SP1ProverOpts::default();
+        let opts = SP1ProverOpts::auto();
 
         // Generate the core proof (CPU).
         #[cfg(not(feature = "cuda"))]
@@ -302,40 +302,47 @@ impl SP1Evaluator {
             prover.verify_compressed(&compress_proof, &vk).expect("Proof verification failed")
         });
 
-        #[cfg(not(feature = "cuda"))]
-        let (shrink_proof, shrink_prove_duration) =
-            time_operation(|| prover.shrink(compress_proof.clone(), opts).unwrap());
 
-        #[cfg(feature = "cuda")]
-        let (shrink_proof, shrink_prove_duration) =
-            time_operation(|| server.shrink(compress_proof.clone()).unwrap());
 
-        let shrink_bytes = bincode::serialize(&shrink_proof).unwrap();
-
-        prover.verify_shrink(&shrink_proof, &vk).expect("Proof verification failed");
-
-        // Warm up the prover.
-        #[cfg(not(feature = "cuda"))]
-        let (wrap_proof, wrap_prove_duration) =
-            time_operation(|| prover.wrap_bn254(shrink_proof.clone(), opts).unwrap());
-
-        #[cfg(not(feature = "cuda"))]
-        let (wrap_proof, wrap_prove_duration) =
-            time_operation(|| prover.wrap_bn254(shrink_proof, opts).unwrap());
-
-        // Warm up the prover.
-        #[cfg(feature = "cuda")]
-        let (wrap_proof, wrap_prove_duration) =
-            time_operation(|| server.wrap_bn254(shrink_proof.clone()).unwrap());
-
-        #[cfg(feature = "cuda")]
-        let (wrap_proof, wrap_prove_duration) =
-            time_operation(|| server.wrap_bn254(shrink_proof).unwrap());
-
-        let wrap_bytes = bincode::serialize(&wrap_proof).unwrap();
-
+        let mut shrink_prove_duration = time::Duration::from_secs(0);
+        let mut wrap_prove_duration = time::Duration::from_secs(0);
+        let mut wrap_verify_duration = time::Duration::from_secs(0);
         let mut groth16_prove_duration = time::Duration::from_secs(0);
         if args.groth16 { 
+            #[cfg(not(feature = "cuda"))]
+            let (shrink_proof, tmp_shrink_prove_duration) =
+                time_operation(|| prover.shrink(compress_proof.clone(), opts).unwrap());
+    
+            #[cfg(feature = "cuda")]
+            let (shrink_proof, tmp_shrink_prove_duration) =
+                time_operation(|| server.shrink(compress_proof.clone()).unwrap());
+    
+            shrink_prove_duration = tmp_shrink_prove_duration;
+            let shrink_bytes = bincode::serialize(&shrink_proof).unwrap();
+            prover.verify_shrink(&shrink_proof, &vk).expect("Proof verification failed");
+
+            // Warm up the prover.
+            #[cfg(not(feature = "cuda"))]
+            let (wrap_proof, tmp_wrap_prove_duration) =
+                time_operation(|| prover.wrap_bn254(shrink_proof.clone(), opts).unwrap());
+
+            #[cfg(not(feature = "cuda"))]
+            let (wrap_proof, tmp_wrap_prove_duration) =
+                time_operation(|| prover.wrap_bn254(shrink_proof, opts).unwrap());
+
+            // Warm up the prover.
+            #[cfg(feature = "cuda")]
+            let (wrap_proof, tmp_wrap_prove_duration) =
+                time_operation(|| server.wrap_bn254(shrink_proof.clone()).unwrap());
+
+            #[cfg(feature = "cuda")]
+            let (wrap_proof, tmp_wrap_prove_duration) =
+                time_operation(|| server.wrap_bn254(shrink_proof).unwrap());
+
+            wrap_prove_duration = tmp_wrap_prove_duration;
+            let wrap_bytes = bincode::serialize(&wrap_proof).unwrap();
+            prover.verify_wrap_bn254(&wrap_proof, &vk).expect("Proof verification failed");
+
             let artifacts_dir =
                 try_build_groth16_bn254_artifacts_dev(&wrap_proof.vk, &wrap_proof.proof);
 

@@ -18,6 +18,7 @@ on:
 
 jobs:
   run:
+    timeout-minutes: 1440
     strategy:
       fail-fast: false
       matrix:
@@ -96,17 +97,13 @@ jobs:
         run: mkdir -p ${{ github.workspace }}/benchmarks
 
       - name: Run benchmark
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 300
-          max_attempts: 3
-          command: |
-            python3 sweep.py \
-              --filename benchmark  \
-              --trials 1 \
-              --programs ${{ matrix.program }} \
-              --provers ${{ matrix.prover }} \
-              --shard-sizes ${{ matrix.shard_size }}
+        run: |
+          python3 sweep.py \
+            --filename benchmark  \
+            --trials 1 \
+            --programs ${{ matrix.program }} \
+            --provers ${{ matrix.prover }} \
+            --shard-sizes ${{ matrix.shard_size }}
 
       - name: List benchmark results
         run: ls -la ${{ github.workspace }}/benchmarks
