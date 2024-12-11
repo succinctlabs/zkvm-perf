@@ -19,6 +19,7 @@ use risc0_groth16::{
 };
 
 use crate::{EvalArgs, PerformanceReport};
+use std::time::Duration;
 
 pub struct Risc0Evaluator;
 
@@ -388,6 +389,25 @@ impl Risc0Evaluator {
 
         let succinct_receipt = compressed_proof.inner.succinct().unwrap();
 
+        let mut shrink_prove_duration = std::time::Duration::from_secs(0);
+        let mut wrap_prove_duration = std::time::Duration::from_secs(0);
+        let mut groth16_prove_duration = std::time::Duration::from_secs(0);
+
+        if args.groth16 {
+            // Bn254 wrapping duration
+            let (bn254_proof, tmp_bn254_compress_duration) = time_operation(|| {
+                prover.identity_p254(&compressed_proof.inner.succinct().unwrap()).unwrap()
+            });
+            let seal_bytes = bn254_proof.get_seal_bytes();
+            println!("Running groth16 wrapper");
+            let (_groth16_proof, tmp_groth16_duration) =
+                time_operation(|| risc0_zkvm::stark_to_snark(&seal_bytes).unwrap());
+
+            println!("Done running groth16");
+            wrap_prove_duration = tmp_bn254_compress_duration;
+            groth16_prove_duration = tmp_groth16_duration;
+        }
+
         // Get the recursive proof size.
         let recursive_proof_size = succinct_receipt.seal.len() * 4;
         let prove_duration = core_prove_duration + compress_duration;
@@ -418,6 +438,10 @@ impl Risc0Evaluator {
             gas: gas_amount(&args.program),
             hashes_per_second: hashes_per_second(&args.program, prove_duration),
             hash_bytes_per_second: hash_bytes_per_second(&args.program, prove_duration),
+            shrink_prove_duration: shrink_prove_duration.as_secs_f64(),
+            wrap_prove_duration: wrap_prove_duration.as_secs_f64(),
+            groth16_prove_duration: groth16_prove_duration.as_secs_f64(),
+            plonk_prove_duration: 0.0,
         }
     }
 

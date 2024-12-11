@@ -5748,8 +5748,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-build"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -5760,11 +5759,11 @@ dependencies = [
 
 [[package]]
 name = "sp1-core-executor"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "bincode",
  "bytemuck",
+ "clap",
  "elf",
  "enum-map",
  "eyre",
@@ -5774,11 +5773,14 @@ dependencies = [
  "log",
  "nohash-hasher",
  "num",
+ "p3-baby-bear",
  "p3-field",
  "p3-maybe-rayon",
+ "p3-util",
  "rand",
  "rrs-succinct",
  "serde",
+ "serde_json",
  "sp1-curves",
  "sp1-primitives",
  "sp1-stark",
@@ -5793,8 +5795,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-core-machine"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "bincode",
  "cbindgen",
@@ -5818,6 +5819,8 @@ dependencies = [
  "p3-keccak-air",
  "p3-matrix",
  "p3-maybe-rayon",
+ "p3-poseidon2",
+ "p3-symmetric",
  "p3-uni-stark",
  "p3-util",
  "pathdiff",
@@ -5825,6 +5828,7 @@ dependencies = [
  "rayon",
  "rayon-scan",
  "serde",
+ "serde_json",
  "size",
  "snowbridge-amcl",
  "sp1-core-executor",
@@ -5846,8 +5850,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-cuda"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "bincode",
  "ctrlc",
@@ -5862,12 +5865,11 @@ dependencies = [
 
 [[package]]
 name = "sp1-curves"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "cfg-if",
+ "curve25519-dalek",
  "dashu",
- "ecdsa",
  "elliptic-curve",
  "generic-array 1.1.0",
  "itertools 0.13.0",
@@ -5884,8 +5886,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-derive"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -5905,8 +5906,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-primitives"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "bincode",
  "hex",
@@ -5922,8 +5922,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-prover"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "anyhow",
  "bincode",
@@ -5940,6 +5939,8 @@ dependencies = [
  "p3-field",
  "p3-matrix",
  "p3-symmetric",
+ "p3-util",
+ "rayon",
  "serde",
  "serde_json",
  "serial_test",
@@ -5959,8 +5960,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-circuit"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "hashbrown 0.14.5",
  "itertools 0.13.0",
@@ -5992,8 +5992,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-compiler"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "backtrace",
  "itertools 0.13.0",
@@ -6013,8 +6012,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-core"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "backtrace",
  "cbindgen",
@@ -6039,6 +6037,7 @@ dependencies = [
  "p3-symmetric",
  "p3-util",
  "pathdiff",
+ "rand",
  "serde",
  "sp1-core-machine",
  "sp1-derive",
@@ -6053,8 +6052,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-derive"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -6062,8 +6060,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-recursion-gnark-ffi"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "anyhow",
  "bincode",
@@ -6107,8 +6104,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-sdk"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "alloy-signer",
  "alloy-signer-local",
@@ -6149,8 +6145,7 @@ dependencies = [
 
 [[package]]
 name = "sp1-stark"
-version = "4.0.0-rc.2"
-source = "git+https://github.com/succinctlabs/sp1?branch=v4.0.0-rc.2#a91f59ce477850ebf09d15c4cebcf878b596ef4f"
+version = "4.0.0-rc.1"
 dependencies = [
  "arrayref",
  "hashbrown 0.14.5",
