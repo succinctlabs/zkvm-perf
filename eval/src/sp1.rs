@@ -12,6 +12,8 @@ use sp1_core_machine::io::SP1Stdin;
 use sp1_prover::{components::CpuProverComponents, utils::get_cycles, SP1Prover};
 use sp1_prover::HashableKey;
 
+use serde::{Deserialize, Serialize};
+
 #[cfg(feature = "cuda")]
 use sp1_cuda::SP1CudaProver;
 
@@ -187,7 +189,22 @@ impl SP1Evaluator {
                 stdin.write_vec(proof.bytes());
                 stdin.write_vec(proof.public_values.to_vec());
                 stdin.write(&vk.bytes32());
-            }
+            },
+            ProgramId::ZKEmail => {
+                #[derive(Serialize, Deserialize, Debug, Clone)]
+                struct EmailInputs {
+                    public_key: String,
+                    signature: String,
+                    headers: String,
+                    body: String,
+                    body_hash: String,
+                }
+
+                const EMAIL_JSON: &[u8] = include_bytes!("../../fixtures/zk-email/email.json");
+                let email_input = serde_json::from_slice::<EmailInputs>(EMAIL_JSON).unwrap();
+
+                stdin.write(&email_input);
+            },
             _ => {}
         }
 

@@ -190,6 +190,21 @@ impl Risc0Evaluator {
                 
                 builder.write(&(seal, public_inputs, verifying_key)).unwrap();
             },
+            ProgramId::ZKEmail => {
+                #[derive(Serialize, Deserialize, Debug, Clone)]
+                struct EmailInputs {
+                    public_key: String,
+                    signature: String,
+                    headers: String,
+                    body: String,
+                    body_hash: String,
+                }
+
+                const EMAIL_JSON: &[u8] = include_bytes!("../../fixtures/zk-email/email.json");
+                let email_input = serde_json::from_slice::<EmailInputs>(EMAIL_JSON).unwrap();
+
+                builder.write(&email_input).unwrap();
+            },
             _ => {}
         }
         let env = builder.build().unwrap();
@@ -348,6 +363,21 @@ impl Risc0Evaluator {
                 let verifying_key: VerifyingKey = verifying_key_json.verifying_key().unwrap();
                 
                 builder.write(&(seal, public_inputs, verifying_key)).unwrap();
+            },
+            ProgramId::ZKEmail => {
+                #[derive(Serialize, Deserialize, Debug, Clone)]
+                struct EmailInputs {
+                    public_key: String,
+                    signature: String,
+                    headers: String,
+                    body: String,
+                    body_hash: String,
+                }
+
+                const EMAIL_JSON: &[u8] = include_bytes!("../../fixtures/zk-email/email.json");
+                let email_input = serde_json::from_slice::<EmailInputs>(EMAIL_JSON).unwrap();
+
+                builder.write(&email_input).unwrap();
             },
             _ => {}
         }

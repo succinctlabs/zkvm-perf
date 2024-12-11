@@ -67,6 +67,8 @@ pub enum ProgramId {
     Helios,
 
     Groth16ProofVerify,
+
+    ZKEmail,
 }
 
 impl ProgramId {
@@ -140,6 +142,8 @@ impl ProgramId {
             ProgramId::Helios => 1,
 
             ProgramId::Groth16ProofVerify => 1,
+
+            ProgramId::ZKEmail => 1,
         }
     }
 }
@@ -209,6 +213,7 @@ impl Display for ProgramId {
             ProgramId::EDDSAVerify => write!(f, "eddsa-verify"),
             ProgramId::Helios => write!(f, "helios"),
             ProgramId::Groth16ProofVerify => write!(f, "groth16-proof-verify"),
+            ProgramId::ZKEmail => write!(f, "zk-email"),
         }
     }
 }

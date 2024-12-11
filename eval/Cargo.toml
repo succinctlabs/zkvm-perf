@@ -44,7 +44,7 @@ ed25519-dalek = { version = "2.1.1", features = ["digest", "rand_core", "serde",
 k256 = { version = "=0.13.3", features = ["serde"] }
 rand = "0.8.5"
 rand_core = "0.6.4"
-serde = "1.0.215"
+serde = { version = "1.0.215", features = ["derive"] }
 
 [features]
 default = []

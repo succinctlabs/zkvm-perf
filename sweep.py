@@ -161,7 +161,8 @@ def main():
             "ecdsa-verify",
             "eddsa-verify",
             "helios",
-            "groth16-proof-verify"
+            "groth16-proof-verify",
+            "zk-email"
         ],
     )
     parser.add_argument(
