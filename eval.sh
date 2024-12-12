@@ -62,6 +62,12 @@ fi
 
 cd ../../
 
+# If buildOnly flag is set, exit here
+if [ "$6" == "buildOnly" ]; then
+    echo "Build completed. Exiting due to buildOnly flag."
+    exit 0
+fi
+
 echo "Running eval script"
 
 # Detect whether we're on an instance with a GPU.

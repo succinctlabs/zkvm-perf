@@ -42,6 +42,19 @@ def run_benchmark(
                     ]
                 )
             else:
+                if "groth16" in program:
+                    subprocess.run(
+                        [
+                            "bash",
+                            "eval.sh",
+                            "fibonacci20k",
+                            prover,
+                            hashfn,
+                            str(shard_size),
+                            filename,
+                            "buildOnly",
+                        ]
+                    )
                 subprocess.run(
                     [
                         "bash",
@@ -53,7 +66,6 @@ def run_benchmark(
                         filename,
                     ]
                 )
-
 
 def main():
     parser = argparse.ArgumentParser(
