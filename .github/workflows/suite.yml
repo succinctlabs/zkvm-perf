@@ -61,7 +61,8 @@ jobs:
             build-essential \
             libc6 \
             gcc \
-            g++
+            g++ \
+            clang
 
       - name: Check CUDA installation
         if: ${{ contains(matrix.instance, 'g6') }}
