@@ -105,7 +105,6 @@ CUDA_VISIBLE_DEVICES=0 cargo run \
     --no-default-features \
     --features "$FEATURES" \
     -- \
-    --groth16 \
     --program "$1" \
     --prover "$2" \
     --hashfn "$3" \
