@@ -85,7 +85,7 @@ This workflow is triggered by `adhoc-matrix.yml` and runs the actual benchmarks 
    rustup install nightly
    ```
 
-2. Install the [SP1 toolchain](https://docs.succinct.xyz/getting-started/install.html):
+2. Install the [SP1 toolchain](https://docs.succinct.xyz/docs/getting-started/install):
    ```sh
    curl -L https://sp1.succinct.xyz | bash
    source ~/.bashrc
