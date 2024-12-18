@@ -5749,7 +5749,7 @@ dependencies = [
 [[package]]
 name = "sp1-build"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -5761,7 +5761,7 @@ dependencies = [
 [[package]]
 name = "sp1-core-executor"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "bincode",
  "bytemuck",
@@ -5788,6 +5788,7 @@ dependencies = [
  "sp1-stark",
  "strum",
  "strum_macros",
+ "subenum",
  "thiserror 1.0.64",
  "tiny-keccak",
  "tracing",
@@ -5798,7 +5799,7 @@ dependencies = [
 [[package]]
 name = "sp1-core-machine"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "bincode",
  "cbindgen",
@@ -5854,7 +5855,7 @@ dependencies = [
 [[package]]
 name = "sp1-cuda"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "bincode",
  "ctrlc",
@@ -5870,7 +5871,7 @@ dependencies = [
 [[package]]
 name = "sp1-curves"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "cfg-if",
  "curve25519-dalek",
@@ -5892,7 +5893,7 @@ dependencies = [
 [[package]]
 name = "sp1-derive"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -5913,7 +5914,7 @@ dependencies = [
 [[package]]
 name = "sp1-primitives"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "bincode",
  "hex",
@@ -5930,7 +5931,7 @@ dependencies = [
 [[package]]
 name = "sp1-prover"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "anyhow",
  "bincode",
@@ -5969,7 +5970,7 @@ dependencies = [
 [[package]]
 name = "sp1-recursion-circuit"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "hashbrown 0.14.5",
  "itertools 0.13.0",
@@ -6002,9 +6003,8 @@ dependencies = [
 [[package]]
 name = "sp1-recursion-compiler"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
- "backtrace",
  "itertools 0.13.0",
  "p3-baby-bear",
  "p3-bn254-fr",
@@ -6023,11 +6023,12 @@ dependencies = [
 [[package]]
 name = "sp1-recursion-core"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "backtrace",
  "cbindgen",
  "cc",
+ "cfg-if",
  "ff 0.13.0",
  "glob",
  "hashbrown 0.14.5",
@@ -6064,7 +6065,7 @@ dependencies = [
 [[package]]
 name = "sp1-recursion-derive"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -6073,7 +6074,7 @@ dependencies = [
 [[package]]
 name = "sp1-recursion-gnark-ffi"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "anyhow",
  "bincode",
@@ -6118,7 +6119,7 @@ dependencies = [
 [[package]]
 name = "sp1-sdk"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "alloy-signer",
  "alloy-signer-local",
@@ -6160,7 +6161,7 @@ dependencies = [
 [[package]]
 name = "sp1-stark"
 version = "4.0.0-rc.1"
-source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#22fbd48757f90b68380157d580468c0362dbded2"
+source = "git+https://github.com/succinctlabs/sp1-wip.git?branch=min%2Feclogup-tracegen#34dfc4ce810d8937ee919a0f03480681bd4d3101"
 dependencies = [
  "arrayref",
  "hashbrown 0.14.5",
@@ -6265,6 +6266,18 @@ dependencies = [
  "quote",
  "rustversion",
  "syn 2.0.87",
+]
+
+[[package]]
+name = "subenum"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f5d5dfb8556dd04017db5e318bbeac8ab2b0c67b76bf197bfb79e9b29f18ecf"
+dependencies = [
+ "heck 0.4.1",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
