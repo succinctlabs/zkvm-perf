@@ -6,6 +6,7 @@ use crate::{
     EvalArgs, PerformanceReport, ProgramId,
 };
 
+use sp1_sdk::Prover;
 use sp1_core_executor::SP1Context;
 use sp1_prover::build::try_build_groth16_bn254_artifacts_dev;
 use sp1_core_machine::io::SP1Stdin;
@@ -182,9 +183,9 @@ impl SP1Evaluator {
                 let mut input = SP1Stdin::new();
                 input.write(&20_u32);
 
-                let client = sp1_sdk::ProverClient::cpu();
+                let client = sp1_sdk::ProverClient::builder().cpu().build();
                 let (pk, vk) = client.setup(&elf);
-                let proof = client.prove(&pk, input).groth16().run().unwrap();
+                let proof = client.prove(&pk, &input).groth16().run().unwrap();
                 
                 stdin.write_vec(proof.bytes());
                 stdin.write_vec(proof.public_values.to_vec());
