@@ -36,6 +36,9 @@ fi
 if [[ $program_directory == groth16-proof-verify* ]]; then
     program_directory="groth-$2"
 fi
+if [[ $program_directory == zk-email* ]]; then
+    program_directory="zk-email-$2"
+fi
 
 echo "Building program"
 
@@ -46,7 +49,7 @@ cd "programs/$program_directory"
 if [ "$2" == "sp1" ]; then
     # The reason we don't just use `cargo prove build` from the SP1 CLI is we need to pass a --features ...
     # flag to select between sp1 and risc0.
-    RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
+    RUSTFLAGS="-C passes=lower-atomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
         RUSTUP_TOOLCHAIN=succinct \
         CARGO_BUILD_TARGET=riscv32im-succinct-zkvm-elf \
         cargo build --release --ignore-rust-version --features $2
@@ -54,10 +57,7 @@ fi
 # If the prover is risc0, then build the program.
 if [ "$2" == "risc0" ]; then
     echo "Building Risc0"
-    RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" \
-        RUSTUP_TOOLCHAIN=risc0 \
-        CARGO_BUILD_TARGET=riscv32im-risc0-zkvm-elf \
-        cargo build --release --ignore-rust-version --features $2
+    CC=gcc CC_riscv32im_risc0_zkvm_elf=~/.risc0/cpp/bin/riscv32-unknown-elf-gcc  RUSTFLAGS="-C passes=loweratomic -C link-arg=-Ttext=0x00200800 -C panic=abort" RISC0_FEATURE_bigint2=1 cargo +risc0 build --release --locked --target riscv32im-risc0-zkvm-elf --manifest-path Cargo.toml --features risc0 
 fi
 
 cd ../../
@@ -104,8 +104,17 @@ if [ "$2" == "risc0" ]; then
  fi
 fi
 
+if [ $TRACE_FILE ]; then
+    echo "Setting TRACE_FILE=$TRACE_FILE"
+    export TRACE_FILE=$TRACE_FILE
+fi
+
+if [ $TRACE_SAMPLE_RATE ]; then
+    export TRACE_SAMPLE_RATE=$TRACE_SAMPLE_RATE
+fi
+
 # Run the benchmark and capture its exit status
-CUDA_VISIBLE_DEVICES=0 cargo run \
+RISC0_INFO=1 RUST_LOG=info CUDA_VISIBLE_DEVICES=0 SP1_DISABLE_PROGRAM_CACHE=true cargo run \
     -p sp1-benchmarks-eval \
     --release \
     --no-default-features \

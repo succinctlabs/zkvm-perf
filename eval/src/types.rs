@@ -46,9 +46,8 @@ pub enum ProgramId {
 
     // Tendermint.
     Tendermint,
-
-    // Reth.
-    Reth,
+    
+    // RSP
     Rsp20526626,
     Rsp20526627,
     Rsp20526628,
@@ -119,9 +118,6 @@ impl ProgramId {
             
             // Tendermint
             ProgramId::Tendermint => 1,
-            
-            // Reth
-            ProgramId::Reth => 1,
             
             // RSP
             ProgramId::Rsp20526626 => 1,
@@ -198,7 +194,6 @@ impl Display for ProgramId {
             ProgramId::Keccak25610mb => write!(f, "keccak256-10mb"),
             ProgramId::SSZWithdrawals => write!(f, "ssz-withdrawals"),
             ProgramId::Tendermint => write!(f, "tendermint"),
-            ProgramId::Reth => write!(f, "reth"),
             ProgramId::Rsp20526626 => write!(f, "rsp-20526626"),
             ProgramId::Rsp20526627 => write!(f, "rsp-20526627"),
             ProgramId::Rsp20526628 => write!(f, "rsp-20526628"),

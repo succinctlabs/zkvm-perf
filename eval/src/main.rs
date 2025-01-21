@@ -96,6 +96,9 @@ pub struct PerformanceReport {
 }
 
 fn main() {
+    // Setup the logger.
+    sp1_core_machine::utils::setup_logger();
+
     let args = EvalArgs::parse();
 
     // Select the correct implementation based on the prover.

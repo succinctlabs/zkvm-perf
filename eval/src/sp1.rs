@@ -2,7 +2,7 @@ use core::time;
 use std::fs;
 
 use crate::{
-    utils::{gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second, rand_ecdsa_signature, rand_eddsa_signature, time_operation},
+    utils::{gas_amount, get_elf, hash_bytes_per_second, hashes_per_second, rand_ecdsa_signature, rand_eddsa_signature, time_operation},
     EvalArgs, PerformanceReport, ProgramId,
 };
 
@@ -24,10 +24,7 @@ use sp1_stark::SP1ProverOpts;
 pub struct SP1Evaluator;
 
 impl SP1Evaluator {
-    pub fn eval(args: &EvalArgs) -> PerformanceReport {
-        // Setup the logger.
-        sp1_core_machine::utils::setup_logger();
- 
+    pub fn eval(args: &EvalArgs) -> PerformanceReport { 
         // Get stdin.
         let mut stdin = SP1Stdin::new();
         match args.program { 
@@ -118,10 +115,6 @@ impl SP1Evaluator {
             ProgramId::Keccak25610mb => {
                 stdin.write(&vec![0u8; 1048576 * 10]);
             }
-            ProgramId::Reth => {
-                let input = get_reth_input(args);
-                stdin.write(&input);
-            }
             ProgramId::Rsp20526626 => {
                 let input = include_bytes!("../../fixtures/20526626.bin");
                 stdin.write_vec(input.to_vec());
@@ -166,7 +159,10 @@ impl SP1Evaluator {
                 stdin.write(&rand_ecdsa_signature());
             },
             ProgramId::EDDSAVerify => {
-                stdin.write(&rand_eddsa_signature());
+                let times: u8 = 100;
+                for _ in 0..times {
+                    stdin.write(&rand_eddsa_signature());
+                }
             },
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
@@ -220,7 +216,7 @@ impl SP1Evaluator {
                     "s3",
                     "cp",
                     &format!("stdin.bin"),
-                    &format!("s3://sp1-testing-suite/{}/stdin.bin", args.program.to_string())
+                    &format!("s3://sp1-testing-suite/v4/{}/stdin.bin", args.program.to_string())
                 ])
                 .status()
                 .expect("Failed to upload stdin.bin to S3");
@@ -231,7 +227,7 @@ impl SP1Evaluator {
                     "s3", 
                     "cp",
                     &format!("program.bin"),
-                    &format!("s3://sp1-testing-suite/{}/program.bin", args.program.to_string())
+                    &format!("s3://sp1-testing-suite/v4/{}/program.bin", args.program.to_string())
                 ])
                 .status()
                 .expect("Failed to upload program.bin to S3");
@@ -303,8 +299,6 @@ impl SP1Evaluator {
             prover.verify_compressed(&compress_proof, &vk).expect("Proof verification failed")
         });
 
-
-
         let mut shrink_prove_duration = time::Duration::from_secs(0);
         let mut wrap_prove_duration = time::Duration::from_secs(0);
         let mut wrap_verify_duration = time::Duration::from_secs(0);
@@ -361,7 +355,7 @@ impl SP1Evaluator {
         let overall_khz = cycles as f64 / prove_duration.as_secs_f64() / 1_000.0;
 
         // Create the performance report.
-        PerformanceReport {
+        let report = PerformanceReport {
             program: args.program.to_string(),
             priority: args.program.priority(),
             prover: args.prover.to_string(),
@@ -387,6 +381,12 @@ impl SP1Evaluator {
             gas: gas_amount(&args.program),
             hashes_per_second: hashes_per_second(&args.program, prove_duration),
             hash_bytes_per_second: hash_bytes_per_second(&args.program, prove_duration),
+        };
+        
+        if std::env::var("SP1_PRINT").is_ok() {
+            println!("{:#?}", report);
         }
+        
+        report
     }
 }

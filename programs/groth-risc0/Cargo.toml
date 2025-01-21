@@ -5,10 +5,23 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-risc0-zkvm = { version = "1.2.0", default-features = false, features = ["std"] }
-risc0-groth16 = { version = "1.2.0"  }
+risc0-zkvm = { version = "=1.2.1", default-features = false, features = ["std", "unstable"] }
+risc0-groth16 = { version = "=1.2.1" }
 serde_json = "1.0.133"
 
 [features]
 risc0 = []
 sp1 = []
+
+[patch.crates-io]
+kzg-rs = { git = "https://github.com/succinctlabs/kzg-rs.git", branch = "john/target-vendor" }
+sp1_bls12_381 = { git = "https://github.com/sp1-patches/bls12_381.git", package = "bls12_381", rev = "7e1b79041253d6f7b591534613245b3f60e05d8b", version = "0.8.0" }
+
+c-kzg = { git = "https://github.com/risc0/c-kzg-4844.git", branch = "p1.0.3" }
+sha2 = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.8-risczero.0" }
+ed25519-dalek = { git = "https://github.com/risc0/curve25519-dalek", tag = "curve25519-4.1.2-risczero.0" }	
+tiny-keccak = { git = "https://github.com/risc0/tiny-keccak", tag = "tiny-keccak/v2.0.2-risczero.0" }
+k256 = { git = "https://github.com/risc0/RustCrypto-elliptic-curves", tag = "k256/v0.13.4-risczero.1" }
+p256 = { git = "https://github.com/risc0/RustCrypto-elliptic-curves", tag = "p256/v0.13.2-risczero.0" }
+rsa = { git = "https://github.com/risc0/RustCrypto-RSA", tag = "v0.9.6-risczero.0" }
+crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.5-risczero.0" }

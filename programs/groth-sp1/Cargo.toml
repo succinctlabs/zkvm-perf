@@ -5,10 +5,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-
-sp1-zkvm = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
-sp1-verifier = { git = "https://github.com/succinctlabs/sp1", branch = "v4.0.0-rc.2" }
+sp1-zkvm = "4.0.0-rc.10"
+sp1-verifier = "4.0.0-rc.10"
 
 [features]
 risc0 = []
 sp1 = []
+
+[patch.crates-io]
+substrate-bn-succinct = { git = "https://github.com/sp1-patches/bn", branch = "n/release-succinct" }

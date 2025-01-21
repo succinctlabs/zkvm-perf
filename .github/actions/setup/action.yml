@@ -77,14 +77,14 @@ runs:
           ~/.rustup/
           ~/.sp1/circuits/plonk/
           ~/.sp1/circuits/groth16/
-        key: rust-1.81.0-${{ hashFiles('**/Cargo.toml') }}
-        restore-keys: rust-1.81.0-
+        key: rust-1.84.0-${{ hashFiles('**/Cargo.toml') }}
+        restore-keys: rust-1.84.0-
 
     - name: Setup toolchain
       id: rustc-toolchain
       shell: bash
       run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain 1.81.0 -y
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain 1.84.0 -y
         . "$HOME/.cargo/env" 
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 

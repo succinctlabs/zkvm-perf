@@ -4,7 +4,7 @@ use std::fs;
 #[cfg(feature = "risc0")]
 use crate::{
     utils::{
-        gas_amount, get_elf, get_reth_input, hash_bytes_per_second, hashes_per_second,
+        gas_amount, get_elf, hash_bytes_per_second, hashes_per_second,
         rand_ecdsa_signature, rand_eddsa_signature, time_operation,
     },
     HashFnId, ProgramId,
@@ -38,15 +38,9 @@ impl Risc0Evaluator {
         let elf = fs::read(&elf_path).unwrap();
         let image_id = compute_image_id(elf.as_slice()).unwrap();
 
-        // If the program is Reth, read the block and set it as input. Otherwise, we assume other
-        // benchmarking programs don't have input.
         let mut builder = ExecutorEnv::builder();
         builder.segment_limit_po2(args.shard_size as u32);
         match args.program {
-            ProgramId::Reth => {
-                let input = get_reth_input(args);
-                builder.write(&input).expect("Failed to write input to executor");
-            }
             ProgramId::Loop10k => {
                 builder.write::<usize>(&2500);
             }
@@ -166,7 +160,12 @@ impl Risc0Evaluator {
                 builder.write(&rand_ecdsa_signature());
             },
             ProgramId::EDDSAVerify => {
-                builder.write(&rand_eddsa_signature());
+                let times: u8 = 100;
+                builder.write(&times);
+                
+                for _ in 0..times {
+                    builder.write(&rand_eddsa_signature());
+                }
             },
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
@@ -220,11 +219,8 @@ impl Risc0Evaluator {
 
         // Setup the prover.
         let mut builder = ExecutorEnv::builder();
+        builder.segment_limit_po2(args.shard_size as u32);
         match args.program {
-            ProgramId::Reth => {
-                let input = get_reth_input(args);
-                builder.write(&input).expect("Failed to write input to executor");
-            }
             ProgramId::Loop10k => {
                 builder.write::<usize>(&2500);
             }
@@ -341,7 +337,12 @@ impl Risc0Evaluator {
                 builder.write(&rand_ecdsa_signature());
             },
             ProgramId::EDDSAVerify => {
-                builder.write(&rand_eddsa_signature());
+                let times: u8 = 100;
+                builder.write(&times);
+
+                for _ in 0..times {
+                    builder.write(&rand_eddsa_signature());
+                }
             },
             ProgramId::Helios => {
                 let input = include_bytes!("../../fixtures/helios/proof_inputs.cbor");
@@ -449,7 +450,7 @@ impl Risc0Evaluator {
         let overall_khz = cycles as f64 / prove_duration.as_secs_f64() / 1_000.0;
 
         // Create the performance report.
-        PerformanceReport {
+        let report = PerformanceReport {
             priority: args.program.priority(),
             program: args.program.to_string(),
             prover: args.prover.to_string(),
@@ -475,7 +476,11 @@ impl Risc0Evaluator {
             wrap_prove_duration: wrap_prove_duration.as_secs_f64(),
             groth16_prove_duration: groth16_prove_duration.as_secs_f64(),
             plonk_prove_duration: 0.0,
-        }
+        };
+
+        println!("report: {:#?}", report);
+
+        report
     }
 
     #[cfg(not(feature = "risc0"))]
